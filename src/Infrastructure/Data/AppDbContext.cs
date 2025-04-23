@@ -13,13 +13,33 @@ namespace Infrastructure.Data
         public DbSet<Firm> Firms { get; set; }
         public DbSet<UserCar> UserCars { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql("YourConnectionString", 
+                    o => o.UseNodaTime()); // Add this line
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Car>()
                 .HasKey(c => c.VIN);  // VIN is the primary key
 
+            modelBuilder.Entity<User>(e => 
+            {
+                e.Property(u => u.BirthDate)
+                    .HasConversion(
+                        v => v.ToUniversalTime(),
+                        v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+                e.HasKey(u => u.Id);
+            });
+
+            /*
             modelBuilder.Entity<User>()
                 .HasKey(u => u.Id);  // Assuming User has an Id property
+            */
 
             modelBuilder.Entity<Insurance>()
                 .HasKey(i => i.Id);

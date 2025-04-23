@@ -1,0 +1,79 @@
+# General OS files
+.DS_Store
+*.swp
+*.swo
+Thumbs.db
+
+# IDE-specific
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# Build outputs
+bin/
+obj/
+build/
+out/
+
+# NuGet packages
+**/packages/
+*.nupkg
+nuget.exe
+
+# EF Core migrations (optional - exclude if you want to track migrations)
+# src/Infrastructure/Migrations/
+
+# Runtime files
+*.runtimeconfig.json
+*.dll
+*.pdb
+*.exe
+*.so
+*.dylib
+*.a
+
+# Logs and diagnostics
+*.log
+*.sarif
+*.testlog
+*.trx
+
+# Docker
+docker-compose.override.yml
+.env
+docker-compose.env
+
+# PostgreSQL
+**/pgdata/
+
+# Avalonia/WPF temp files
+**/avalonia/
+**/App/avalonia/
+*.cache
+*.ilk
+*.exp
+*.lib
+*.ilk
+*.exp
+*.pch
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+
+# Local development files
+appsettings.Development.json
+launchSettings.json
+
+# Rider IDE
+_ReSharper.*
+*.sln.iml
+
+# VS Code
+.history/
+
+# macOS
+._*

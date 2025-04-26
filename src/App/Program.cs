@@ -1,21 +1,23 @@
 ﻿using Avalonia;
-using Avalonia.ReactiveUI;
 using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 
-namespace App
+namespace App;
+
+sealed class Program
 {
-    class Program
+    // Initialization code. Don't use any Avalonia, third-party APIs or any
+    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
+    // yet and stuff might break.
+    [STAThread]
+    public static void Main(string[] args)
     {
-        // This is your existing Avalonia setup
-        [STAThread]
-        public static void Main(string[] args)
-        {
-            // 1. Configure the host builder
+        // 1. Configure the host builder
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
@@ -32,15 +34,19 @@ namespace App
                 Infrastructure.Seeders.DatabaseSeeder.Seed(dbContext);
             }
 
-            // 3. Start Avalonia as before
-            BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args);
-        }
 
-        public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()
-                .UsePlatformDetect()
-                .WithInterFont()
-                .LogToTrace();
-    }
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true)
+            .Build();
+
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    }   
+
+    // Avalonia configuration, don't remove; also used by visual designer.
+    public static AppBuilder BuildAvaloniaApp()
+        => AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .WithInterFont()
+            .LogToTrace();
 }

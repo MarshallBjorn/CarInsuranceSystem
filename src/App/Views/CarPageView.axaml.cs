@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace App.Views;
 
-public partial class ButtonPageView : UserControl
+public partial class CarPageView : UserControl
 {
-    public ButtonPageView()
+    public CarPageView()
     {
         InitializeComponent();
     }

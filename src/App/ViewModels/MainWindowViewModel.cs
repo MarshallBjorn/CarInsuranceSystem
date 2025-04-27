@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using App.Views;
 using Avalonia;
@@ -31,7 +32,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<ListItemTemplate> Items { get; } = new()
     {
         new ListItemTemplate(typeof(HomePageViewModel), "HomeRegular"),
-        new ListItemTemplate(typeof(ButtonPageViewModel), "CursorHoverRegular"),
+        new ListItemTemplate(typeof(CarPageViewModel), "Vehicle"),
     };
 
     [RelayCommand]

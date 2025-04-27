@@ -8,6 +8,11 @@ namespace Infrastructure.Data
 {
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
+        public AppDbContext CreateDbContext()
+        {
+            return CreateDbContext(Array.Empty<string>());
+        }
+        
         public AppDbContext CreateDbContext(string[] args)
         {
             // Get the path to the App project

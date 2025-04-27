@@ -9,19 +9,64 @@
              d:DesignHeight="450"
              x:Class="App.Views.CarPageView"
              x:DataType="vm:CarPageViewModel">
-    
-    <StackPanel>
-      <ItemsControl ItemsSource="{Binding Cars}">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="model:Car">
-                <StackPanel Margin="5">
-                    <TextBlock Text="{Binding VIN}" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Mark}" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Model}"/>
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-      
-    </StackPanel>
+    <ScrollViewer>
+    <Grid RowDefinitions="Auto, *" Margin="20">
+      <TextBlock Grid.Row="0" Margin="0 20" FontSize="20" FontWeight="Bold">
+        Your car list!
+      </TextBlock>
+      <Border Grid.Row="1" Background="#2d323c" CornerRadius="10">
+        <DockPanel Margin="10">
+
+    <!-- HEADER -->
+    <Grid DockPanel.Dock="Top" Background="#1e1e1e">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="0" Text="VIN" FontWeight="Bold" HorizontalAlignment="Center" />
+        <TextBlock Grid.Column="1" Text="Mark" FontWeight="Bold" HorizontalAlignment="Center" />
+        <TextBlock Grid.Column="2" Text="Model" FontWeight="Bold" HorizontalAlignment="Center" />
+        <TextBlock Grid.Column="3" Text="" FontWeight="Bold" HorizontalAlignment="Center" />
+    </Grid>
+
+    <!-- BODY -->
+    <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Cars}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="model:Car">
+                    <Border Margin="0,0,0,5" Padding="8" Background="#2D2D2D" CornerRadius="4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <Button Grid.Column="3" VerticalAlignment="Center">EDIT</Button>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+
+</DockPanel>
+
+
+      </Border>
+    </Grid>
+  </ScrollViewer>
 </UserControl>

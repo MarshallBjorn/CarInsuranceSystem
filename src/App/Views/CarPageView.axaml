@@ -8,43 +8,60 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              x:Class="App.Views.CarPageView"
-             x:DataType="vm:CarPageViewModel">
-    <ScrollViewer>
-    <Grid RowDefinitions="Auto, *" Margin="20">
-      <TextBlock Grid.Row="0" Margin="0 20" FontSize="20" FontWeight="Bold">
-        Your car list!
-      </TextBlock>
-      <Border Grid.Row="1" Background="#2d323c" CornerRadius="10">
-        <DockPanel Margin="10">
+             x:DataType="vm:CarPageViewModel"
+             x:Name="RootControl">
 
-    <!-- HEADER -->
-    <Grid DockPanel.Dock="Top" Background="#1e1e1e">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
+    <UserControl.Styles>
+        <Style Selector="Border#AddCarPopup">
+            <Setter Property="Width" Value="0"/>
+            <Setter Property="Height" Value="0"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Width" Duration="0:0:0.3"/>
+                    <DoubleTransition Property="Height" Duration="0:0:0.3"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
 
-        <TextBlock Grid.Column="0" Text="VIN" FontWeight="Bold" HorizontalAlignment="Center" />
-        <TextBlock Grid.Column="1" Text="Mark" FontWeight="Bold" HorizontalAlignment="Center" />
-        <TextBlock Grid.Column="2" Text="Model" FontWeight="Bold" HorizontalAlignment="Center" />
-        <TextBlock Grid.Column="3" Text="" FontWeight="Bold" HorizontalAlignment="Center" />
-    </Grid>
+        <Style Selector="Border#AddCarPopup.open">
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="400"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
 
-    <!-- BODY -->
-    <ScrollViewer>
-        <ItemsControl ItemsSource="{Binding Cars}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+        <Style Selector="Border#OverlayPanel">
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+                </Transitions>
+            </Setter>
+        </Style>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="model:Car">
-                    <Border Margin="0,0,0,5" Padding="8" Background="#2D2D2D" CornerRadius="4">
-                        <Grid>
+        <Style Selector="Border#OverlayPanel.open">
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <!-- Main content -->
+        <ScrollViewer>
+            <Grid Name="MainGrid" RowDefinitions="Auto, *" Margin="20">
+                <!-- Header with title and add button -->
+                <Grid Grid.Row="0">
+                    <TextBlock Margin="0 20" FontSize="20" FontWeight="Bold">
+                        Your car list!
+                    </TextBlock>
+                    <Button Name="AddCarButton" HorizontalAlignment="Right" Command="{Binding CarAddCommand}">Add Car</Button>
+                </Grid>
+
+                <!-- Main content area -->
+                <Border Grid.Row="1" Background="#2d323c" CornerRadius="10">
+                    <DockPanel Margin="10">
+                        <!-- HEADER -->
+                        <Grid DockPanel.Dock="Top" Background="#1e1e1e">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*" />
                                 <ColumnDefinition Width="2*" />
@@ -52,21 +69,67 @@
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="{Binding VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            <TextBlock Grid.Column="2" Text="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            <Button Grid.Column="3" VerticalAlignment="Center">EDIT</Button>
+                            <TextBlock Grid.Column="0" Text="VIN" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="Mark" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="Model" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="" FontWeight="Bold" HorizontalAlignment="Center" />
                         </Grid>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </ScrollViewer>
+                    
+                        <!-- BODY -->
+                        <StackPanel>
+                            <ItemsControl ItemsSource="{Binding Cars}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
 
-</DockPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Car">
+                                        <Border Margin="0,0,0,5" Padding="8" Background="#2D2D2D" CornerRadius="4">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="3*" />
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                </Grid.ColumnDefinitions>
+                
+                                                <TextBlock Grid.Column="0" Text="{Binding VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="2" Text="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                <Button Content="EDIT" 
+                                                        Grid.Column="3" 
+                                                        VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
 
+        <!-- Overlay -->
+        <Border Name="OverlayPanel"
+                Background="#000000"
+                Classes.open="{Binding CarAddIsOpen}"
+                IsHitTestVisible="{Binding CarAddIsOpen}"
+                ZIndex="1"/>
 
-      </Border>
+        <!-- Add Car Popup -->
+        <Border Name="AddCarPopup"
+                Classes.open="{Binding CarAddIsOpen}"
+                Background="#ff0000"
+                CornerRadius="5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                ZIndex="2">
+            <TextBlock Text="Add Car Form Would Go Here" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
     </Grid>
-  </ScrollViewer>
 </UserControl>

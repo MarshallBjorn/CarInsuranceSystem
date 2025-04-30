@@ -1,18 +1,18 @@
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Core.Entities;
 using Infrastructure;
-using Infrastructure.Services;
+using App.Views;
+using CommunityToolkit.Mvvm.Input;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace App.ViewModels;
 
 public partial class CarPageViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private string? _errorText;
-
     public ObservableCollection<Car> Cars { get; set; } = new ObservableCollection<Car>();
 
     public CarPageViewModel()
@@ -27,4 +27,10 @@ public partial class CarPageViewModel : ViewModelBase
         foreach (var car in cars)
             Cars.Add(car);
     }
+
+    [ObservableProperty]
+    private bool _carAddIsOpen = false;
+
+    [RelayCommand]
+    private void CarAdd() => CarAddIsOpen ^= true;
 }

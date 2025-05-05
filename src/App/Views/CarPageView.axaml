@@ -73,7 +73,7 @@
                     <TextBlock Margin="0 20" FontSize="20" FontWeight="Bold">
                         Your car list!
                     </TextBlock>
-                    <Button Name="AddCarButton" HorizontalAlignment="Right" Command="{Binding CarAddCommand}">Add Car</Button>
+                    <Button Name="AddCarButton" HorizontalAlignment="Right" Command="{Binding CarAddOpenCommand}">Add Car</Button>
                 </Grid>
 
                 <!-- Main content area -->
@@ -146,9 +146,16 @@
                 Background="#1e1e1e"
                 CornerRadius="5"
                 ZIndex="2">
-            <TextBlock Text="Add Car Form Would Go Here" 
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+            <StackPanel>
+                <TextBlock Text="{Binding ErrorText}" />
+                <TextBox Watermark="VIN" Text="{Binding Vin}" />
+                <TextBox Watermark="Mark" Text="{Binding Mark}" />
+                <TextBox Watermark="Model" Text="{Binding Model}" />
+                <TextBox Watermark="Production Year" Text="{Binding ProductionYear}" />
+                <TextBox Watermark="Engine Type" Text="{Binding EngineType}" />
+                <Button Command="{Binding CarAddSaveCommand}" 
+                        Content="ADD CAR"/>
+            </StackPanel>
         </Border>
 
         <!-- Edit Car Popup -->

@@ -26,9 +26,18 @@ public class CarRepository(AppDbContext context) : ICarRepository
     }
 
     // TODO
-    public Task<bool> AddCarAsync(Car car)
+    public async Task<bool> AddCarAsync(Car car)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _context.Cars.Add(car);
+            await _context.SaveChangesAsync();
+            return true;
+        } 
+        catch
+        {
+            return false;
+        }
     }
 
     // TODO

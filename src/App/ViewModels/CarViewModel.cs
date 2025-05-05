@@ -17,6 +17,6 @@ public partial class CarViewModel : ViewModelBase
     [RelayCommand]
     private void ShowEdit()
     {
-        _carPageViewModel.ShowCarEdit(Car);
+        _carPageViewModel.CarEditOpen(Car);
     }
 }

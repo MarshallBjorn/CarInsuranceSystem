@@ -1,6 +1,8 @@
 using System;
+using App.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
@@ -20,7 +22,7 @@ public partial class CarPageView : UserControl
         mAddCarButton = this.Find<Control>("AddCarButton") ?? throw new Exception("Cannot find Add Car Button by name.");;
         mMainGrid = this.Find<Control>("MainGrid") ?? throw new Exception("Cannot find Main Grid by name.");;
         
-        LayoutUpdated += (_, __) => RepositionPopup();
+        // LayoutUpdated += (_, __) => RepositionPopup();
     }
 
     private void RepositionPopup()
@@ -29,7 +31,10 @@ public partial class CarPageView : UserControl
 
         if (relativePos is { } p)
         {
-            mAddCarPopup.Margin = new Thickness(p.X, p.Y, 0, 0);
+            mAddCarPopup.Margin = new Thickness(0, p.Y, p.X, 0);
         }
     }
+
+    private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e) 
+        => ((CarPageViewModel)DataContext).CarAddCommand.Execute(null);
 }

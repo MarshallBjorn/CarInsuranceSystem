@@ -31,6 +31,18 @@ public partial class CarPageViewModel : ViewModelBase
     [ObservableProperty]
     private bool _carAddIsOpen = false;
 
+    [ObservableProperty]
+    private bool _carEditIsOpen = false;
+    
+    [ObservableProperty]
+    private Car? _selectedCar;
+
     [RelayCommand]
     private void CarAdd() => CarAddIsOpen ^= true;
+
+    [RelayCommand]
+    private void CarEdit()
+    {
+        CarEditIsOpen ^= true;
+    }
 }

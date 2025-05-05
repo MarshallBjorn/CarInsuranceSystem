@@ -18,9 +18,9 @@
             <Setter Property="Opacity" Value="0"/>
             <Setter Property="Transitions">
                 <Transitions>
-                    <DoubleTransition Property="Width" Duration="0:0:0.3"/>
-                    <DoubleTransition Property="Height" Duration="0:0:0.3"/>
-                    <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                    <DoubleTransition Property="Width" Duration="0:0:0.3" Easing="QuadraticEaseInOut"/>
+                    <DoubleTransition Property="Height" Duration="0:0:0.3" Easing="QuadraticEaseInOut"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="QuadraticEaseInOut"/>
                 </Transitions>
             </Setter>
         </Style>
@@ -98,9 +98,9 @@
                                                 <TextBlock Grid.Column="0" Text="{Binding VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                 <TextBlock Grid.Column="1" Text="{Binding Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                                 <TextBlock Grid.Column="2" Text="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                                <Button Content="EDIT" 
-                                                        Grid.Column="3" 
-                                                        VerticalAlignment="Center" />
+                                                <Button Content="EDIT"
+                                                        Grid.Column="3"
+                                                        VerticalAlignment="Center"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -117,15 +117,20 @@
                 Background="#000000"
                 Classes.open="{Binding CarAddIsOpen}"
                 IsHitTestVisible="{Binding CarAddIsOpen}"
+                PointerPressed="InputElement_OnPointerPressed"
+                ZIndex="1"/>
+
+        <Border Name="OverlayPanel2"
+                Background="#000000"
+                Classes.open="{Binding CarEditIsOpen}"
+                IsHitTestVisible="{Binding CarEditIsOpen}"
                 ZIndex="1"/>
 
         <!-- Add Car Popup -->
         <Border Name="AddCarPopup"
                 Classes.open="{Binding CarAddIsOpen}"
-                Background="#ff0000"
+                Background="#1e1e1e"
                 CornerRadius="5"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
                 ZIndex="2">
             <TextBlock Text="Add Car Form Would Go Here" 
                        HorizontalAlignment="Center"

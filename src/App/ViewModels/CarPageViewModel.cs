@@ -62,7 +62,7 @@ public partial class CarPageViewModel : ViewModelBase
 
         if (!result.IsValid)
         {
-            string ErrorMessages = string.Join("\n", result.Errors.Select(e => e.ErrorMessage));
+            string ErrorMessages = string.Join("\n", result.Errors.Select(e => $"- {e.ErrorMessage}"));
             ErrorText = ErrorMessages;
         } else {
             await ServiceLocator.CarService.AddCarAsync(newCar);

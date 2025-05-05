@@ -25,6 +25,25 @@
             </Setter>
         </Style>
 
+        <Style Selector="Border#EditCarPopup.open">
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="400"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style Selector="Border#EditCarPopup">
+            <Setter Property="Width" Value="0"/>
+            <Setter Property="Height" Value="0"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Width" Duration="0:0:0.3" Easing="QuadraticEaseInOut"/>
+                    <DoubleTransition Property="Height" Duration="0:0:0.3" Easing="QuadraticEaseInOut"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="QuadraticEaseInOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
         <Style Selector="Border#AddCarPopup.open">
             <Setter Property="Width" Value="300"/>
             <Setter Property="Height" Value="400"/>
@@ -85,7 +104,7 @@
                                 </ItemsControl.ItemsPanel>
 
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="model:Car">
+                                    <DataTemplate x:DataType="vm:CarViewModel">
                                         <Border Margin="0,0,0,5" Padding="8" Background="#2D2D2D" CornerRadius="4">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -95,11 +114,12 @@
                                                     <ColumnDefinition Width="1*" />
                                                 </Grid.ColumnDefinitions>
                 
-                                                <TextBlock Grid.Column="0" Text="{Binding VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                                <TextBlock Grid.Column="2" Text="{Binding Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="0" Text="{Binding Car.VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Car.Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="2" Text="{Binding Car.Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                                 <Button Content="EDIT"
                                                         Grid.Column="3"
+                                                        Command="{Binding ShowEditCommand}"
                                                         VerticalAlignment="Center"/>
                                             </Grid>
                                         </Border>
@@ -120,12 +140,6 @@
                 PointerPressed="InputElement_OnPointerPressed"
                 ZIndex="1"/>
 
-        <Border Name="OverlayPanel2"
-                Background="#000000"
-                Classes.open="{Binding CarEditIsOpen}"
-                IsHitTestVisible="{Binding CarEditIsOpen}"
-                ZIndex="1"/>
-
         <!-- Add Car Popup -->
         <Border Name="AddCarPopup"
                 Classes.open="{Binding CarAddIsOpen}"
@@ -133,6 +147,17 @@
                 CornerRadius="5"
                 ZIndex="2">
             <TextBlock Text="Add Car Form Would Go Here" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- Add Car Popup -->
+        <Border Name="EditCarPopup"
+                Classes.open="{Binding CarEditIsOpen}"
+                Background="#1e1e1e"
+                CornerRadius="5"
+                ZIndex="2">
+            <TextBlock Text="Edit Car Form Would Go Here" 
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
         </Border>

@@ -2,31 +2,16 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Core.Entities;
 using Infrastructure;
-using App.Views;
 using CommunityToolkit.Mvvm.Input;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Linq;
 
 namespace App.ViewModels;
 
 public partial class CarPageViewModel : ViewModelBase
 {
-    public ObservableCollection<Car> Cars { get; set; } = new ObservableCollection<Car>();
-
-    public CarPageViewModel()
-    {
-        _ = LoadCarsAsync();
-    }
-
-    private async Task LoadCarsAsync()
-    {
-        var cars = await ServiceLocator.CarService.GetCarsAsync();
-        Cars.Clear();
-        foreach (var car in cars)
-            Cars.Add(car);
-    }
+    [ObservableProperty]
+    public ObservableCollection<CarViewModel>? cars;
 
     [ObservableProperty]
     private bool _carAddIsOpen = false;
@@ -37,11 +22,26 @@ public partial class CarPageViewModel : ViewModelBase
     [ObservableProperty]
     private Car? _selectedCar;
 
+    public CarPageViewModel()
+    {
+        _ = LoadCarsAsync();
+    }
+
+    private async Task LoadCarsAsync()
+    {
+        var cars = await ServiceLocator.CarService.GetCarsAsync();
+        
+        Cars = new ObservableCollection<CarViewModel>(
+            cars.Select(car => new CarViewModel(car, this))
+        );
+    }
+
+    // Command which opens add form popup. Works directly from here.
     [RelayCommand]
     private void CarAdd() => CarAddIsOpen ^= true;
 
-    [RelayCommand]
-    private void CarEdit()
+    // Command which helps edit form popup. It alowes to transfer operational data.
+    public void ShowCarEdit(Car car)
     {
         CarEditIsOpen ^= true;
     }

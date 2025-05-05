@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using App.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
@@ -35,6 +36,12 @@ public partial class CarPageView : UserControl
         }
     }
 
-    private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e) 
-        => ((CarPageViewModel)DataContext).CarAddCommand.Execute(null);
+    private void InputElement_OnPointerPressed(object sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is CarPageViewModel vm)
+        {
+            vm.CarEditIsOpen = false;
+            vm.CarAddIsOpen = false;
+        }
+    }
 }

@@ -12,6 +12,12 @@ public class CarValidator : AbstractValidator<Car>
             .Length(17)
             .Matches("^[A-HJ-NPR-Z0-9]{17}$");  // Standard VIN format
 
+        RuleFor(c => c.Mark)
+            .NotEmpty();
+
+        RuleFor(c => c.Model)
+            .NotEmpty();
+
         RuleFor(c => c.ProductionYear)
             .InclusiveBetween(1900, DateTime.Now.Year + 1);
     }

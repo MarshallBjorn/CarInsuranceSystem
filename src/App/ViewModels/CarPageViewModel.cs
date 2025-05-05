@@ -19,6 +19,11 @@ public partial class CarPageViewModel : ViewModelBase
     [ObservableProperty]
     private bool _carEditIsOpen = false;
     
+    public bool IsAnyPopupOpen => CarAddIsOpen || CarEditIsOpen;
+
+    partial void OnCarAddIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
+    partial void OnCarEditIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
+
     [ObservableProperty]
     private Car? _selectedCar;
 
@@ -44,5 +49,6 @@ public partial class CarPageViewModel : ViewModelBase
     public void ShowCarEdit(Car car)
     {
         CarEditIsOpen ^= true;
+        SelectedCar = car;
     }
 }

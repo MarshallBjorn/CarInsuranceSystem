@@ -135,8 +135,8 @@
         <!-- Overlay -->
         <Border Name="OverlayPanel"
                 Background="#000000"
-                Classes.open="{Binding CarAddIsOpen}"
-                IsHitTestVisible="{Binding CarAddIsOpen}"
+                Classes.open="{Binding IsAnyPopupOpen}"
+                IsHitTestVisible="{Binding IsAnyPopupOpen}"
                 PointerPressed="InputElement_OnPointerPressed"
                 ZIndex="1"/>
 
@@ -151,15 +151,28 @@
                        VerticalAlignment="Center"/>
         </Border>
 
-        <!-- Add Car Popup -->
+        <!-- Edit Car Popup -->
         <Border Name="EditCarPopup"
                 Classes.open="{Binding CarEditIsOpen}"
                 Background="#1e1e1e"
                 CornerRadius="5"
                 ZIndex="2">
-            <TextBlock Text="Edit Car Form Would Go Here" 
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+            
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="10">
+                <TextBlock Text="{Binding SelectedCar.Mark}" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+                
+                <TextBlock Text="{Binding SelectedCar.Model}" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+                    
+                <TextBlock Text="{Binding SelectedCar.ProductionYear}" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

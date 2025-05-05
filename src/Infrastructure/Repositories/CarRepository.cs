@@ -15,6 +15,7 @@ public class CarRepository(AppDbContext context) : ICarRepository
 
     public async Task<Car> GetByVINAsync(string VIN)
     {
-        return await _context.Cars.FindAsync(VIN);
+        var car = await _context.Cars.FindAsync(VIN);
+        return car ?? throw new InvalidOperationException("Car with this VIN has not been found.");
     }
 }

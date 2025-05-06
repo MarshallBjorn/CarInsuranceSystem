@@ -2,6 +2,8 @@ using Core.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
+namespace Infrastructure.Repositories;
+
 public class UserRepository(AppDbContext context) : IUserRepository
 {
     private readonly AppDbContext _context = context;

@@ -1,5 +1,7 @@
 using Core.Entities;
 
+namespace Infrastructure.Repositories;
+
 public interface IUserRepository
 {
     Task<bool> RegisterAsync(User user, string password);

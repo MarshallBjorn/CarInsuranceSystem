@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Linq;
 using Core.Validators;
-using System.IO;
 
 namespace App.ViewModels;
 
@@ -23,6 +22,9 @@ public partial class CarPageViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _ErrorText = "";
+
+    [ObservableProperty]
+    private string _messageText = "No logged in user.";
     
     public bool IsAnyPopupOpen => CarAddIsOpen || CarEditIsOpen;
 
@@ -41,6 +43,10 @@ public partial class CarPageViewModel : ViewModelBase
     public CarPageViewModel()
     {
         _ = LoadCarsAsync();
+        var user = ServiceLocator.AppState.LoggedInUser;
+        if (user is not null) {
+            MessageText = $"Welcome {user.FirstName} {user.LastName}";
+        }
     }
 
     // Command which opens add form popup. Works directly from here.

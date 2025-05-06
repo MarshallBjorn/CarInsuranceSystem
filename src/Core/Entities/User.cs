@@ -8,6 +8,9 @@ public class User
     public required string LastName { get; set; }            // e.g., "Doe"
     public DateTime BirthDate { get; set; }         // Age validation later
 
+    public required string PasswordHash { get; set; }
+    public string? Role { get; set; } = "User";
+
     // Navigation property (1 User → N UserCar links)
     public ICollection<UserCar> UserCars { get; set; } = new List<UserCar>();
 }

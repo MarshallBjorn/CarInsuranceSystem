@@ -68,14 +68,16 @@ public static class DatabaseSeeder
                     Email = "oleksij.nawrockij@gmail.com", 
                     FirstName = "Oleksij", 
                     LastName = "Nawrockij", 
-                    BirthDate = DateTime.SpecifyKind(new DateTime(2004, 12, 8), DateTimeKind.Utc)
+                    BirthDate = DateTime.SpecifyKind(new DateTime(2004, 12, 8), DateTimeKind.Utc),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"),
                 },
                 new () {
                     Id = Guid.NewGuid(),
                     Email = "tomasz.nowak@gmail.com",
                     FirstName = "Tomasz",
                     LastName = "Nowak",
-                    BirthDate = DateTime.SpecifyKind(new DateTime(2003, 11, 2), DateTimeKind.Utc)
+                    BirthDate = DateTime.SpecifyKind(new DateTime(2003, 11, 2), DateTimeKind.Utc),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("321"),
                 }
             };
             

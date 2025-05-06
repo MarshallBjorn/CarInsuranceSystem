@@ -146,16 +146,25 @@
                 Background="#1e1e1e"
                 CornerRadius="5"
                 ZIndex="2">
-            <StackPanel>
-                <TextBlock Text="{Binding ErrorText}" />
-                <TextBox Watermark="VIN" Text="{Binding Vin}" />
-                <TextBox Watermark="Mark" Text="{Binding Mark}" />
-                <TextBox Watermark="Model" Text="{Binding Model}" />
-                <TextBox Watermark="Production Year" Text="{Binding ProductionYear}" />
-                <TextBox Watermark="Engine Type" Text="{Binding EngineType}" />
-                <Button Command="{Binding CarAddSaveCommand}" 
+            <DockPanel Margin="20">
+                <TextBlock Text="{Binding ErrorText}"
+                           DockPanel.Dock="Top" />
+                <TextBox Watermark="VIN" Text="{Binding Vin}"
+                         DockPanel.Dock="Top" />
+                <TextBox Watermark="Mark" Text="{Binding Mark}" 
+                         DockPanel.Dock="Top"/>
+                <TextBox Watermark="Model" Text="{Binding Model}"
+                         DockPanel.Dock="Top" />
+                <TextBox Watermark="Production Year" Text="{Binding ProductionYear}"
+                         DockPanel.Dock="Top" />
+                <TextBox Watermark="Engine Type" Text="{Binding EngineType}"
+                         DockPanel.Dock="Top" />
+                <Button Command="{Binding CarAddSaveCommand}"
+                        DockPanel.Dock="Bottom"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Left"
                         Content="ADD CAR"/>
-            </StackPanel>
+            </DockPanel>
         </Border>
 
         <!-- Edit Car Popup -->

@@ -42,6 +42,7 @@ public partial class CarPageView : UserControl
         {
             vm.CarEditIsOpen = false;
             vm.CarAddIsOpen = false;
+            vm.ErrorText = "";
         }
     }
 }

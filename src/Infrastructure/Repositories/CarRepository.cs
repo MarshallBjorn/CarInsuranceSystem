@@ -40,9 +40,15 @@ public class CarRepository(AppDbContext context) : ICarRepository
         }
     }
 
-    // TODO
-    public Task<List<Car>> GetCarsUserAsync(int id)
+    public async Task<List<Car>> GetCarsUserAsync(User user)
     {
-        throw new NotImplementedException();
+        var cars = await _context.UserCars
+            .Where(uc => uc.UserId == user.Id)
+            .Include(uc => uc.Car)
+            .Select(uc => uc.Car!)
+            .ToListAsync();
+        if (!cars.Any()) 
+            throw new Exception("You have no cars registered.");
+        return cars;
     }
 }

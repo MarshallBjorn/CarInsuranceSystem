@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -17,14 +18,18 @@ public partial class AuthPageViewModel : ViewModelBase
     [RelayCommand]
     private async Task LogIn()
     {
-        var currentUser = await ServiceLocator.UserService.LoginAsync(Email, Password);
+        try{
+            var currentUser = await ServiceLocator.UserService.LoginAsync(Email, Password);
 
-        if (currentUser is not null)
+            if (currentUser is not null)
+            {
+                ServiceLocator.AppState.LoggedInUser = currentUser;
+                MessageText = $"Auth success. Welcome {currentUser.FirstName} {currentUser.LastName}";
+            }
+        } catch (Exception ex)
         {
-            ServiceLocator.AppState.LoggedInUser = currentUser;
-            MessageText = $"Auth success. Welcome {currentUser.FirstName} {currentUser.LastName}";
-        } else {
-            MessageText = "Auth failed";
+            MessageText = ex.Message;
         }
+        
     }
 }

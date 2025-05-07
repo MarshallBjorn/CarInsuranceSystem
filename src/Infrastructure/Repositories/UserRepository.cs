@@ -12,9 +12,9 @@ public class UserRepository(AppDbContext context) : IUserRepository
     {
         var user = await GetByEmailAsync(email);
         if (user == null)
-            return null;
+            throw new Exception("User with this email does not exist.");
         
-        return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash) ? user : null;
+        return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash) ? user : throw new Exception("Wrong email or password.");
     }
 
     public async Task<bool> RegisterAsync(User user, string password)

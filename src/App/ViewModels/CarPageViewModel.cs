@@ -24,7 +24,7 @@ public partial class CarPageViewModel : ViewModelBase
     private string _ErrorText = "";
 
     [ObservableProperty]
-    private string _messageText = "No logged in user.";
+    private string _messageText = "";
     
     public bool IsAnyPopupOpen => CarAddIsOpen || CarEditIsOpen;
 
@@ -89,11 +89,16 @@ public partial class CarPageViewModel : ViewModelBase
 
     private async Task LoadCarsAsync()
     {
-        var cars = await ServiceLocator.CarService.GetCarsAsync();
+        var user = ServiceLocator.AppState.LoggedInUser;
+        if (user is null) {
+            MessageText = "No logged in user";
+        } else {
+            var cars = await ServiceLocator.CarService.GetCarsUserAsync(user);
         
-        Cars = new ObservableCollection<CarViewModel>(
-            cars.Select(car => new CarViewModel(car, this))
-        );
+            Cars = new ObservableCollection<CarViewModel>(
+                cars.Select(car => new CarViewModel(car, this))
+            );
+        }
     }
 
     private void ResetDefaultCar()

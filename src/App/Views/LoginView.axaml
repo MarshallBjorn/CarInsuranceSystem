@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:App.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="App.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+             
+  <StackPanel Margin="20">
+    <TextBlock Text="{Binding MessageText}"
+               DockPanel.Dock="Top" />
+    <TextBox Watermark="Email" Text="{Binding Email}"
+             DockPanel.Dock="Top" />
+    <TextBox Watermark="Password" Text="{Binding Password}"
+             PasswordChar="*"
+             DockPanel.Dock="Top"/>
+    <Button Command="{Binding LogInCommand}}"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Left"
+            Content="LOGIN"/>
+  </StackPanel>
+</UserControl>

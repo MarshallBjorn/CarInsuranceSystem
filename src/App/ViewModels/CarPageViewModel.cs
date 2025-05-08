@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Linq;
 using Core.Validators;
+using System;
 
 namespace App.ViewModels;
 
@@ -31,7 +32,7 @@ public partial class CarPageViewModel : ViewModelBase
     [ObservableProperty] private string _vin = "";
     [ObservableProperty] private string _mark = "";
     [ObservableProperty] private string _model = "";
-    [ObservableProperty] private int _productionYear = 0;
+    [ObservableProperty] private string _productionYear = "";
     [ObservableProperty] private string _engineType = "";
 
     partial void OnCarAddIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
@@ -59,7 +60,7 @@ public partial class CarPageViewModel : ViewModelBase
             VIN = Vin,
             Mark = Mark,
             Model = Model,
-            ProductionYear = ProductionYear,
+            ProductionYear = Int32.Parse(ProductionYear),
             EngineType = EngineType,
         };
 
@@ -106,7 +107,7 @@ public partial class CarPageViewModel : ViewModelBase
         Vin = "";
         Mark = "";
         Model = "";
-        ProductionYear = 0;
+        ProductionYear = "";
         EngineType = "";
     }
 }

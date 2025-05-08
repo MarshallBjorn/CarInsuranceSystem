@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,27 +8,16 @@ namespace App.ViewModels;
 public partial class AuthPageViewModel : ViewModelBase
 {
     [ObservableProperty]
-    private string _email = "";
-    [ObservableProperty]
-    private string _password = "";
-    [ObservableProperty]
-    private string _messageText = "";
+    private ViewModelBase _currentAuthView = new LoginViewModel();
+
+    private bool switchBool = true;
 
     [RelayCommand]
-    private async Task LogIn()
+    private void AuthSwitch()
     {
-        try{
-            var currentUser = await ServiceLocator.UserService.LoginAsync(Email, Password);
+        switchBool ^= true;
 
-            if (currentUser is not null)
-            {
-                ServiceLocator.AppState.LoggedInUser = currentUser;
-                MessageText = $"Auth success. Welcome {currentUser.FirstName} {currentUser.LastName}";
-            }
-        } catch (Exception ex)
-        {
-            MessageText = ex.Message;
-        }
-        
+        if (!switchBool) CurrentAuthView = new RegisterViewModel();
+        else CurrentAuthView = new LoginViewModel();
     }
 }

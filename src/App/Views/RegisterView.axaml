@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:App.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="App.Views.RegisterView"
+             x:DataType="vm:RegisterViewModel">
+  <StackPanel Margin="20">
+    <TextBlock Text="{Binding MessageText}" />
+    <TextBox Watermark="Email" Text="{Binding Email}" Margin="0 10" />
+    <TextBox Watermark="Firstname" Text="{Binding Firstname}" Margin="0 10" />
+    <TextBox Watermark="Secondname" Text="{Binding Lastname}" Margin="0 10" />
+    <TextBox Watermark="Password" Text="{Binding Password1}" PasswordChar="*" Margin="0 10" />
+    <TextBox Watermark="Repeat password" Text="{Binding Password2}" PasswordChar="*" Margin="0 10" />
+    <DatePicker SelectedDate="{Binding BirthDate, Mode=TwoWay}" 
+                ZIndex="1"
+                Margin="0 10"
+                HorizontalAlignment="Center"/>
+    <Button VerticalAlignment="Bottom"
+            HorizontalAlignment="Left"
+            Content="REGISTER"/>
+  </StackPanel>
+</UserControl>

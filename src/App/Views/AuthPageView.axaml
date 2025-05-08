@@ -19,20 +19,12 @@
                      FontWeight="Bold"/>
         </Grid>
         <Grid Grid.Row="1">
-          <DockPanel Margin="20">
-                <TextBlock Text="{Binding MessageText}"
-                           DockPanel.Dock="Top" />
-                <TextBox Watermark="Email" Text="{Binding Email}"
-                         DockPanel.Dock="Top" />
-                <TextBox Watermark="Password" Text="{Binding Password}" 
-                         DockPanel.Dock="Top"/>
-                <Button Command="{Binding LogInCommand}}"
-                        DockPanel.Dock="Bottom"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Left"
-                        Content="LOGIN"/>
-            </DockPanel>
+          <ContentControl Content="{Binding CurrentAuthView}" />
         </Grid>
+        <Button VerticalAlignment="Bottom"
+                Command="{Binding AuthSwitchCommand}" 
+                HorizontalAlignment="Right"
+                Content="Switch" />
       </Grid>
     </ScrollViewer>
   </Grid>

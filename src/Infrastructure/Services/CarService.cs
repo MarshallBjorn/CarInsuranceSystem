@@ -13,8 +13,8 @@ namespace Infrastructure.Services
 
         public Task<List<Car>> GetCarsAsync() => _repository.GetAllAsync();
 
-        public Task<bool> AddCarAsync(Car car) => _repository.AddCarAsync(car);
-    
         public Task<List<Car>> GetCarsUserAsync(User user) => _repository.GetCarsUserAsync(user);
+
+        public Task<bool> AddCarAsync(Car car) => _repository.AddCarAsync(car);
     }
 }

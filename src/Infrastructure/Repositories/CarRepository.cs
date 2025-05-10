@@ -26,17 +26,10 @@ public class CarRepository(AppDbContext context) : ICarRepository
     }
 
     // TODO
-    public async Task<bool> AddCarAsync(Car car, User user, Insurance? insurance = null)
+    public async Task<bool> AddCarAsync(Car car, User user)
     {
         try
         {
-            // If insurance is provided, add it to the context first
-            if (insurance != null)
-            {
-                _context.Insurances.Add(insurance);
-                car.InsuranceId = insurance.Id; // Link the car to the insurance
-            }
-
             var userCar = new UserCar
             {
                 UserId = user.Id,

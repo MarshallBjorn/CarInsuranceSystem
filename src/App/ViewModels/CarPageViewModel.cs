@@ -46,11 +46,7 @@ public partial class CarPageViewModel : ViewModelBase
 
     public CarPageViewModel()
     {
-        _ = LoadCarsAsync();
-        var user = ServiceLocator.AppState.LoggedInUser;
-        if (user is not null) {
-            MessageText = $"Welcome {user.FirstName} {user.LastName}";
-        }
+        _ = InitializeAsync();
     }
 
     // Command which opens add form popup. Works directly from here.
@@ -60,24 +56,29 @@ public partial class CarPageViewModel : ViewModelBase
     [RelayCommand]
     private async Task CarAddSave() {
         try {
+            var user = ServiceLocator.AppState.LoggedInUser;
+            var insurance = SelectedInsurance?.ThisInsurance;
+
             Car newCar = new() {
                 VIN = Vin,
                 Mark = Mark,
                 Model = Model,
                 ProductionYear = Int32.Parse(ProductionYear),
                 EngineType = EngineType,
+                InsuranceId = insurance?.Id,
+                Insurance = insurance
             };
 
             var validator = new CarValidator();
             var result = validator.Validate(newCar);
-            var user = ServiceLocator.AppState.LoggedInUser;
+            
 
             if (result.IsValid && user is not null)
             {
-                await ServiceLocator.CarService.AddCarAsync(newCar, user, SelectedInsurance.ThisInsurance);
+                await ServiceLocator.CarService.AddCarAsync(newCar, user);
                 _ = LoadCarsAsync();
                 CarAddIsOpen ^= true;
-                ErrorText = SelectedInsurance.ThisInsurance.Firm.Name;
+                ErrorText = "";
                 ResetDefaultCar();
             } else {
                 string ErrorMessages = string.Join("\n", result.Errors.Select(e => $"- {e.ErrorMessage}"));
@@ -85,7 +86,7 @@ public partial class CarPageViewModel : ViewModelBase
             }
         } catch (Exception ex)
         {
-            MessageText = ex.Message;
+            ErrorText = ex.Message;
         }
     }
 
@@ -98,11 +99,6 @@ public partial class CarPageViewModel : ViewModelBase
 
     private async Task LoadCarsAsync()
     {
-        var insurances = await ServiceLocator.InsuranceService.GetInsurancesAsync();
-        Insurances = new ObservableCollection<InsuranceViewModel>(
-            insurances.Select(ins => new InsuranceViewModel(ins))
-        );
-
         var user = ServiceLocator.AppState.LoggedInUser;
         if (user is null) {
             MessageText = "No logged in user";
@@ -115,6 +111,14 @@ public partial class CarPageViewModel : ViewModelBase
         }
     }
 
+    private async Task LoadInsurancesAsync()
+    {
+        var insurances = await ServiceLocator.InsuranceService.GetInsurancesAsync();
+        Insurances = new ObservableCollection<InsuranceViewModel>(
+            insurances.Select(ins => new InsuranceViewModel(ins))
+        );
+    }
+
     private void ResetDefaultCar()
     {
         Vin = "";
@@ -122,5 +126,16 @@ public partial class CarPageViewModel : ViewModelBase
         Model = "";
         ProductionYear = "";
         EngineType = "";
+    }
+
+    private async Task InitializeAsync()
+    {
+        await LoadInsurancesAsync();
+        await LoadCarsAsync();
+
+        var user = ServiceLocator.AppState.LoggedInUser;
+        if (user is not null) {
+            MessageText = $"Welcome {user.FirstName} {user.LastName}";
+        }
     }
 }

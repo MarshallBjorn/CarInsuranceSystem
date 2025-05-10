@@ -6,18 +6,25 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="App.Views.RegisterView"
              x:DataType="vm:RegisterViewModel">
+
   <StackPanel Margin="20">
     <TextBlock Text="{Binding MessageText}" />
-    <TextBox Watermark="Email" Text="{Binding Email}" Margin="0 10" />
-    <TextBox Watermark="Firstname" Text="{Binding Firstname}" Margin="0 10" />
-    <TextBox Watermark="Secondname" Text="{Binding Lastname}" Margin="0 10" />
-    <TextBox Watermark="Password" Text="{Binding Password1}" PasswordChar="*" Margin="0 10" />
-    <TextBox Watermark="Repeat password" Text="{Binding Password2}" PasswordChar="*" Margin="0 10" />
+    <TextBox Watermark="Email" Text="{Binding Email, Mode=TwoWay}" Margin="0 10" />
+    <TextBlock Text="{Binding EmailErrors}" />
+    <TextBox Watermark="First name" Text="{Binding Firstname, Mode=TwoWay}" Margin="0 10" />
+    <TextBlock Text="{Binding FirstNameErrors}" />
+    <TextBox Watermark="Last name" Text="{Binding Lastname, Mode=TwoWay}" Margin="0 10" />
+    <TextBlock Text="{Binding LastNameErrors}" />
+    <TextBox Watermark="Password" Text="{Binding Password1, Mode=TwoWay}" PasswordChar="•" Margin="0 10" />
+    <TextBlock Text="{Binding PasswordErrors1}" />
+    <TextBox Watermark="Repeat password" Text="{Binding Password2, Mode=TwoWay}" PasswordChar="•" Margin="0 10" />
+    <TextBlock Text="{Binding PasswordErrors2}" />
     <DatePicker SelectedDate="{Binding BirthDate, Mode=TwoWay}" 
                 ZIndex="1"
                 Margin="0 10"
                 HorizontalAlignment="Center"/>
-    <Button VerticalAlignment="Bottom"
+    <Button Command = "{Binding RegisterCommand}"
+            VerticalAlignment="Bottom"
             HorizontalAlignment="Left"
             Content="REGISTER"/>
   </StackPanel>

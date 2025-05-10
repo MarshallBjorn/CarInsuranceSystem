@@ -6,6 +6,7 @@ using Core.Entities;
 public partial class CarViewModel : ViewModelBase
 {
     public Car Car { get; }
+    
     private readonly CarPageViewModel _carPageViewModel;
     
     public CarViewModel(Car car, CarPageViewModel carPageViewModel)

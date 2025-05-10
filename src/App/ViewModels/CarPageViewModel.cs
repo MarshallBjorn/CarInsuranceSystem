@@ -14,6 +14,8 @@ public partial class CarPageViewModel : ViewModelBase
 {
     [ObservableProperty]
     public ObservableCollection<CarViewModel>? cars;
+    [ObservableProperty]
+    public ObservableCollection<InsuranceViewModel>? insurances;
 
     [ObservableProperty]
     private bool _carAddIsOpen = false;
@@ -34,6 +36,7 @@ public partial class CarPageViewModel : ViewModelBase
     [ObservableProperty] private string _model = "";
     [ObservableProperty] private string _productionYear = "";
     [ObservableProperty] private string _engineType = "";
+    [ObservableProperty] private Insurance? _selectedInsurance;
 
     partial void OnCarAddIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
     partial void OnCarEditIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
@@ -56,27 +59,32 @@ public partial class CarPageViewModel : ViewModelBase
 
     [RelayCommand]
     private async Task CarAddSave() {
-        Car newCar = new() {
-            VIN = Vin,
-            Mark = Mark,
-            Model = Model,
-            ProductionYear = Int32.Parse(ProductionYear),
-            EngineType = EngineType,
-        };
+        try {
+            Car newCar = new() {
+                VIN = Vin,
+                Mark = Mark,
+                Model = Model,
+                ProductionYear = Int32.Parse(ProductionYear),
+                EngineType = EngineType,
+            };
 
-        var validator = new CarValidator();
-        var result = validator.Validate(newCar);
+            var validator = new CarValidator();
+            var result = validator.Validate(newCar);
 
-        if (!result.IsValid)
+            if (!result.IsValid)
+            {
+                string ErrorMessages = string.Join("\n", result.Errors.Select(e => $"- {e.ErrorMessage}"));
+                ErrorText = ErrorMessages;
+            } else {
+                await ServiceLocator.CarService.AddCarAsync(newCar, SelectedInsurance);
+                _ = LoadCarsAsync();
+                CarAddIsOpen ^= true;
+                ErrorText = "";
+                ResetDefaultCar();
+            }
+        } catch (Exception ex)
         {
-            string ErrorMessages = string.Join("\n", result.Errors.Select(e => $"- {e.ErrorMessage}"));
-            ErrorText = ErrorMessages;
-        } else {
-            await ServiceLocator.CarService.AddCarAsync(newCar);
-            _ = LoadCarsAsync();
-            CarAddIsOpen ^= true;
-            ErrorText = "";
-            ResetDefaultCar();
+            MessageText = ex.Message;
         }
     }
 
@@ -87,9 +95,13 @@ public partial class CarPageViewModel : ViewModelBase
         SelectedCar = car;
     }
 
-
     private async Task LoadCarsAsync()
     {
+        var insurances = await ServiceLocator.InsuranceService.GetInsurancesAsync();
+        Insurances = new ObservableCollection<InsuranceViewModel>(
+            insurances.Select(ins => new InsuranceViewModel(ins))
+        );
+
         var user = ServiceLocator.AppState.LoggedInUser;
         if (user is null) {
             MessageText = "No logged in user";

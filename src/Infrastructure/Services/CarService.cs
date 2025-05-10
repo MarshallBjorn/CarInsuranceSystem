@@ -15,6 +15,6 @@ namespace Infrastructure.Services
 
         public Task<List<Car>> GetCarsUserAsync(User user) => _repository.GetCarsUserAsync(user);
 
-        public Task<bool> AddCarAsync(Car car) => _repository.AddCarAsync(car);
+        public Task<bool> AddCarAsync(Car car, Insurance? insurance) => _repository.AddCarAsync(car, insurance);
     }
 }

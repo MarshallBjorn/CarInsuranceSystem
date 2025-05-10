@@ -8,5 +8,5 @@ public interface ICarRepository
     Task<List<Car>> GetCarsUserAsync(User user);
     Task<Car> GetByVINAsync(String VIN);
     Task<bool> UpdateCarDataAsync(String VIN, Car updatedCar);
-    Task<bool> AddCarAsync(Car car);
+    Task<bool> AddCarAsync(Car car, Insurance? insurance);
 }

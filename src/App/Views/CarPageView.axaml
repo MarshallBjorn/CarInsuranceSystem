@@ -116,7 +116,7 @@
                                                 </Grid.ColumnDefinitions>
                 
                                                 <TextBlock Grid.Column="0" Text="{Binding Car.VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding Car.Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="{Binding Car.Insurance.Firm.Name}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                                 <TextBlock Grid.Column="2" Text="{Binding Car.Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                                 <Button Content="EDIT"
                                                         Grid.Column="3"
@@ -160,6 +160,16 @@
                          DockPanel.Dock="Top" />
                 <TextBox Watermark="Engine Type" Text="{Binding EngineType}"
                          DockPanel.Dock="Top" />
+
+                <ComboBox ItemsSource="{Binding Insurances}"
+                          SelectedItem="{Binding SelectedInsurance}"
+                          Width="200">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:InsuranceViewModel">
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <Button Command="{Binding CarAddSaveCommand}"
                         DockPanel.Dock="Bottom"
                         VerticalAlignment="Bottom"

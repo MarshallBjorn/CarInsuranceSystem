@@ -8,8 +8,12 @@ namespace App.ViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {
+    private readonly AuthPageViewModel _parentViewModel;
+
+    public LoginViewModel(AuthPageViewModel parentViewModel) => _parentViewModel = parentViewModel;
+
     [ObservableProperty]
-    private string _email = "";
+    public string _email = "";
     [ObservableProperty]
     private string _password = "";
     [ObservableProperty]

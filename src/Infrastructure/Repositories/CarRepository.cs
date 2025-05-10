@@ -26,7 +26,7 @@ public class CarRepository(AppDbContext context) : ICarRepository
     }
 
     // TODO
-    public async Task<bool> AddCarAsync(Car car, Insurance? insurance = null)
+    public async Task<bool> AddCarAsync(Car car, User user, Insurance? insurance = null)
     {
         try
         {
@@ -37,7 +37,18 @@ public class CarRepository(AppDbContext context) : ICarRepository
                 car.InsuranceId = insurance.Id; // Link the car to the insurance
             }
 
+            var userCar = new UserCar
+            {
+                UserId = user.Id,
+                CarVIN = car.VIN,
+                User = user,
+                Car = car,
+                PurchaseDate = DateTime.UtcNow,
+                IsCurrentOwner = true
+            };
+
             _context.Cars.Add(car);
+            _context.UserCars.Add(userCar);
             await _context.SaveChangesAsync();
             return true;
         } 

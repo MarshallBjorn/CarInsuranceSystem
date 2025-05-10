@@ -11,6 +11,10 @@ namespace App.ViewModels;
 
 public partial class RegisterViewModel : ViewModelBase
 {
+    private readonly AuthPageViewModel _parentViewModel; 
+
+    public RegisterViewModel(AuthPageViewModel parentViewModel) => _parentViewModel = parentViewModel; 
+
     [ObservableProperty] private string _email = "";
     [ObservableProperty] private string _firstname = "";
     [ObservableProperty] private string _lastname = "";
@@ -85,7 +89,9 @@ public partial class RegisterViewModel : ViewModelBase
 
             if (userInfo.IsValid && passwordChecked1.IsValid && passwordChecked2.IsValid) {
                 await ServiceLocator.UserService.RegisterAsync(user, Password1, Password2);
-                MessageText = "User registered";
+                _parentViewModel.MessageText = "User registered succesfuly";
+                _parentViewModel.email = Email;
+                _parentViewModel.Switch();
             } else {
                 foreach (var error in userInfo.Errors)
                 {
@@ -121,7 +127,6 @@ public partial class RegisterViewModel : ViewModelBase
                 OnPropertyChanged(nameof(PasswordErrors1));
                 OnPropertyChanged(nameof(PasswordErrors2));
             }
-            
         } catch (Exception ex) {
             MessageText = ex.Message;
         }

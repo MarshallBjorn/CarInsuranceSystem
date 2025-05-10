@@ -36,7 +36,7 @@ public partial class CarPageViewModel : ViewModelBase
     [ObservableProperty] private string _model = "";
     [ObservableProperty] private string _productionYear = "";
     [ObservableProperty] private string _engineType = "";
-    [ObservableProperty] private Insurance? _selectedInsurance;
+    [ObservableProperty] private InsuranceViewModel? _selectedInsurance;
 
     partial void OnCarAddIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
     partial void OnCarEditIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
@@ -70,17 +70,18 @@ public partial class CarPageViewModel : ViewModelBase
 
             var validator = new CarValidator();
             var result = validator.Validate(newCar);
+            var user = ServiceLocator.AppState.LoggedInUser;
 
-            if (!result.IsValid)
+            if (result.IsValid && user is not null)
             {
-                string ErrorMessages = string.Join("\n", result.Errors.Select(e => $"- {e.ErrorMessage}"));
-                ErrorText = ErrorMessages;
-            } else {
-                await ServiceLocator.CarService.AddCarAsync(newCar, SelectedInsurance);
+                await ServiceLocator.CarService.AddCarAsync(newCar, user, SelectedInsurance.ThisInsurance);
                 _ = LoadCarsAsync();
                 CarAddIsOpen ^= true;
-                ErrorText = "";
+                ErrorText = SelectedInsurance.ThisInsurance.Firm.Name;
                 ResetDefaultCar();
+            } else {
+                string ErrorMessages = string.Join("\n", result.Errors.Select(e => $"- {e.ErrorMessage}"));
+                ErrorText = ErrorMessages;
             }
         } catch (Exception ex)
         {

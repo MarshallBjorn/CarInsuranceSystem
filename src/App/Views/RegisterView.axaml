@@ -9,19 +9,31 @@
 
   <StackPanel Margin="20">
     <TextBlock Text="{Binding MessageText}" />
-    <TextBox Watermark="Email" Text="{Binding Email, Mode=TwoWay}" Margin="0 10" />
+    
+    <TextBlock Text="Email" Margin="0 10" />
+    <TextBox Watermark="e.g. john@doe.email.com" Text="{Binding Email, Mode=TwoWay}" Margin="0 2" />
     <TextBlock Text="{Binding EmailErrors}" />
-    <TextBox Watermark="First name" Text="{Binding Firstname, Mode=TwoWay}" Margin="0 10" />
+    
+    <TextBlock Text="First name" Margin="0 10" />
+    <TextBox Watermark="John" Text="{Binding Firstname, Mode=TwoWay}" Margin="0 2" />
     <TextBlock Text="{Binding FirstNameErrors}" />
-    <TextBox Watermark="Last name" Text="{Binding Lastname, Mode=TwoWay}" Margin="0 10" />
+
+    <TextBlock Text="Last name" Margin="0 10" />
+    <TextBox Watermark="Doe" Text="{Binding Lastname, Mode=TwoWay}" Margin="0 2" />
     <TextBlock Text="{Binding LastNameErrors}" />
-    <TextBox Watermark="Password" Text="{Binding Password1, Mode=TwoWay}" PasswordChar="•" Margin="0 10" />
+
+    <TextBlock Text="Password" Margin="0 10" />
+    <TextBox Watermark="abc1!@2$" Text="{Binding Password1, Mode=TwoWay}" PasswordChar="•" Margin="0 2" />
     <TextBlock Text="{Binding PasswordErrors1}" />
-    <TextBox Watermark="Repeat password" Text="{Binding Password2, Mode=TwoWay}" PasswordChar="•" Margin="0 10" />
+
+    <TextBlock Text="Repeat password" Margin="0 10" />
+    <TextBox Watermark="abc1!@2$" Text="{Binding Password2, Mode=TwoWay}" PasswordChar="•" Margin="0 2" />
     <TextBlock Text="{Binding PasswordErrors2}" />
+
+    <TextBlock Text= "Birth date" Margin="0 10" />
     <DatePicker SelectedDate="{Binding BirthDate, Mode=TwoWay}" 
                 ZIndex="1"
-                Margin="0 10"
+                Margin="0 2"
                 HorizontalAlignment="Center"/>
     <Button Command = "{Binding RegisterCommand}"
             VerticalAlignment="Bottom"

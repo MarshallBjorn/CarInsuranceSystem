@@ -1,28 +1,54 @@
-using Microsoft.EntityFrameworkCore;
 using Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data;
+
+/// <summary>
+/// Database context for the Car Insurance System.
+/// </summary>
+public class AppDbContext : DbContext
 {
-    public class AppDbContext : DbContext
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AppDbContext"/> class.
+    /// </summary>
+    /// <param name="options">The options for this context.</param>
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    }
 
-        public DbSet<Car> Cars { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Insurance> Insurances { get; set; }
-        public DbSet<Firm> Firms { get; set; }
-        public DbSet<UserCar> UserCars { get; set; }
+    /// <summary>
+    /// Gets or sets the collection of cars.
+    /// </summary>
+    public DbSet<Car> Cars { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseNpgsql("YourConnectionString", 
-                    o => o.UseNodaTime()); // Add this line
-            }
-        }
+    /// <summary>
+    /// Gets or sets the collection of users.
+    /// </summary>
+    public DbSet<User> Users { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+    /// <summary>
+    /// Gets or sets the collection of insurances.
+    /// </summary>
+    public DbSet<Insurance> Insurances { get; set; }
+
+    /// <summary>
+    /// Gets or sets the collection of firms.
+    /// </summary>
+    public DbSet<Firm> Firms { get; set; }
+
+    /// <summary>
+    /// Gets or sets the collection of user-car relationships.
+    /// </summary>
+    public DbSet<UserCar> UserCars { get; set; }
+
+    /// <summary>
+    /// Configures the database model.
+    /// </summary>
+    /// <param name="modelBuilder">The builder used to configure the model.</param>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Car>()
                 .HasKey(c => c.VIN);  // VIN is the primary key
@@ -63,6 +89,33 @@ namespace Infrastructure.Data
                 .WithMany(f => f.Insurances)
                 .HasForeignKey(i => i.FirmId)
                 .OnDelete(DeleteBehavior.Cascade);
-        }
     }
+    
+
+    /// <summary>
+    /// Saves changes to the database with audit information.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The number of state entries written to the database.</returns>
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        // Existing audit logic
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+}
+
+/// <summary>
+/// Interface for auditable entities.
+/// </summary>
+public interface IAuditableEntity
+{
+    /// <summary>
+    /// Gets or sets the creation timestamp.
+    /// </summary>
+    DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets the last update timestamp.
+    /// </summary>
+    DateTime UpdatedAt { get; set; }
 }

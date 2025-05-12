@@ -1,0 +1,80 @@
+using Infrastructure;
+using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Infrastructure.Services;
+using Core.Validators;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using FluentValidation;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Load configuration
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+// Register DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), o => o.UseNodaTime()));
+
+// Register DbContextFactory
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddScoped<IDbContextFactory<AppDbContext>, AppDbContextFactory>();
+
+// Register repositories
+builder.Services.AddScoped<ICarRepository, CarRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Register services
+builder.Services.AddScoped<CarService>();
+builder.Services.AddScoped<UserService>();
+
+// Register validators
+builder.Services.AddValidatorsFromAssemblyContaining<CarValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+
+// Add controllers
+builder.Services.AddControllers();
+
+// Add Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "CarInsuranceSystem API", Version = "v1" });
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+});
+
+// Initialize ServiceLocator
+ServiceLocator.Initialize(builder.Services.BuildServiceProvider());
+
+var app = builder.Build();
+
+// Configure middleware
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarInsuranceSystem API v1"));
+}
+
+// Comment out HTTPS redirection for Docker
+// app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+
+// Apply migrations and seed data
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+    Infrastructure.Seeders.DatabaseSeeder.Seed(dbContext);
+}
+
+await app.RunAsync();

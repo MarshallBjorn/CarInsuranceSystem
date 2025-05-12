@@ -1,20 +1,47 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Core.Entities;
+using FluentValidation;
 using Infrastructure.Repositories;
 
-namespace Infrastructure.Services
+namespace Infrastructure.Services;
+
+public class CarService
 {
-    public class CarService
+    private readonly ICarRepository _repository;
+    private readonly IValidator<Car> _carValidator;
+
+    public CarService(ICarRepository repository, IValidator<Car> carValidator)
     {
-        private readonly CarRepository _repository;
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _carValidator = carValidator ?? throw new ArgumentNullException(nameof(carValidator));
+    }
 
-        public CarService(CarRepository repository) => _repository = repository;
+    public Task<List<Car>> GetCarsAsync()
+    {
+        return _repository.GetAllAsync();
+    }
 
-        public Task<List<Car>> GetCarsAsync() => _repository.GetAllAsync();
+    public Task<List<Car>> GetCarsUserAsync(User user)
+    {
+        if (user == null)
+            throw new ArgumentNullException(nameof(user));
+        return _repository.GetCarsUserAsync(user);
+    }
 
-        public Task<List<Car>> GetCarsUserAsync(User user) => _repository.GetCarsUserAsync(user);
+    public async Task<Car> GetByVINAsync(string vin) {
+        return await _repository.GetByVINAsync(vin);
+    }
 
-        public Task<bool> AddCarAsync(Car car, User user) => _repository.AddCarAsync(car, user);
+    public async Task<bool> AddCarAsync(Car car, User user)
+    {
+        if (car == null)
+            throw new ArgumentNullException(nameof(car));
+        if (user == null)
+            throw new ArgumentNullException(nameof(user));
+
+        var validationResult = await _carValidator.ValidateAsync(car);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+
+        return await _repository.AddCarAsync(car, user);
     }
 }

@@ -1,52 +1,52 @@
-﻿using Avalonia;
-using Infrastructure.Data;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
+﻿using App.ViewModels;
+using Avalonia;
+using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
+using System.Diagnostics;
 
 namespace App;
 
-sealed class Program
+class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     [STAThread]
     public static void Main(string[] args)
     {
-        // 1. Configure the host builder
-            var host = Host.CreateDefaultBuilder(args)
-                .ConfigureServices((context, services) =>
-                {
-                    // Add DbContext with configuration from appsettings.json
-                    services.AddDbContext<AppDbContext>(options => 
-                        options.UseNpgsql(context.Configuration.GetConnectionString("DefaultConnection")));
-                })
-                .Build();
-
-            // 2. Run the seeder
-            using (var scope = host.Services.CreateScope())
+        try
+        {
+            Debug.WriteLine("Program.Main started");
+            var services = new ServiceCollection();
+            services.AddHttpClient("CarInsuranceApi", client =>
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                Infrastructure.Seeders.DatabaseSeeder.Seed(dbContext);
-            }
+                client.BaseAddress = new Uri("http://localhost:5000");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
 
+            services.AddSingleton<AppState>();
+            services.AddSingleton<HomePageViewModel>();
+            services.AddSingleton<CarPageViewModel>();
+            services.AddSingleton<AuthPageViewModel>();
+            services.AddSingleton<AboutPageViewModel>();
+            services.AddSingleton<MainWindowViewModel>();
+            Debug.WriteLine("DI services registered");
 
-        var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true)
-            .Build();
+            var serviceProvider = services.BuildServiceProvider();
+            AppState.ServiceProvider = serviceProvider;
+            Debug.WriteLine("AppState.ServiceProvider set");
 
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-    }   
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+            Debug.WriteLine("Avalonia app started");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Program.Main error: {ex}");
+            throw;
+        }
+    }
 
-    // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
             .LogToTrace();
 }

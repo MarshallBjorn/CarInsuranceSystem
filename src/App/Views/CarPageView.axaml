@@ -73,8 +73,9 @@
                     <TextBlock Margin="0 20" FontSize="20" FontWeight="Bold">
                         Your car list!
                     </TextBlock>
-                    <TextBlock Text="{Binding MessageText}" />
-                    <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Watermark="Search..." HorizontalAlignment="Center"
+                    <TextBlock VerticalAlignment="Top" Text="{Binding MessageText}" />
+                    <TextBlock VerticalAlignment="Bottom" Text="{Binding ErrorText}" />
+                    <TextBox Text="{CompiledBinding FilterText}" Watermark="Search..." HorizontalAlignment="Center"
                              Width="500"/>
                     <Button Name="AddCarButton" HorizontalAlignment="Right" Command="{Binding CarAddOpenCommand}">Add Car</Button>
                 </Grid>
@@ -99,7 +100,7 @@
                     
                         <!-- BODY -->
                         <StackPanel>
-                            <ItemsControl ItemsSource="{Binding FilteredCars}">
+                            <ItemsControl ItemsSource="{Binding Cars}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel />

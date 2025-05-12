@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
+using Infrastructure.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddScoped<UserService>();
 // Register validators
 builder.Services.AddValidatorsFromAssemblyContaining<CarValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add controllers
 builder.Services.AddControllers();

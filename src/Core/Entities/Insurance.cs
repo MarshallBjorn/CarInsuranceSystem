@@ -13,7 +13,4 @@ public class Insurance
     // Foreign key (1 Insurance → 1 Firm)
     public Guid FirmId { get; set; }
     public Firm? Firm { get; set; }
-
-    // Navigation property (1 Insurance → N Cars)
-    public ICollection<Car> Cars { get; set; } = new List<Car>();
 }

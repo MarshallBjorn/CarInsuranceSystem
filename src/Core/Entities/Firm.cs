@@ -8,6 +8,4 @@ public class Firm
     public required string CountryCode { get; set; }         // e.g., "DE"
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation property (1 Firm → N Insurances)
-    public ICollection<Insurance> Insurances { get; set; } = new List<Insurance>();
 }

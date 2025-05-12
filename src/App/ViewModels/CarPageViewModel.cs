@@ -13,9 +13,41 @@ namespace App.ViewModels;
 public partial class CarPageViewModel : ViewModelBase
 {
     [ObservableProperty]
-    public ObservableCollection<CarViewModel>? cars;
+    public ObservableCollection<CarViewModel> _cars = new();
+
+    [ObservableProperty]
+    private ObservableCollection<CarViewModel> _filteredCars = new();
+    
     [ObservableProperty]
     public ObservableCollection<InsuranceViewModel>? insurances;
+
+    [ObservableProperty]
+    private string _filterText = "";
+
+    partial void OnFilterTextChanged(string value)
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrWhiteSpace(FilterText))
+        {
+            FilteredCars = new ObservableCollection<CarViewModel>(Cars);
+            return;
+        }
+
+        var lower = FilterText.ToLowerInvariant();
+
+        var result = Cars.Where(car =>
+            car.Car.Model.ToLower().Contains(lower) ||
+            car.Car.Mark.ToLower().Contains(lower) ||
+            car.Car.VIN.ToLower().Contains(lower)
+        );
+
+        FilteredCars = new ObservableCollection<CarViewModel>(result);
+    }
+
 
     [ObservableProperty]
     private bool _carAddIsOpen = false;
@@ -108,6 +140,7 @@ public partial class CarPageViewModel : ViewModelBase
             Cars = new ObservableCollection<CarViewModel>(
                 cars.Select(car => new CarViewModel(car, this))
             );
+            ApplyFilter();
         }
     }
 

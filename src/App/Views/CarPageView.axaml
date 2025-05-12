@@ -74,6 +74,8 @@
                         Your car list!
                     </TextBlock>
                     <TextBlock Text="{Binding MessageText}" />
+                    <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Watermark="Search..." HorizontalAlignment="Center"
+                             Width="500"/>
                     <Button Name="AddCarButton" HorizontalAlignment="Right" Command="{Binding CarAddOpenCommand}">Add Car</Button>
                 </Grid>
 
@@ -97,7 +99,7 @@
                     
                         <!-- BODY -->
                         <StackPanel>
-                            <ItemsControl ItemsSource="{Binding Cars}">
+                            <ItemsControl ItemsSource="{Binding FilteredCars}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel />

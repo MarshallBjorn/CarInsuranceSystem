@@ -1,19 +1,18 @@
 using System;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using App.Support;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
-using Infrastructure;
-using Infrastructure.Services;
+using Infrastructure.DTOs;
+using Tmds.DBus.Protocol;
 
 namespace App.ViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {
-    private readonly AuthPageViewModel _parentViewModel;
-
-    public LoginViewModel(AuthPageViewModel parentViewModel) => _parentViewModel = parentViewModel;
-
     [ObservableProperty]
     public string _email = "";
     [ObservableProperty]
@@ -24,21 +23,64 @@ public partial class LoginViewModel : ViewModelBase
     [RelayCommand]
     private async Task LogIn()
     {
+        MessageText = "";
+        var client = HttpClientFactory.CreateClient("CarInsuranceApi");
+
         try {
-            var UserService = ServiceLocator.GetService<UserService>();
+            var response = await client.PostAsJsonAsync("api/User/login", new {
+                Email,
+                Password
+            });
 
-            var currentUser = await UserService.LoginAsync(Email, Password);
-
-            if (currentUser is not null)
+            if (!response.IsSuccessStatusCode)
             {
-                MessageText = $"Auth success. Welcome {currentUser.FirstName} {currentUser.LastName}";
-            } else {
-                MessageText = "Auth failed";
+                var errorContent = await response.Content.ReadAsStringAsync();
+                MessageText = $"Wrong email or password.";
+                return;
             }
-        } catch (Exception ex)
+            
+            var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            TokenStorage.Token = result.Token;
+            MessageText = TokenStorage.Token;
+            await LoginSuccess();
+        } 
+        catch (Exception ex)
+        {
+            MessageText = ex.Message;
+        }   
+    }
+
+    private async Task LoginSuccess()
+    {
+        var client = HttpClientFactory.CreateClient("CarInsuranceApi");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TokenStorage.Token);
+        
+        try {
+            var response = await client.GetAsync("api/User/me");
+
+            if(!response.IsSuccessStatusCode)
+            {
+                MessageText = $"Failed to load user info: {response.StatusCode}";
+                return;
+            }
+
+            var user = await response.Content.ReadFromJsonAsync<User>();
+
+            if (user != null)
+            {
+                AppState.LoggedInUser = user;
+                MessageText = $"Welcome {user.FirstName} {user.LastName}";
+            }
+        }
+        catch (Exception ex)
         {
             MessageText = ex.Message;
         }
-        
+    }
+
+    private void reset()
+    {
+        Email = "";
+        Password = "";
     }
 }

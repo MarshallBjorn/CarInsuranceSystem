@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using App.Factories;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Infrastructure;
@@ -8,35 +9,32 @@ namespace App.ViewModels;
 
 public partial class AuthPageViewModel : ViewModelBase
 {
+    private readonly IAuthViewModelFactory _factory;
+
     [ObservableProperty]
     private ViewModelBase _currentAuthView;
     [ObservableProperty]
     private string _messageText = "";
     public string email = "";
 
-    public AuthPageViewModel() => _currentAuthView = new LoginViewModel(this);
+    public AuthPageViewModel(IAuthViewModelFactory factory)
+    {
+        _factory = factory;
+        CurrentAuthView = _factory.CreateLogin();
+    }
 
     private bool switchBool = true;
 
-    public void Switch()
+    [RelayCommand]
+    public void AuthSwitch()
     {
         switchBool ^= true;
 
-        if (!switchBool) CurrentAuthView = new RegisterViewModel(this);
+        if (switchBool) 
+            CurrentAuthView = _factory.CreateLogin(email);
         else
         { 
-            var loginViewModel = new LoginViewModel(this);
-
-            if (!String.IsNullOrEmpty(email))
-                loginViewModel.Email = email;
-            CurrentAuthView = loginViewModel;
+            CurrentAuthView = _factory.CreateRegister();
         }
     }
-
-    [RelayCommand]
-    private void AuthSwitch()
-    {
-        Switch();
-    }
-
 }

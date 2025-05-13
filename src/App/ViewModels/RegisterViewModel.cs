@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -12,10 +13,6 @@ namespace App.ViewModels;
 
 public partial class RegisterViewModel : ViewModelBase
 {
-    private readonly AuthPageViewModel _parentViewModel; 
-
-    public RegisterViewModel(AuthPageViewModel parentViewModel) => _parentViewModel = parentViewModel; 
-
     [ObservableProperty] private string _email = "";
     [ObservableProperty] private string _firstname = "";
     [ObservableProperty] private string _lastname = "";
@@ -84,16 +81,17 @@ public partial class RegisterViewModel : ViewModelBase
                 BirthDate = BirthDate.DateTime,
             };
 
-            var service = ServiceLocator.GetService<UserService>();
+            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
             var userInfo = UserValidator.Validate(user);
             var passwordChecked1 = PasswordValidator.Validate(Password1);
             var passwordChecked2 = PasswordValidator.Validate(Password2);
 
             if (userInfo.IsValid && passwordChecked1.IsValid && passwordChecked2.IsValid) {
-                await service.RegisterAsync(user, Password1, Password2);
-                _parentViewModel.MessageText = "User registered succesfuly";
-                _parentViewModel.email = Email;
-                _parentViewModel.Switch();
+                var response = await client.PostAsJsonAsync($"api/User/register", user);
+                response.EnsureSuccessStatusCode();
+                // _parentViewModel.MessageText = "User registered succesfuly";
+                // _parentViewModel.email = Email;
+                // _parentViewModel.Switch();
             } else {
                 foreach (var error in userInfo.Errors)
                 {

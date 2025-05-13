@@ -29,6 +29,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__DefaultConnection=Host=db;Database=CarInsurance;Username=postgres;Password=${DB_PASSWORD}
+      - Jwt__Key=a7D$39xn29vL!8Nf^#p@fQk*ZPwxNveTYu+28XYr
+      - Jwt__Issuer=yourapi
+      - Jwt__Audience=yourapp
     networks:
       - app-network
 networks:

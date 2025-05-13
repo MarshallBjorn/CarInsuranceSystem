@@ -1,4 +1,6 @@
-﻿using App.ViewModels;
+﻿using App.Factories;
+using App.Support;
+using App.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +22,18 @@ class Program
             {
                 client.BaseAddress = new Uri("http://localhost:5000");
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
+            })
+            .ConfigureHttpClient(client =>
+            {
+                var token = TokenStorage.Token;
+                if (!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                } 
             });
+
+            services.AddSingleton<IAuthViewModelFactory, AuthModelFactory>();
 
             services.AddSingleton<AppState>();
             services.AddSingleton<HomePageViewModel>();
@@ -28,6 +41,8 @@ class Program
             services.AddSingleton<AuthPageViewModel>();
             services.AddSingleton<AboutPageViewModel>();
             services.AddSingleton<MainWindowViewModel>();
+            services.AddTransient<LoginViewModel>();
+            services.AddTransient<RegisterViewModel>();
             Debug.WriteLine("DI services registered");
 
             var serviceProvider = services.BuildServiceProvider();

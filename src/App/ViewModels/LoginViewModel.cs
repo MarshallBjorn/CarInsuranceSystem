@@ -6,8 +6,7 @@ using App.Support;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
-using Infrastructure.DTOs;
-using Tmds.DBus.Protocol;
+using Core.DTOs;
 
 namespace App.ViewModels;
 

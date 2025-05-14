@@ -1,3 +1,5 @@
+namespace Core.RequestModels;
+
 public class RegisterRequest
 {
     public string FirstName { get; set; } = null!;

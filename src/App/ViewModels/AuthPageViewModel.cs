@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using App.Factories;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Infrastructure;
 
 namespace App.ViewModels;
 

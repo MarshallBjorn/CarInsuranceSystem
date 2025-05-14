@@ -2,7 +2,6 @@
 using App.Support;
 using App.ViewModels;
 using Avalonia;
-using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics;

@@ -1,3 +1,5 @@
+namespace Core.RequestModels;
+
 public class LoginRequest
 {
     public string Email { get; set; } = null!;

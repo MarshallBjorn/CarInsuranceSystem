@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Core.Entities;
+using Core.RequestModels;
 using FluentValidation;
 using Infrastructure.DTOs;
 using Infrastructure.Services;
@@ -57,7 +58,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] Core.RequestModels.RegisterRequest request)
     {
         try
         {
@@ -114,7 +115,7 @@ public class UserController : ControllerBase
 
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] Core.RequestModels.LoginRequest request)
     {
         var user = await _userService.LoginAsync(request.Email, request.Password);
         if (user == null)

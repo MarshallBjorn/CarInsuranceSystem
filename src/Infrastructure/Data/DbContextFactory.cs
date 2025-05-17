@@ -1,34 +1,44 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System.IO;
-using System.Reflection;
 
 namespace Infrastructure.Data
 {
-    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>, IDbContextFactory<AppDbContext>
     {
+        private readonly IConfiguration _configuration;
+
+        // For runtime use (Avalonia)
+        public AppDbContextFactory(IConfiguration configuration)
+        {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
+        // For design-time use (migrations)
+        public AppDbContextFactory()
+        {
+            _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+        }
+
         public AppDbContext CreateDbContext()
         {
-            return CreateDbContext(Array.Empty<string>());
-        }
-        
-        public AppDbContext CreateDbContext(string[] args)
-        {
-            // Get the path to the App project
-            var appProjectPath = Path.GetFullPath(Path.Combine(
-                Directory.GetCurrentDirectory(), 
-                "../App/"));
-
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(appProjectPath)
-                .AddJsonFile("appsettings.json")
-                .Build();
+            var connectionString = _configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseNpgsql(connectionString, o => o.UseNodaTime());
 
             return new AppDbContext(optionsBuilder.Options);
+        }
+
+        // For IDesignTimeDbContextFactory
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            return CreateDbContext();
         }
     }
 }

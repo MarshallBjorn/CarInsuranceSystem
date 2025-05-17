@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
 using Core.Validators;
 using Infrastructure;
+using Infrastructure.Services;
 
 namespace App.ViewModels;
 
@@ -83,12 +84,13 @@ public partial class RegisterViewModel : ViewModelBase
                 BirthDate = BirthDate.DateTime,
             };
 
+            var service = ServiceLocator.GetService<UserService>();
             var userInfo = UserValidator.Validate(user);
             var passwordChecked1 = PasswordValidator.Validate(Password1);
             var passwordChecked2 = PasswordValidator.Validate(Password2);
 
             if (userInfo.IsValid && passwordChecked1.IsValid && passwordChecked2.IsValid) {
-                await ServiceLocator.UserService.RegisterAsync(user, Password1, Password2);
+                await service.RegisterAsync(user, Password1, Password2);
                 _parentViewModel.MessageText = "User registered succesfuly";
                 _parentViewModel.email = Email;
                 _parentViewModel.Switch();

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Core.Entities;
 
 public class Car
@@ -11,7 +13,4 @@ public class Car
     // Foreign key (1 Car → 1 Insurance, optional)
     public Guid? InsuranceId { get; set; }
     public Insurance? Insurance { get; set; }
-
-    // Navigation property (1 Car → N UserCar links)
-    public ICollection<UserCar> UserCars { get; set; } = new List<UserCar>();
 }

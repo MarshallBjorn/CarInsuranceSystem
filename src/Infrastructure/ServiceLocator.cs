@@ -1,41 +1,54 @@
-using Core.Entities;
-using Infrastructure.Data;
-using Infrastructure.Repositories;
-using Infrastructure.Services;
-using Infrastructure.State;
 
-namespace Infrastructure
+
+namespace Infrastructure;
+
+/// <summary>
+/// Provides a static service locator for accessing dependency injection services.
+/// </summary>
+public static class ServiceLocator
 {
-    public static class ServiceLocator
+    private static IServiceProvider? _provider;
+
+    /// <summary>
+    /// Initializes the service locator with the specified service provider.
+    /// </summary>
+    /// <param name="provider">The service provider to use for resolving services.</param>
+    /// <exception cref="ArgumentNullException">Thrown when provider is null.</exception>
+    public static void Initialize(IServiceProvider provider)
     {
-        private static AppDbContext _dbContext;
-        private static CarService _carService;
-        private static UserService _userService;
-        private static InsuranceService _insuranceService;
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+    }
 
-        private static AppState _appState = new AppState();
-
-        static ServiceLocator()
+    /// <summary>
+    /// Gets a service of type T from the service provider.
+    /// </summary>
+    /// <typeparam name="T">The type of service to retrieve.</typeparam>
+    /// <returns>The service instance.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the service provider is not initialized.</exception>
+    public static T GetService<T>()
+    {
+        if (_provider == null)
         {
-            var dbContextFactory = new AppDbContextFactory();
-            _dbContext = dbContextFactory.CreateDbContext();
-
-            var carRepository = new CarRepository(_dbContext);
-            _carService = new CarService(carRepository);
-
-            var userRepository = new UserRepository(_dbContext);
-            _userService = new UserService(userRepository); 
-
-            var insuranceRepository = new InsuranceRepository(_dbContext);
-            _insuranceService = new InsuranceService(insuranceRepository);
+            throw new InvalidOperationException("ServiceLocator is not initialized.");
         }
+        return _provider.GetService<T>();
+    }
 
-        public static CarService CarService => _carService;
+    /// <summary>
+    /// Gets the current application state.
+    /// </summary>
 
-        public static UserService UserService => _userService;
-
-        public static InsuranceService InsuranceService => _insuranceService;
-        
-        public static AppState AppState => _appState;
+    /// <summary>
+    /// Creates a new service scope.
+    /// </summary>
+    /// <returns>A new service scope.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the service provider is not initialized.</exception>
+    public static IServiceScope CreateScope()
+    {
+        if (_provider == null)
+        {
+            throw new InvalidOperationException("ServiceLocator is not initialized.");
+        }
+        return _provider.CreateScope();
     }
 }

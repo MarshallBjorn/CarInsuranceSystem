@@ -73,7 +73,10 @@
                     <TextBlock Margin="0 20" FontSize="20" FontWeight="Bold">
                         Your car list!
                     </TextBlock>
-                    <TextBlock Text="{Binding MessageText}" />
+                    <TextBlock VerticalAlignment="Top" Text="{Binding MessageText}" />
+                    <TextBlock VerticalAlignment="Bottom" Text="{Binding ErrorText}" />
+                    <TextBox Text="{CompiledBinding FilterText}" Watermark="Search..." HorizontalAlignment="Center"
+                             Width="500"/>
                     <Button Name="AddCarButton" HorizontalAlignment="Right" Command="{Binding CarAddOpenCommand}">Add Car</Button>
                 </Grid>
 

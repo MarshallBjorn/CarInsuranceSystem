@@ -1,65 +1,120 @@
 using Core.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Repositories;
 
-public class CarRepository(AppDbContext context) : ICarRepository
+public class CarRepository : ICarRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly AppDbContext _context;
+
+    public CarRepository(AppDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
 
     public async Task<List<Car>> GetAllAsync()
     {
         return await _context.Cars.ToListAsync();
     }
 
-    public async Task<Car> GetByVINAsync(string VIN)
+    public async Task<Car> GetByVINAsync(string vin)
     {
-        var car = await _context.Cars.FindAsync(VIN);
-        return car ?? throw new InvalidOperationException("Car with this VIN has not been found.");
+        if (string.IsNullOrWhiteSpace(vin))
+            throw new ArgumentException("VIN cannot be null or empty.", nameof(vin));
+
+        var car = await _context.Cars.FindAsync(vin);
+        return car ?? throw new KeyNotFoundException($"Car with VIN {vin} not found.");
     }
 
-    // TODO
-    public Task<bool> UpdateCarDataAsync(String VIN, Car updatedCar)
+    public async Task<bool> UpdateCarDataAsync(string vin, Car updatedCar)
     {
-        throw new NotImplementedException();
-    }
+        if (string.IsNullOrWhiteSpace(vin))
+            throw new ArgumentException("VIN cannot be null or empty.", nameof(vin));
+        if (updatedCar == null)
+            throw new ArgumentNullException(nameof(updatedCar));
 
-    // TODO
-    public async Task<bool> AddCarAsync(Car car, User user)
-    {
+        var existingCar = await _context.Cars.FindAsync(vin);
+        if (existingCar == null)
+            return false;
+
+        // Update only allowed fields
+        existingCar.Mark = updatedCar.Model;
+        existingCar.Model = updatedCar.Model;
+        existingCar.ProductionYear = updatedCar.ProductionYear;
+        // Add other fields as needed, but avoid updating VIN
+
         try
         {
-            var userCar = new UserCar
-            {
-                UserId = user.Id,
-                CarVIN = car.VIN,
-                User = user,
-                Car = car,
-                PurchaseDate = DateTime.UtcNow,
-                IsCurrentOwner = true
-            };
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            // Log ex (e.g., using Serilog)
+            throw new InvalidOperationException("Failed to update car data.", ex);
+        }
+    }
 
+    public async Task<bool> AddCarAsync(Car car, User user)
+    {
+        if (car == null)
+            throw new ArgumentNullException(nameof(car));
+        if (user == null)
+            throw new ArgumentNullException(nameof(user));
+
+        var existingCar = await _context.Cars
+            .FirstOrDefaultAsync(c => c.VIN == car.VIN);
+
+        if (existingCar != null)
+        {
+            throw new Exception("This car already exists");
+        }
+        
+        _context.Users.Attach(user);
+
+        var userCar = new UserCar
+        {
+            UserId = user.Id,
+            CarVIN = car.VIN,
+            Car = car,
+            User = user,
+            PurchaseDate = DateTime.UtcNow,
+            IsCurrentOwner = true
+        };
+
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
             _context.Cars.Add(car);
             _context.UserCars.Add(userCar);
             await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
             return true;
-        } 
-        catch
+        }
+        catch (DbUpdateException ex)
         {
-            return false;
+            await transaction.RollbackAsync();
+            // Log ex
+            throw new InvalidOperationException("Failed to add car.", ex);
         }
     }
 
     public async Task<List<Car>> GetCarsUserAsync(User user)
     {
+        if (user == null)
+            throw new ArgumentNullException(nameof(user));
+
         var cars = await _context.UserCars
             .Where(uc => uc.UserId == user.Id)
             .Include(uc => uc.Car)
             .Select(uc => uc.Car!)
             .ToListAsync();
-        if (!cars.Any()) 
-            throw new Exception("You have no cars registered.");
+
+        if (!cars.Any())
+            throw new KeyNotFoundException($"No cars registered for user with ID {user.Id}.");
+
         return cars;
     }
 }

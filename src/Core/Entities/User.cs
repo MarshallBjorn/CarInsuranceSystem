@@ -10,7 +10,4 @@ public class User
 
     public string? PasswordHash { get; set; }
     public string? Role { get; set; } = "User";
-
-    // Navigation property (1 User → N UserCar links)
-    public ICollection<UserCar> UserCars { get; set; } = new List<UserCar>();
 }

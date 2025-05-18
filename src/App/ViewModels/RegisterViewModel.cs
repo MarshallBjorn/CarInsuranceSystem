@@ -1,28 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
+using Core.RequestModels;
 using Core.Validators;
-using Infrastructure;
-using Infrastructure.Services;
+using Tmds.DBus.Protocol;
 
 namespace App.ViewModels;
 
 public partial class RegisterViewModel : ViewModelBase
 {
-    private readonly AuthPageViewModel _parentViewModel; 
-
-    public RegisterViewModel(AuthPageViewModel parentViewModel) => _parentViewModel = parentViewModel; 
-
     [ObservableProperty] private string _email = "";
     [ObservableProperty] private string _firstname = "";
     [ObservableProperty] private string _lastname = "";
     [ObservableProperty] private DateTimeOffset _birthDate = new DateTimeOffset(DateTime.Today);
     [ObservableProperty] private string _password1 = "";
     [ObservableProperty] private string _password2 = "";
-
     [ObservableProperty] private string _messageText = "";
     
     private readonly List<string> _emailErrorList = new();
@@ -59,6 +55,7 @@ public partial class RegisterViewModel : ViewModelBase
     [RelayCommand]
     private async Task Register()
     {
+        MessageText = "";
         _firstNameErrorList.Clear();
         OnPropertyChanged(nameof(FirstNameErrors));
         _emailErrorList.Clear();
@@ -84,16 +81,29 @@ public partial class RegisterViewModel : ViewModelBase
                 BirthDate = BirthDate.DateTime,
             };
 
-            var service = ServiceLocator.GetService<UserService>();
+            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
             var userInfo = UserValidator.Validate(user);
             var passwordChecked1 = PasswordValidator.Validate(Password1);
             var passwordChecked2 = PasswordValidator.Validate(Password2);
 
             if (userInfo.IsValid && passwordChecked1.IsValid && passwordChecked2.IsValid) {
-                await service.RegisterAsync(user, Password1, Password2);
-                _parentViewModel.MessageText = "User registered succesfuly";
-                _parentViewModel.email = Email;
-                _parentViewModel.Switch();
+                BirthDate = BirthDate.ToUniversalTime();
+                var request = new RegisterRequest
+                {
+                    Email = Email,
+                    FirstName = Firstname,
+                    LastName = Lastname,
+                    BirthDate = BirthDate.UtcDateTime,
+                    Password1 = Password1,
+                    Password2 = Password2
+                };
+                
+                var response = await client.PostAsJsonAsync($"api/User/register", request);
+                response.EnsureSuccessStatusCode();
+                MessageText = "XD";
+                // _parentViewModel.MessageText = "User registered succesfuly";
+                // _parentViewModel.email = Email;
+                // _parentViewModel.Switch();
             } else {
                 foreach (var error in userInfo.Errors)
                 {

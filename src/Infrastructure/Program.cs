@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using Infrastructure.Mapper;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,25 @@ builder.Services.AddSwaggerGen(c =>
         c.IncludeXmlComments(xmlPath);
     }
 });
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = "yourapi",
+            ValidateAudience = true,
+            ValidAudience = "yourapp",
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes("a7D$39xn29vL!8Nf^#p@fQk*ZPwxNveTYu+28XYr")),
+            ValidateLifetime = true
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 
 // Initialize ServiceLocator
 ServiceLocator.Initialize(builder.Services.BuildServiceProvider());

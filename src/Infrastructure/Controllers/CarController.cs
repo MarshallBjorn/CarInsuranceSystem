@@ -1,6 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Core.Entities;
 using FluentValidation;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Infrastructure.Controllers;
@@ -68,11 +71,22 @@ public class CarController : ControllerBase
         }
     }
 
-    [HttpGet("user/{userId}")]
-    public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUser(Guid userId)
+    [Authorize]
+    [HttpGet("user")]
+    public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUser()
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) 
+                          ?? User.FindFirst(JwtRegisteredClaimNames.Sub);
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID claim not found in token.");
+            }
+
+            var userId = Guid.Parse(userIdClaim.Value);
+
             var user = await _userService.GetByIdAsync(userId);
             var cars = await _carService.GetCarsUserAsync(user);
             return Ok(cars);

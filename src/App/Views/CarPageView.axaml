@@ -100,7 +100,8 @@
                     
                         <!-- BODY -->
                         <StackPanel>
-                            <ItemsControl ItemsSource="{Binding Cars}">
+                            <TextBlock Text="{Binding ListText}" IsVisible="{Binding IsEmpty}" />
+                            <ItemsControl ItemsSource="{Binding FilteredCars}" IsVisible="{Binding IsList}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel />

@@ -13,6 +13,8 @@ namespace App.ViewModels;
 
 public partial class RegisterViewModel : ViewModelBase
 {
+    public Action<string>? OnRegistrationSuccess { get; set; }
+
     [ObservableProperty] private string _email = "";
     [ObservableProperty] private string _firstname = "";
     [ObservableProperty] private string _lastname = "";
@@ -86,7 +88,8 @@ public partial class RegisterViewModel : ViewModelBase
             var passwordChecked1 = PasswordValidator.Validate(Password1);
             var passwordChecked2 = PasswordValidator.Validate(Password2);
 
-            if (userInfo.IsValid && passwordChecked1.IsValid && passwordChecked2.IsValid) {
+            if (userInfo.IsValid && passwordChecked1.IsValid && passwordChecked2.IsValid)
+            {
                 BirthDate = BirthDate.ToUniversalTime();
                 var request = new RegisterRequest
                 {
@@ -97,14 +100,22 @@ public partial class RegisterViewModel : ViewModelBase
                     Password1 = Password1,
                     Password2 = Password2
                 };
-                
+
                 var response = await client.PostAsJsonAsync($"api/User/register", request);
-                response.EnsureSuccessStatusCode();
-                MessageText = "XD";
-                // _parentViewModel.MessageText = "User registered succesfuly";
-                // _parentViewModel.email = Email;
-                // _parentViewModel.Switch();
-            } else {
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageText = string.Format(json);
+                    return;
+                }
+
+                MessageText = "User registered succesfuly.";
+                
+                OnRegistrationSuccess?.Invoke(Email);
+            }
+            else
+            {
                 foreach (var error in userInfo.Errors)
                 {
                     switch (error.PropertyName)

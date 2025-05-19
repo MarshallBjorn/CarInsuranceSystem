@@ -12,6 +12,7 @@ public partial class AuthPageViewModel : ViewModelBase
 
     [ObservableProperty]
     private ViewModelBase _currentAuthView;
+
     [ObservableProperty]
     private string _messageText = "";
     public string email = "";
@@ -29,11 +30,23 @@ public partial class AuthPageViewModel : ViewModelBase
     {
         switchBool ^= true;
 
-        if (switchBool) 
+        if (switchBool)
+        {
             CurrentAuthView = _factory.CreateLogin(email);
+            MessageText = "";
+        }
         else
-        { 
-            CurrentAuthView = _factory.CreateRegister();
+        {
+            var registerVm = _factory.CreateRegister();
+            registerVm.OnRegistrationSuccess = (string newEmail) =>
+            {
+                email = newEmail;
+                MessageText = "Registration successful. Please log in.";
+                switchBool = true;
+                CurrentAuthView = _factory.CreateLogin(email);
+            };
+
+            CurrentAuthView = registerVm;
         }
     }
 }

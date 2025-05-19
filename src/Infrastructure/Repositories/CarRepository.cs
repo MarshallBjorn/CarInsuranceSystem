@@ -113,7 +113,7 @@ public class CarRepository : ICarRepository
             .ToListAsync();
 
         if (!cars.Any())
-            throw new KeyNotFoundException($"No cars registered for user with ID {user.Id}.");
+            throw new KeyNotFoundException($"No cars registered for user with email {user.Email}.");
 
         return cars;
     }

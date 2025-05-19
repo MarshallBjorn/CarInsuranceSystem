@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using App.Support;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
@@ -58,17 +59,21 @@ public partial class CarPageViewModel : ViewModelBase
         }
     }
 
-    [ObservableProperty]
-    private bool _carAddIsOpen = false;
+    [ObservableProperty] private bool _carAddIsOpen = false;
 
-    [ObservableProperty]
-    private bool _carEditIsOpen = false;
+    [ObservableProperty] private bool _carEditIsOpen = false;
+
+    [ObservableProperty] private bool _isList = false;
+    [ObservableProperty] private bool _isEmpty = true;
 
     [ObservableProperty]
     private string _errorText = "";
 
     [ObservableProperty]
     private string _messageText = "";
+
+    [ObservableProperty]
+    private string _listText = "";
 
     public bool IsAnyPopupOpen => CarAddIsOpen || CarEditIsOpen;
 
@@ -186,103 +191,56 @@ public partial class CarPageViewModel : ViewModelBase
             Debug.WriteLine($"CarEditOpen: Exception: {ex}");
         }
     }
-
-    private async Task TestGetAllCarsAsync()
-    {
-        try
-        {
-            Debug.WriteLine("TestGetAllCarsAsync started");
-            if (AppState.ServiceProvider == null)
-            {
-                ErrorText = "ServiceProvider not initialized.";
-                MessageText = "Failed to load cars. 1";
-                Debug.WriteLine("TestGetAllCarsAsync: ServiceProvider is null");
-                return;
-            }
-
-            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
-            Debug.WriteLine("TestGetAllCarsAsync: Sending GET to api/Car");
-            var response = await client.GetAsync("api/Car");
-            Debug.WriteLine($"TestGetAllCarsAsync: HTTP Status: {response.StatusCode}");
-            
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                ErrorText = $"API error: {response.StatusCode} - {errorContent}";
-                MessageText = "Failed to load cars. 2";
-                Debug.WriteLine($"TestGetAllCarsAsync: Failed with status {response.StatusCode}, content: {errorContent}");
-                return;
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine($"TestGetAllCarsAsync: Response JSON: {json}");
-            var cars = await response.Content.ReadFromJsonAsync<Car[]>();
-
-            if (cars == null)
-            {
-                ErrorText = "Failed to deserialize cars from API response.";
-                MessageText = "Failed to load cars. 3";
-                Debug.WriteLine("TestGetAllCarsAsync: Cars array is null after deserialization");
-                return;
-            }
-
-            Cars = new ObservableCollection<CarViewModel>(
-                cars.Select(car => new CarViewModel(car, this))
-            );
-            ApplyFilter();
-            MessageText = cars.Any() ? $"{cars.Length} cars loaded." : "No cars found.";
-            Debug.WriteLine($"TestGetAllCarsAsync: Loaded {cars.Length} cars");
-        }
-        catch (HttpRequestException ex)
-        {
-            ErrorText = $"Network error: {ex.Message}";
-            MessageText = "Failed to load cars. 4";
-            Debug.WriteLine($"TestGetAllCarsAsync: HttpRequestException: {ex.Message}, Inner: {ex.InnerException?.Message}");
-        }
-        catch (InvalidOperationException ex)
-        {
-            ErrorText = $"Service error: {ex.Message}";
-            MessageText = "Failed to load cars. 5";
-            Debug.WriteLine($"TestGetAllCarsAsync: InvalidOperationException: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            ErrorText = $"Unexpected error: {ex.Message}";
-            MessageText = "Failed to load cars. 6";
-            Debug.WriteLine($"TestGetAllCarsAsync: Exception: {ex.Message}, StackTrace: {ex.StackTrace}");
-        }
-    }
+    
     private async Task LoadCarsAsync()
     {
         try
         {
             Debug.WriteLine("LoadCarsAsync started");
+
             var client = HttpClientFactory.CreateClient("CarInsuranceApi");
-            Car[]? cars;
-            var user = AppState.LoggedInUser;
-            Debug.WriteLine($"LoadCarsAsync: User ID={user?.Id}");
-            if (user != null)
+
+            // Add the token to the request
+            var token = TokenStorage.Token;
+            if (string.IsNullOrWhiteSpace(token))
             {
-                Debug.WriteLine($"LoadCarsAsync: Fetching api/Car/user/{user.Id}");
-                var response = await client.GetAsync($"api/Car/user/{user.Id}");
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"LoadCarsAsync: Response JSON={json}");
-                cars = await response.Content.ReadFromJsonAsync<Car[]>();
+                ListText = "User is not logged in.";
+                MessageText = "User is not logged in.";
+                Debug.WriteLine("LoadCarsAsync: Missing auth token.");
+                return;
             }
-            else
+
+            client.DefaultRequestHeaders.Authorization = 
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            Debug.WriteLine("LoadCarsAsync: Fetching api/Car/user/cars");
+            var response = await client.GetAsync("api/Car/user");
+
+            var json = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"LoadCarsAsync: Response JSON={json}");
+
+            if (!response.IsSuccessStatusCode)
             {
-                Debug.WriteLine("LoadCarsAsync: Fetching api/Car (no user)");
-                cars = await client.GetFromJsonAsync<Car[]>("api/Car");
+                ErrorText = $"API error: {response.StatusCode}";
+                ListText = string.Format(json);
+                Debug.WriteLine($"LoadCarsAsync: API returned error - {json}");
+                return;
+            }
+            
+            var cars = await response.Content.ReadFromJsonAsync<Car[]>();
+            if (!IsList)
+            {
+                IsList ^= true;
+                IsEmpty ^= true;
             }
 
             if (cars == null)
-            {
-                ErrorText = "Failed to load cars from API.";
-                MessageText = "Failed to load cars.";
-                Debug.WriteLine("LoadCarsAsync: Cars array is null");
-                return;
-            }
+                {
+                    ErrorText = "Failed to load cars from API.";
+                    MessageText = "Failed to load cars.";
+                    Debug.WriteLine("LoadCarsAsync: Cars array is null");
+                    return;
+                }
 
             Cars = new ObservableCollection<CarViewModel>(
                 cars.Select(car => new CarViewModel(car, this))
@@ -372,7 +330,10 @@ public partial class CarPageViewModel : ViewModelBase
         try
         {
             Debug.WriteLine("InitializeAsync started");
-            await TestGetAllCarsAsync(); // Test API call
+            // await TestGetAllCarsAsync(); // Test API call
+            AppState.OnLogin += async () => await LoadCarsAsync();
+            await LoadCarsAsync();
+            
             // MessageText = "TestGetAllCarsAsync completed.";
         }
         catch (Exception ex)

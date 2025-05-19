@@ -39,8 +39,14 @@ public partial class LoginViewModel : ViewModelBase
             }
             
             var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+
+            if (result is null || string.IsNullOrEmpty(result.Token))
+            {
+                MessageText = "Login failed: Invalid response from server.";
+                return;
+            }
+
             TokenStorage.Token = result.Token;
-            MessageText = TokenStorage.Token;
             await LoginSuccess();
         } 
         catch (Exception ex)
@@ -68,6 +74,7 @@ public partial class LoginViewModel : ViewModelBase
             if (user != null)
             {
                 AppState.LoggedInUser = user;
+                AppState.RaiseLogin();
                 MessageText = $"Welcome {user.FirstName} {user.LastName}";
             }
         }

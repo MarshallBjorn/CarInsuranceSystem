@@ -26,6 +26,12 @@ public partial class LoginViewModel : ViewModelBase
         var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
         try {
+            if (string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
+            {   
+                MessageText = $"Email or password fields should not be empty.";
+                return;
+            }
+
             var response = await client.PostAsJsonAsync("api/User/login", new {
                 Email,
                 Password

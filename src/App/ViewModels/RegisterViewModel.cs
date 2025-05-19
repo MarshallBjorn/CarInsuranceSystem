@@ -106,7 +106,7 @@ public partial class RegisterViewModel : ViewModelBase
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    MessageText = string.Format(json);
+                    MessageText = json.Trim('"');
                     return;
                 }
 
@@ -151,7 +151,7 @@ public partial class RegisterViewModel : ViewModelBase
                 OnPropertyChanged(nameof(PasswordErrors2));
             }
         } catch (Exception ex) {
-            MessageText = ex.Message;
+            MessageText = ex.Message.Trim('"');
         }
     }
 }

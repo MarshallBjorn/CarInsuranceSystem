@@ -222,11 +222,11 @@ public partial class CarPageViewModel : ViewModelBase
             if (!response.IsSuccessStatusCode)
             {
                 ErrorText = $"API error: {response.StatusCode}";
-                ListText = string.Format(json);
+                ListText = json.Trim('"');
                 Debug.WriteLine($"LoadCarsAsync: API returned error - {json}");
                 return;
             }
-            
+
             var cars = await response.Content.ReadFromJsonAsync<Car[]>();
             if (!IsList)
             {

@@ -75,16 +75,24 @@
                     </TextBlock>
                     <TextBlock VerticalAlignment="Top" Text="{Binding MessageText}" />
                     <TextBlock VerticalAlignment="Bottom" Text="{Binding ErrorText}" />
-                    <TextBox Text="{CompiledBinding FilterText}" Watermark="Search..." HorizontalAlignment="Center"
-                             Width="500"/>
-                    <Button Name="AddCarButton" HorizontalAlignment="Right" Command="{Binding CarAddOpenCommand}">Add Car</Button>
+                    <Button Name="AddCarButton" 
+                            HorizontalAlignment="Right"
+                            Command="{Binding CarAddOpenCommand}"
+                            IsVisible="{Binding IsList}">Add Car</Button>
                 </Grid>
 
                 <!-- Main content area -->
                 <Border Grid.Row="1" Background="#2d323c" CornerRadius="10">
                     <DockPanel Margin="10">
                         <!-- HEADER -->
-                        <Grid DockPanel.Dock="Top" Background="#1e1e1e">
+                        <TextBox DockPanel.Dock="Top"
+                                 Text="{CompiledBinding FilterText}" 
+                                 Watermark="Search..."
+                                 IsVisible="{Binding IsList}"
+                                 HorizontalAlignment="Center"
+                                 Margin="0 0 0 10"
+                                 Width="500"/>
+                        <Grid DockPanel.Dock="Top" Background="#1e1e1e" IsVisible="{Binding IsList}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*" />
                                 <ColumnDefinition Width="2*" />
@@ -100,7 +108,12 @@
                     
                         <!-- BODY -->
                         <StackPanel>
-                            <TextBlock Text="{Binding ListText}" IsVisible="{Binding IsEmpty}" />
+                            <TextBlock Text="{Binding ListText}" 
+                                       IsVisible="{Binding IsEmpty}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
                             <ItemsControl ItemsSource="{Binding FilteredCars}" IsVisible="{Binding IsList}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -109,7 +122,7 @@
                                 </ItemsControl.ItemsPanel>
 
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:CarViewModel">
+                                    <DataTemplate x:DataType="vm:CarPageViewModels.CarViewModel">
                                         <Border Margin="0,0,0,5" Padding="8" Background="#2D2D2D" CornerRadius="4">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>

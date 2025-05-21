@@ -1,5 +1,5 @@
 using System;
-using App.ViewModels;
+using App.ViewModels.AuthPageViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Factories;

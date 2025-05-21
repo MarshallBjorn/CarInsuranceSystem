@@ -9,7 +9,7 @@ using Core.RequestModels;
 using Core.Validators;
 using Tmds.DBus.Protocol;
 
-namespace App.ViewModels;
+namespace App.ViewModels.AuthPageViewModels;
 
 public partial class RegisterViewModel : ViewModelBase
 {

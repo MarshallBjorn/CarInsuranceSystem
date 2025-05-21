@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
 using Core.DTOs;
 
-namespace App.ViewModels;
+namespace App.ViewModels.AuthPageViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {

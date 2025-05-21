@@ -1,6 +1,7 @@
 ﻿using App.Factories;
 using App.Support;
 using App.ViewModels;
+using App.ViewModels.AuthPageViewModels;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using System;

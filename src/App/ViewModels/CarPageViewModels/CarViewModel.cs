@@ -1,4 +1,4 @@
-namespace App.ViewModels;
+namespace App.ViewModels.CarPageViewModels;
 
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;

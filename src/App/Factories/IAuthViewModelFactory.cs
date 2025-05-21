@@ -1,4 +1,4 @@
-using App.ViewModels;
+using App.ViewModels.AuthPageViewModels;
 
 namespace App.Factories;
 

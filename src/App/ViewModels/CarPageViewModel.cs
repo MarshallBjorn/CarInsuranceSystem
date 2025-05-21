@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
 using Core.Validators;
 using FluentValidation;
+using App.ViewModels.CarPageViewModels;
 
 namespace App.ViewModels;
 
@@ -191,7 +192,7 @@ public partial class CarPageViewModel : ViewModelBase
             Debug.WriteLine($"CarEditOpen: Exception: {ex}");
         }
     }
-    
+
     private async Task LoadCarsAsync()
     {
         try
@@ -210,7 +211,7 @@ public partial class CarPageViewModel : ViewModelBase
                 return;
             }
 
-            client.DefaultRequestHeaders.Authorization = 
+            client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             Debug.WriteLine("LoadCarsAsync: Fetching api/Car/user/cars");
@@ -235,12 +236,12 @@ public partial class CarPageViewModel : ViewModelBase
             }
 
             if (cars == null)
-                {
-                    ErrorText = "Failed to load cars from API.";
-                    MessageText = "Failed to load cars.";
-                    Debug.WriteLine("LoadCarsAsync: Cars array is null");
-                    return;
-                }
+            {
+                ErrorText = "Failed to load cars from API.";
+                MessageText = "Failed to load cars.";
+                Debug.WriteLine("LoadCarsAsync: Cars array is null");
+                return;
+            }
 
             Cars = new ObservableCollection<CarViewModel>(
                 cars.Select(car => new CarViewModel(car, this))
@@ -333,7 +334,7 @@ public partial class CarPageViewModel : ViewModelBase
             // await TestGetAllCarsAsync(); // Test API call
             AppState.OnLogin += async () => await LoadCarsAsync();
             await LoadCarsAsync();
-            
+
             // MessageText = "TestGetAllCarsAsync completed.";
         }
         catch (Exception ex)

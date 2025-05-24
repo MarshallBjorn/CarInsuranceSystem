@@ -3,74 +3,81 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:App.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="App.Views.AuthPageViews.UserPageView"
              x:DataType="vm:AuthPageViewModels.UserPageViewModel">
 
   <UserControl.Styles>
     <Style Selector="TextBox">
       <Setter Property="Background" Value="#1e1e1e" />
-      <Setter Property="BorderBrush" Value="#1e1e1e" />    
-      <Setter Property="BorderThickness" Value="1" />       
-      <Setter Property="Foreground" Value="White" />       
-      <Setter Property="CaretBrush" Value="White" />       
-    </Style>
-
-    <Style Selector="TextBox:pointerover">
-      <Setter Property="Background" Value="#1e1e1e" />        
-      <Setter Property="BorderBrush" Value="#1e1e1e" />        
-      <Setter Property="BorderThickness" Value="1" />           
-      <Setter Property="Foreground" Value="White" />           
-      <Setter Property="CaretBrush" Value="White" />           
-      <Setter Property="Opacity" Value="1.0" />                
+      <Setter Property="BorderBrush" Value="Gray" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="CaretBrush" Value="White" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="10" />
+      <Setter Property="MinHeight" Value="40" />
+      <Setter Property="FontSize" Value="18" />
     </Style>
 
     <Style Selector="TextBox[IsReadOnly=True]">
-      <Setter Property="CaretBrush" Value="Transparent" />     
+      <Setter Property="CaretBrush" Value="Transparent" />
     </Style>
   </UserControl.Styles>
-    
-  <StackPanel Margin="20" Spacing="10">
-    <TextBlock Text="{Binding WelcomeMessage}"
-               HorizontalAlignment="Center"
-               FontSize="20"
-               FontWeight="Bold" />
 
-    <TextBlock Text="{Binding MessageText}"
-               HorizontalAlignment="Center"
-               FontSize="18"
-               Foreground="Red" />
-    
-    <StackPanel>
-      <TextBlock Text="Email:"/>
-      <TextBox Text="{Binding User.Email}" IsReadOnly="{Binding IsReadOnly}" />
+  <Grid Margin="40" RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*">
+    <!-- Header -->
+    <StackPanel Grid.Row="0" HorizontalAlignment="Center" Spacing="8">
+      <TextBlock Text="{Binding WelcomeMessage}" FontSize="26" FontWeight="Bold" />
+      <TextBlock Text="{Binding MessageText}" FontSize="18" Foreground="Red" />
     </StackPanel>
 
-    <StackPanel>
-      <TextBlock Text="First Name:"/>
-      <TextBox Text="{Binding User.FirstName}" IsReadOnly="{Binding IsReadOnly}" />
+    <!-- Edit Button -->
+    <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="0 20 0 10">
+      <Button Content="{Binding EditButtonText}"
+              Command="{Binding ToggleEditCommand}"
+              Width="140"
+              FontSize="16"
+              Height="40" />
     </StackPanel>
 
-    <StackPanel>
-      <TextBlock Text="Last Name:"/>
-      <TextBox Text="{Binding User.LastName}" IsReadOnly="{Binding IsReadOnly}" />
+    <!-- User Info Form -->
+    <StackPanel Grid.Row="2" HorizontalAlignment="Center" Width="400" Spacing="16">
+      <StackPanel>
+        <TextBlock Text="Email:" FontSize="18" Margin="0 0 0 6"/>
+        <TextBox Text="{Binding User.Email}" IsReadOnly="{Binding IsReadOnly}" />
+      </StackPanel>
+
+      <StackPanel>
+        <TextBlock Text="First Name:" FontSize="18" Margin="0 0 0 6"/>
+        <TextBox Text="{Binding User.FirstName}" IsReadOnly="{Binding IsReadOnly}" />
+      </StackPanel>
+
+      <StackPanel>
+        <TextBlock Text="Last Name:" FontSize="18" Margin="0 0 0 6"/>
+        <TextBox Text="{Binding User.LastName}" IsReadOnly="{Binding IsReadOnly}" />
+      </StackPanel>
+
+      <StackPanel>
+        <TextBlock Text="Birth Date:" FontSize="18" Margin="0 0 0 6"/>
+        <TextBox Text="{Binding BirthDateString}" IsReadOnly="{Binding IsReadOnly}" />
+      </StackPanel>
     </StackPanel>
 
-    <StackPanel>
-      <TextBlock Text="Birth Date:"/>
-      <TextBox Text="{Binding User.BirthDate, StringFormat='yyyy-MM-dd'}" IsReadOnly="{Binding IsReadOnly}" />
+    <!-- Actions -->
+    <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="0 30 0 0" Spacing="14">
+      <Button Content="Change Password"
+              Command="{Binding ChangePasswordCommand}"
+              Width="180"
+              FontSize="16"
+              Height="42"/>
+      <TextBlock Text="Logout"
+                 Foreground="#D3D3D3"
+                 FontSize="18"
+                 Cursor="Hand"
+                 TextDecorations="Underline"
+                 PointerPressed="OnTextClicked"
+                 HorizontalAlignment="Center" />
     </StackPanel>
-
-    <Button Content="{Binding EditButtonText}" Command="{Binding ToggleEditCommand}" Width="100" HorizontalAlignment="Center"/>
-    <Button Content="Change Password" 
-            Command="{Binding ChangePasswordCommand}" 
-            Width="100" 
-            HorizontalAlignment="Center"/>
-    <TextBlock Text="Logout"
-                Foreground="#D3D3D3"
-                FontSize="16"
-                Cursor="Hand"
-                TextDecorations="Underline"
-                PointerPressed="OnTextClicked" />
-  </StackPanel>
+  </Grid>
 </UserControl>

@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
+using Core.Validators;
 
 namespace App.ViewModels.AuthPageViewModels
 {
@@ -16,6 +18,7 @@ namespace App.ViewModels.AuthPageViewModels
         [ObservableProperty] private User _user;
         [ObservableProperty] private string _messageText = "";
         [ObservableProperty] private string _welcomeMessage;
+        [ObservableProperty] private string _birthDateString;
 
         private bool _isReadOnly = true;
         private readonly HttpClient _client;
@@ -27,6 +30,7 @@ namespace App.ViewModels.AuthPageViewModels
             WelcomeMessage = $"Welcome {User.FirstName}";
 
             _client = HttpClientFactory.CreateClient("CarInsuranceApi");
+            BirthDateString = User.BirthDate.ToString("yyyy-MM-dd");
         }
 
         public bool IsReadOnly
@@ -57,6 +61,28 @@ namespace App.ViewModels.AuthPageViewModels
             }
             else
             {
+                // Parse date safely
+                if (!DateTime.TryParseExact(BirthDateString, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out var parsedDate))
+                {
+                    MessageText = "Please enter a valid birth date (e.g., 1990-05-15).";
+                    await Task.Delay(3000);
+                    MessageText = string.Empty;
+                    return;
+                }
+
+                User.BirthDate = DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc);
+
+                var validator = new UserValidator();
+                var result = validator.Validate(User);
+
+                if (!result.IsValid)
+                {
+                    MessageText = string.Join("\n", result.Errors.Select(e => e.ErrorMessage));
+                    await Task.Delay(5000);
+                    MessageText = string.Empty;
+                    return;
+                }
+
                 try
                 {
                     var response = await _client.PutAsJsonAsync("api/User/update", User);
@@ -67,7 +93,9 @@ namespace App.ViewModels.AuthPageViewModels
                     }
                     else
                     {
-                        MessageText = $"Failed to update user: {response.ReasonPhrase}";
+                        string errorText = await response.Content.ReadAsStringAsync();
+                        MessageText = $"Failed to update user: {errorText}";
+                        
                     }
                 }
                 catch (Exception ex)

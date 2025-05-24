@@ -15,7 +15,6 @@ public partial class AuthPageViewModel : ViewModelBase
     private readonly IAuthViewModelFactory _factory;
 
     [ObservableProperty] private ViewModelBase _currentAuthView = new();
-
     [ObservableProperty] private string _messageText = "";
     [ObservableProperty] private bool _popupIsOpen = false;
 
@@ -23,15 +22,13 @@ public partial class AuthPageViewModel : ViewModelBase
     [ObservableProperty] private string _currentPassword = "";
     [ObservableProperty] private string _newPassword = "";
     [ObservableProperty] private string _confirmPassword = "";
-    private string Email = "";
 
-    public string email = "";
+    private string emailForPasswordChange = "";
 
     public AuthPageViewModel(IAuthViewModelFactory factory)
     {
         _factory = factory;
-
-        LoginViewCreator();
+        LoginViewCreator(); // Start with login
     }
 
     private bool switchBool = true;
@@ -50,10 +47,9 @@ public partial class AuthPageViewModel : ViewModelBase
             var registerVm = _factory.CreateRegister();
             registerVm.OnRegistrationSuccess = (string newEmail) =>
             {
-                email = newEmail;
                 MessageText = "Registration successful. Please log in.";
                 switchBool = true;
-                CurrentAuthView = _factory.CreateLogin(email);
+                LoginViewCreator(newEmail);
             };
             registerVm.SwitchToLogin = AuthSwitch;
             CurrentAuthView = registerVm;
@@ -64,7 +60,7 @@ public partial class AuthPageViewModel : ViewModelBase
     public void PasswordChangeOpen(string email)
     {
         PopupIsOpen ^= true;
-        Email = email;
+        emailForPasswordChange = email;
     }
 
     [RelayCommand]
@@ -77,7 +73,7 @@ public partial class AuthPageViewModel : ViewModelBase
         {
             var request = new ChangePasswordRequest
             {
-                Email = Email,
+                Email = emailForPasswordChange,
                 CurrentPassword = CurrentPassword,
                 NewPassword = NewPassword,
                 ConfirmNewPassword = ConfirmPassword
@@ -93,7 +89,7 @@ public partial class AuthPageViewModel : ViewModelBase
             {
                 PopupText = "Password successfully changed";
                 await Task.Delay(2000);
-                PopupIsOpen ^= true;
+                PopupIsOpen = false;
             }
         }
         catch (Exception ex)
@@ -110,14 +106,10 @@ public partial class AuthPageViewModel : ViewModelBase
         LoginViewCreator();
     }
 
-    private void LoginViewCreator()
+    private void LoginViewCreator(string? email = null)
     {
-        var loginVm = _factory.CreateLogin();
-        loginVm.OnLoggingInSuccess = () =>
-        {
-            UserPageViewCreator();
-            // CurrentAuthView = _factory.CreateUserPage();
-        };
+        var loginVm = email is not null ? _factory.CreateLogin(email) : _factory.CreateLogin();
+        loginVm.OnLoggingInSuccess = UserPageViewCreator;
         loginVm.SwitchToRegister = AuthSwitch;
         CurrentAuthView = loginVm;
     }

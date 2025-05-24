@@ -12,6 +12,9 @@ namespace App.ViewModels.AuthPageViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {
+    public Action? OnLoggingInSuccess { get; set; }
+    public Action? SwitchToRegister { get; set; }
+
     [ObservableProperty]
     public string _email = "";
     [ObservableProperty]
@@ -81,6 +84,7 @@ public partial class LoginViewModel : ViewModelBase
             {
                 AppState.LoggedInUser = user;
                 AppState.RaiseLogin();
+                OnLoggingInSuccess?.Invoke();
                 MessageText = $"Welcome {user.FirstName} {user.LastName}";
             }
         }
@@ -88,6 +92,12 @@ public partial class LoginViewModel : ViewModelBase
         {
             MessageText = ex.Message;
         }
+    }
+
+    [RelayCommand]
+    public void SwitchToReg()
+    {
+        SwitchToRegister?.Invoke();
     }
 
     private void reset()

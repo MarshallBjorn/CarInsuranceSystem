@@ -14,6 +14,7 @@ namespace App.ViewModels.AuthPageViewModels;
 public partial class RegisterViewModel : ViewModelBase
 {
     public Action<string>? OnRegistrationSuccess { get; set; }
+    public Action? SwitchToLogin { get; set; }
 
     [ObservableProperty] private string _email = "";
     [ObservableProperty] private string _firstname = "";
@@ -22,7 +23,7 @@ public partial class RegisterViewModel : ViewModelBase
     [ObservableProperty] private string _password1 = "";
     [ObservableProperty] private string _password2 = "";
     [ObservableProperty] private string _messageText = "";
-    
+
     private readonly List<string> _emailErrorList = new();
     private readonly List<string> _firstNameErrorList = new();
     private readonly List<string> _lastNameErrorList = new();
@@ -30,28 +31,28 @@ public partial class RegisterViewModel : ViewModelBase
     private readonly List<string> _passwordErrorList1 = new();
     private readonly List<string> _passwordErrorList2 = new();
 
-    public string EmailErrors => _emailErrorList.Count > 0 
-        ? string.Join("\n", _emailErrorList) 
+    public string EmailErrors => _emailErrorList.Count > 0
+        ? string.Join("\n", _emailErrorList)
         : string.Empty;
 
-    public string FirstNameErrors => _firstNameErrorList.Count > 0 
-        ? string.Join("\n", _firstNameErrorList) 
-        : string.Empty;
-    
-    public string LastNameErrors => _lastNameErrorList.Count > 0 
-        ? string.Join("\n", _lastNameErrorList) 
+    public string FirstNameErrors => _firstNameErrorList.Count > 0
+        ? string.Join("\n", _firstNameErrorList)
         : string.Empty;
 
-    public string DateErrors => _dateErrorList.Count > 0 
-        ? string.Join("\n", _dateErrorList) 
+    public string LastNameErrors => _lastNameErrorList.Count > 0
+        ? string.Join("\n", _lastNameErrorList)
         : string.Empty;
 
-    public string PasswordErrors1 => _passwordErrorList1.Count > 0 
-        ? string.Join("\n", _passwordErrorList1) 
+    public string DateErrors => _dateErrorList.Count > 0
+        ? string.Join("\n", _dateErrorList)
         : string.Empty;
-    
-    public string PasswordErrors2 => _passwordErrorList2.Count > 0 
-        ? string.Join("\n", _passwordErrorList2) 
+
+    public string PasswordErrors1 => _passwordErrorList1.Count > 0
+        ? string.Join("\n", _passwordErrorList1)
+        : string.Empty;
+
+    public string PasswordErrors2 => _passwordErrorList2.Count > 0
+        ? string.Join("\n", _passwordErrorList2)
         : string.Empty;
 
     [RelayCommand]
@@ -73,8 +74,9 @@ public partial class RegisterViewModel : ViewModelBase
 
         var UserValidator = new UserValidator();
         var PasswordValidator = new PasswordValidator();
-        
-        try {
+
+        try
+        {
             User user = new()
             {
                 Email = Email,
@@ -111,7 +113,7 @@ public partial class RegisterViewModel : ViewModelBase
                 }
 
                 MessageText = "User registered succesfuly.";
-                
+
                 OnRegistrationSuccess?.Invoke(Email);
             }
             else
@@ -150,8 +152,16 @@ public partial class RegisterViewModel : ViewModelBase
                 OnPropertyChanged(nameof(PasswordErrors1));
                 OnPropertyChanged(nameof(PasswordErrors2));
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             MessageText = ex.Message.Trim('"');
         }
+    }
+
+    [RelayCommand]
+    public void SwitchToLog()
+    {
+        SwitchToLogin?.Invoke();
     }
 }

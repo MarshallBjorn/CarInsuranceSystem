@@ -6,4 +6,5 @@ public interface IAuthViewModelFactory
 {
     LoginViewModel CreateLogin(string? prefillEmail = null);
     RegisterViewModel CreateRegister();
+    UserPageViewModel CreateUserPage();
 }

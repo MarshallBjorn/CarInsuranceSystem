@@ -25,7 +25,7 @@
       <TextBox Watermark="e.g. john@doe.email.com" 
                Text="{Binding Email, Mode=TwoWay}"
                Margin="0 2"
-               Width="250"
+               Width="300"
                FontSize="18"/>
     </StackPanel>
     
@@ -38,18 +38,26 @@
                Text="{Binding Password}"
                PasswordChar="•"
                Margin="0 2"
-               Width="250"
+               Width="300"
                FontSize="18"/>
     </StackPanel>
 
-    <Button Command="{Binding LogInCommand}}"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center"
-            Width="200"
-            Height="50"
-            Margin="15"
-            Content="LOGIN"/>
+    <StackPanel HorizontalAlignment="Center">
+      <Button Command="{Binding LogInCommand}}"
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Center"
+              Width="200"
+              Height="50"
+              Margin="15"
+              Content="LOGIN"/>
+      <TextBlock Text="Don't have an account? Register here..."
+                Foreground="#D3D3D3"
+                FontSize="16"
+                TextDecorations="Underline"
+                Cursor="Hand"
+                PointerPressed="OnTextClicked" />
+    </StackPanel>
   </StackPanel>
 </UserControl>

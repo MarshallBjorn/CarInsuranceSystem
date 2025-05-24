@@ -102,7 +102,8 @@ public class UserController : ControllerBase
             return NotFound("User not found");
 
         // Optional: map to DTO to avoid sending password hashes etc.
-        var userDto = new {
+        var userDto = new
+        {
             user.Id,
             user.Email,
             user.FirstName,
@@ -144,5 +145,56 @@ public class UserController : ControllerBase
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    [Authorize]
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest dto)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                        ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out Guid userId))
+            return Unauthorized("Invalid token");
+
+        if (dto.Id != userId)
+            return Forbid("You can only update your own profile.");
+
+        var user = new User
+        {
+            Id = dto.Id,
+            Email = dto.Email,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            BirthDate = dto.BirthDate
+        };
+
+        var success = await _userService.UpdateUserAsync(user);
+        return success ? Ok("User updated successfully.") : NotFound("User not found.");
+    }
+    
+    [Authorize]
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        try
+        {
+            var result = await _userService.ChangePasswordAsync(
+                request.Email,
+                request.CurrentPassword,
+                request.NewPassword,
+                request.ConfirmNewPassword
+            );
+
+            return result ? Ok("Password changed successfully.") : BadRequest("Failed to change password.");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }

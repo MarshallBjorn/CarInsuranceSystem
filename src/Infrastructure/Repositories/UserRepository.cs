@@ -54,4 +54,12 @@ public class UserRepository : IUserRepository
         await using var context = await _contextFactory.CreateDbContextAsync();
         return await context.Users.FindAsync(id);
     }
+
+    public async Task<bool> UpdateUserAsync(User updatedUser)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        context.Users.Update(updatedUser);
+        var result = await context.SaveChangesAsync();
+        return result > 0;
+    }
 }

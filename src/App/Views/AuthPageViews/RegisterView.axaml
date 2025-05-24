@@ -126,13 +126,22 @@
         </StackPanel>
       </StackPanel>
     </Grid>
-    <Button Command = "{Binding RegisterCommand}" 
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center"
-            Width="200"
-            Height="50"
-            Content="REGISTER"/>
+    <StackPanel HorizontalAlignment="Center">
+      <Button Command = "{Binding RegisterCommand}" 
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Center"
+              Width="200"
+              Height="50"
+              Margin="15"
+              Content="REGISTER"/>
+      <TextBlock Text="Have an account? Login here..."
+                Foreground="#D3D3D3"
+                FontSize="16"
+                Cursor="Hand"
+                TextDecorations="Underline"
+                PointerPressed="OnTextClicked" />
+    </StackPanel>
   </StackPanel>
 </UserControl>

@@ -18,4 +18,9 @@ public class AuthModelFactory : IAuthViewModelFactory
     {
         return AppState.ServiceProvider?.GetRequiredService<RegisterViewModel>() ?? throw new ArgumentNullException();
     }
+
+    public UserPageViewModel CreateUserPage()
+    {
+        return AppState.ServiceProvider?.GetRequiredService<UserPageViewModel>() ?? throw new ArgumentNullException();
+    }
 }

@@ -11,6 +11,7 @@ using FluentValidation;
 using Infrastructure.Mapper;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Infrastructure.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<CarValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordRequestValidator>();
 
 // Add controllers
 builder.Services.AddControllers();

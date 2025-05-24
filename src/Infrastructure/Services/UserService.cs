@@ -63,4 +63,26 @@ public class UserService
 
         return await _repository.GetByEmailAsync(email);
     }
+
+    public async Task<bool> UpdateUserAsync(User updatedUser)
+    {
+        return await _repository.UpdateUserAsync(updatedUser);
+    }
+
+    public async Task<bool> ChangePasswordAsync(string email, string currentPassword, string newPassword, string confirmNewPassword)
+    {
+        if (newPassword != confirmNewPassword)
+            throw new ArgumentException("New passwords do not match.");
+
+        var user = await _repository.GetByEmailAsync(email);
+        if (user == null)
+            throw new KeyNotFoundException("User not found.");
+
+        if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
+            throw new ArgumentException("Current password is incorrect.");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _repository.UpdateUserAsync(user);
+        return true;
+    }
 }

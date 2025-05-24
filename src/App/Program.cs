@@ -20,7 +20,7 @@ class Program
             var services = new ServiceCollection();
             services.AddHttpClient("CarInsuranceApi", client =>
             {
-                client.BaseAddress = new Uri("http://localhost:5000");
+                client.BaseAddress = new Uri("http://localhost:6000");
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             })
             .ConfigureHttpClient(client =>
@@ -43,6 +43,7 @@ class Program
             services.AddSingleton<MainWindowViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
+            services.AddTransient<UserPageViewModel>();
             Debug.WriteLine("DI services registered");
 
             var serviceProvider = services.BuildServiceProvider();

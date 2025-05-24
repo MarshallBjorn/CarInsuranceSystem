@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:App.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="App.Views.AuthPageViews.UserPageView"
+             x:DataType="vm:AuthPageViewModels.UserPageViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="#1e1e1e" />
+      <Setter Property="BorderBrush" Value="#1e1e1e" />    
+      <Setter Property="BorderThickness" Value="1" />       
+      <Setter Property="Foreground" Value="White" />       
+      <Setter Property="CaretBrush" Value="White" />       
+    </Style>
+
+    <Style Selector="TextBox:pointerover">
+      <Setter Property="Background" Value="#1e1e1e" />        
+      <Setter Property="BorderBrush" Value="#1e1e1e" />        
+      <Setter Property="BorderThickness" Value="1" />           
+      <Setter Property="Foreground" Value="White" />           
+      <Setter Property="CaretBrush" Value="White" />           
+      <Setter Property="Opacity" Value="1.0" />                
+    </Style>
+
+    <Style Selector="TextBox[IsReadOnly=True]">
+      <Setter Property="CaretBrush" Value="Transparent" />     
+    </Style>
+  </UserControl.Styles>
+    
+  <StackPanel Margin="20" Spacing="10">
+    <TextBlock Text="{Binding WelcomeMessage}"
+               HorizontalAlignment="Center"
+               FontSize="20"
+               FontWeight="Bold" />
+
+    <TextBlock Text="{Binding MessageText}"
+               HorizontalAlignment="Center"
+               FontSize="18"
+               Foreground="Red" />
+    
+    <StackPanel>
+      <TextBlock Text="Email:"/>
+      <TextBox Text="{Binding User.Email}" IsReadOnly="{Binding IsReadOnly}" />
+    </StackPanel>
+
+    <StackPanel>
+      <TextBlock Text="First Name:"/>
+      <TextBox Text="{Binding User.FirstName}" IsReadOnly="{Binding IsReadOnly}" />
+    </StackPanel>
+
+    <StackPanel>
+      <TextBlock Text="Last Name:"/>
+      <TextBox Text="{Binding User.LastName}" IsReadOnly="{Binding IsReadOnly}" />
+    </StackPanel>
+
+    <StackPanel>
+      <TextBlock Text="Birth Date:"/>
+      <TextBox Text="{Binding User.BirthDate, StringFormat='yyyy-MM-dd'}" IsReadOnly="{Binding IsReadOnly}" />
+    </StackPanel>
+
+    <Button Content="{Binding EditButtonText}" Command="{Binding ToggleEditCommand}" Width="100" HorizontalAlignment="Center"/>
+    <Button Content="SOmething" Command="{Binding ChangePasswordCommand}" Width="100" HorizontalAlignment="Center"/>
+  </StackPanel>
+</UserControl>

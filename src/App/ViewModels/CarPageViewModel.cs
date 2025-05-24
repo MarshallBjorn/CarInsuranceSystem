@@ -201,7 +201,6 @@ public partial class CarPageViewModel : ViewModelBase
 
             var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
-            // Add the token to the request
             var token = TokenStorage.Token;
             if (string.IsNullOrWhiteSpace(token))
             {

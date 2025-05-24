@@ -15,4 +15,9 @@ public class AppState
     {
         OnLogin?.Invoke();
     }
+
+    public void RaiseLogout()
+    {
+        OnLogin?.Invoke();
+    }
 }

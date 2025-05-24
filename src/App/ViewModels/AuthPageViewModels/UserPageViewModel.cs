@@ -11,6 +11,7 @@ namespace App.ViewModels.AuthPageViewModels
     public partial class UserPageViewModel : ViewModelBase
     {
         public Action<string>? OnChangePassword { get; set; }
+        public Action? OnLogoutClick { get; set; }
 
         [ObservableProperty] private User _user;
         [ObservableProperty] private string _messageText = "";
@@ -84,6 +85,12 @@ namespace App.ViewModels.AuthPageViewModels
         private void ChangePassword()
         {
             OnChangePassword?.Invoke(User.Email);
+        }
+
+        [RelayCommand]
+        public void Logout()
+        {
+            OnLogoutClick?.Invoke();
         }
     }
 }

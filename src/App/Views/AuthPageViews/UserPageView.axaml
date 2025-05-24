@@ -62,6 +62,15 @@
     </StackPanel>
 
     <Button Content="{Binding EditButtonText}" Command="{Binding ToggleEditCommand}" Width="100" HorizontalAlignment="Center"/>
-    <Button Content="SOmething" Command="{Binding ChangePasswordCommand}" Width="100" HorizontalAlignment="Center"/>
+    <Button Content="Change Password" 
+            Command="{Binding ChangePasswordCommand}" 
+            Width="100" 
+            HorizontalAlignment="Center"/>
+    <TextBlock Text="Logout"
+                Foreground="#D3D3D3"
+                FontSize="16"
+                Cursor="Hand"
+                TextDecorations="Underline"
+                PointerPressed="OnTextClicked" />
   </StackPanel>
 </UserControl>

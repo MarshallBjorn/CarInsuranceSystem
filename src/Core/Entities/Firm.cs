@@ -8,4 +8,5 @@ public class Firm
     public required string CountryCode { get; set; }         // e.g., "DE"
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public ICollection<InsuranceType> InsuranceTypes { get; set; } = new List<InsuranceType>();
 }

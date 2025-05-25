@@ -32,7 +32,12 @@ public class AppDbContext : DbContext
     /// <summary>
     /// Gets or sets the collection of insurances.
     /// </summary>
-    public DbSet<Insurance> Insurances { get; set; }
+    public DbSet<InsuranceType> InsuranceTypes { get; set; }
+
+    /// <summary>
+    /// Gets or sets the collection of insurances.
+    /// </summary>
+    public DbSet<CarInsurance> CarInsurances { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of firms.
@@ -50,31 +55,50 @@ public class AppDbContext : DbContext
     /// <param name="modelBuilder">The builder used to configure the model.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserCar>()
-                .HasKey(uc => new { uc.UserId, uc.CarVIN });
+            base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<UserCar>()
-                .HasOne(uc => uc.User)
-                .WithMany()
-                .HasForeignKey(uc => uc.UserId);
-
-            modelBuilder.Entity<UserCar>()
-                .HasOne(uc => uc.Car)
-                .WithMany()
-                .HasForeignKey(uc => uc.CarVIN);
+            // Existing configs...
 
             modelBuilder.Entity<Car>()
                 .HasKey(c => c.VIN);
 
             modelBuilder.Entity<Car>()
-                .HasOne(c => c.Insurance)
-                .WithMany()
-                .HasForeignKey(c => c.InsuranceId);
+                .HasMany(c => c.CarInsurances)
+                .WithOne(ci => ci.Car)
+                .HasForeignKey(ci => ci.CarVIN);
 
-            modelBuilder.Entity<Insurance>()
-                .HasOne(i => i.Firm)
-                .WithMany()
-                .HasForeignKey(i => i.FirmId);
+            modelBuilder.Entity<CarInsurance>()
+                .HasOne(ci => ci.Car)
+                .WithMany(c => c.CarInsurances)
+                .HasForeignKey(ci => ci.CarVIN);
+
+            modelBuilder.Entity<CarInsurance>()
+                .HasOne(ci => ci.InsuranceType)
+                .WithMany(it => it.CarInsurances)
+                .HasForeignKey(ci => ci.InsuranceTypeId);
+
+            modelBuilder.Entity<InsuranceType>()
+                .HasOne(it => it.Firm)
+                .WithMany(f => f.InsuranceTypes)
+                .HasForeignKey(it => it.FirmId);
+
+            // *** Add this for UserCar composite key ***
+            modelBuilder.Entity<UserCar>()
+                .HasKey(uc => new { uc.UserId, uc.CarVIN });
+
+            // Optionally configure navigation:
+            modelBuilder.Entity<UserCar>()
+                .HasOne(uc => uc.User)
+                .WithMany(u => u.UserCars)
+                .HasForeignKey(uc => uc.UserId);
+
+            modelBuilder.Entity<UserCar>()
+                .HasOne(uc => uc.Car)
+                .WithMany(c => c.UserCars)
+                .HasForeignKey(uc => uc.CarVIN);
+        }
+
+
 
             // modelBuilder.Entity<Car>()
             //     .HasKey(c => c.VIN);  // VIN is the primary key
@@ -115,8 +139,6 @@ public class AppDbContext : DbContext
             //     .WithMany(f => f.Insurances)
             //     .HasForeignKey(i => i.FirmId)
             //     .OnDelete(DeleteBehavior.Cascade);
-    }
-    
 
     /// <summary>
     /// Saves changes to the database with audit information.

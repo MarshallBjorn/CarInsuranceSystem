@@ -5,21 +5,21 @@ namespace Infrastructure.Seeders;
 
 public static class DatabaseSeeder
 {
-    public static void Seed(AppDbContext context) 
+    public static void Seed(AppDbContext context)
     {
         if (!context.Firms.Any())
         {
             var firms = new List<Firm>
             {
-                new() { 
+                new() {
                     Id = Guid.NewGuid(),
-                    Name = "Black FOX", 
+                    Name = "Black FOX",
                     CountryCode = "UA",
                     CreatedAt = DateTime.UtcNow
                 },
-                new() { 
+                new() {
                     Id = Guid.NewGuid(),
-                    Name = "Tegoniemasz Industries", 
+                    Name = "Tegoniemasz Industries",
                     CountryCode = "PL",
                     CreatedAt = DateTime.UtcNow
                 }
@@ -29,33 +29,90 @@ public static class DatabaseSeeder
             context.SaveChanges();
         }
 
-        if (!context.Insurances.Any())
+        if (!context.InsuranceTypes.Any())
         {
             var fox = context.Firms.First(f => f.Name == "Black FOX");
             var tegnie = context.Firms.First(f => f.Name == "Tegoniemasz Industries");
 
-            var insurances = new List<Insurance>
+            var insuranceTypes = new List<InsuranceType>
             {
                 new() {
                     Id = Guid.NewGuid(),
+                    Name = "Premium",
+                    PolicyDescription = "Premium insurance policy",
                     PolicyNumber = "POL-ALL-123",
-                    Type = "Premium",
-                    FirmId = fox.Id,
+                    FirmId = fox.Id
+                },
+                new() {
+                    Id = Guid.NewGuid(),
+                    Name = "Basic",
+                    PolicyDescription = "Basic insurance policy",
+                    PolicyNumber = "POL-SF-456",
+                    FirmId = tegnie.Id
+                }
+            };
+
+            context.InsuranceTypes.AddRange(insuranceTypes);
+            context.SaveChanges();
+        }
+
+        if (!context.Cars.Any())
+        {
+            var cars = new List<Car>
+            {
+                new()
+                {
+                    VIN = "JM1TA221321173708",
+                    Mark = "Mazda",
+                    Model = "3",
+                    ProductionYear = 2012,
+                    EngineType = "Petrol"
+                },
+                new()
+                {
+                    VIN = "WMEEK8AA9BK479016",
+                    Mark = "Seat",
+                    Model = "Leon",
+                    ProductionYear = 2008,
+                    EngineType = "Diesel"
+                }
+            };
+
+            context.Cars.AddRange(cars);
+            context.SaveChanges();
+        }
+
+        if (!context.CarInsurances.Any())
+        {
+            var premiumInsuranceType = context.InsuranceTypes.First(i => i.PolicyNumber == "POL-ALL-123");
+            var basicInsuranceType = context.InsuranceTypes.First(i => i.PolicyNumber == "POL-SF-456");
+
+            var mazda = context.Cars.First(c => c.VIN == "JM1TA221321173708");
+            var seat = context.Cars.First(c => c.VIN == "WMEEK8AA9BK479016");
+
+            var carInsurances = new List<CarInsurance>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    CarVIN = mazda.VIN,
+                    InsuranceTypeId = premiumInsuranceType.Id,
                     ValidFrom = DateTime.UtcNow.AddYears(-1),
                     ValidTo = DateTime.UtcNow.AddYears(1),
                     IsActive = true
                 },
-                new() {
+                new()
+                {
                     Id = Guid.NewGuid(),
-                    PolicyNumber = "POL-SF-456",
-                    Type = "Basic",
-                    FirmId = tegnie.Id,
+                    CarVIN = seat.VIN,
+                    InsuranceTypeId = basicInsuranceType.Id,
                     ValidFrom = DateTime.UtcNow,
                     ValidTo = DateTime.UtcNow.AddYears(2),
                     IsActive = true
                 }
             };
-            context.Insurances.AddRange(insurances);
+
+            context.CarInsurances.AddRange(carInsurances);
             context.SaveChanges();
         }
 
@@ -63,15 +120,17 @@ public static class DatabaseSeeder
         {
             var users = new List<User>
             {
-                new () { 
+                new()
+                {
                     Id = Guid.NewGuid(),
-                    Email = "oleksij.nawrockij@gmail.com", 
-                    FirstName = "Oleksij", 
-                    LastName = "Nawrockij", 
+                    Email = "oleksij.nawrockij@gmail.com",
+                    FirstName = "Oleksij",
+                    LastName = "Nawrockij",
                     BirthDate = DateTime.SpecifyKind(new DateTime(2004, 12, 8), DateTimeKind.Utc),
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"),
                 },
-                new () {
+                new()
+                {
                     Id = Guid.NewGuid(),
                     Email = "tomasz.nowak@gmail.com",
                     FirstName = "Tomasz",
@@ -80,57 +139,31 @@ public static class DatabaseSeeder
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("321"),
                 }
             };
-            
+
             context.Users.AddRange(users);
             context.SaveChanges();
         }
 
-        if (!context.Cars.Any())
+        if (!context.UserCars.Any())
         {
-            var premiumInsurance = context.Insurances.First(i => i.PolicyNumber == "POL-ALL-123");
-
-            var cars = new List<Car>
-            {
-                new() { 
-                    VIN = "JM1TA221321173708", 
-                    Mark = "Mazda", 
-                    Model = "3", 
-                    ProductionYear = 2012,
-                    EngineType = "Petrol",
-                    InsuranceId = premiumInsurance.Id
-                },
-                new() {
-                    VIN = "WMEEK8AA9BK479016", 
-                    Mark = "Seat", 
-                    Model = "Leon", 
-                    ProductionYear = 2008,
-                    EngineType = "Diesel",
-                    InsuranceId = premiumInsurance.Id
-                }
-            };
-
-            context.Cars.AddRange(cars);
-            context.SaveChanges();
-        }
-
-        if(!context.UserCars.Any())
-        {
-            var mazda = context.Cars.First(i => i.Mark == "Mazda");
-            var leonidas = context.Cars.First(i => i.Mark == "Seat");
-            var oleksij = context.Users.First(i => i.FirstName == "Oleksij");
-            var tomeg = context.Users.First(i => i.FirstName == "Tomasz");
+            var mazda = context.Cars.First(c => c.Mark == "Mazda");
+            var seat = context.Cars.First(c => c.Mark == "Seat");
+            var oleksij = context.Users.First(u => u.FirstName == "Oleksij");
+            var tomasz = context.Users.First(u => u.FirstName == "Tomasz");
 
             var userCars = new List<UserCar>
             {
-                new() {
+                new()
+                {
                     UserId = oleksij.Id,
                     CarVIN = mazda.VIN,
                     PurchaseDate = DateTime.UtcNow.AddMonths(-6),
                     IsCurrentOwner = true
                 },
-                new () {
-                    UserId = tomeg.Id,
-                    CarVIN = leonidas.VIN,
+                new()
+                {
+                    UserId = tomasz.Id,
+                    CarVIN = seat.VIN,
                     PurchaseDate = DateTime.UtcNow.AddMonths(-2),
                     IsCurrentOwner = true
                 }

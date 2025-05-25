@@ -11,7 +11,6 @@ public class MappingProfile : Profile
         CreateMap<User, UserDto>();
         CreateMap<Car, CarDto>();
         CreateMap<UserCar, UserCarDto>();
-        CreateMap<Insurance, InsuranceDto>();
         CreateMap<Firm, FirmDto>();
     }
 }

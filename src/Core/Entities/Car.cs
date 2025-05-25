@@ -10,7 +10,6 @@ public class Car
     public int ProductionYear { get; set; }        // e.g., 2020
     public string? EngineType { get; set; }         // e.g., "Hybrid"
 
-    // Foreign key (1 Car → 1 Insurance, optional)
-    public Guid? InsuranceId { get; set; }
-    public Insurance? Insurance { get; set; }
+    public ICollection<CarInsurance> CarInsurances { get; set; } = new List<CarInsurance>();
+    public ICollection<UserCar> UserCars { get; set; } = new List<UserCar>();
 }

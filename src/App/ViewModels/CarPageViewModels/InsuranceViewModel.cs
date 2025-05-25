@@ -2,7 +2,7 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Core.Entities;
 
-namespace App.ViewModels;
+namespace App.ViewModels.CarPageViewModels;
 
 public partial class InsuranceViewModel : ViewModelBase
 {

@@ -7,4 +7,5 @@ public class CarDto
     public string Model { get; set; } = default!;
     public int ProductionYear { get; set; }
     public string? EngineType { get; set; }
+    public List<CarInsuranceDto> CarInsurances { get; set; } = new();
 }

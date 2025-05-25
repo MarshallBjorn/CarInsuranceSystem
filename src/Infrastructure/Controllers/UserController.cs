@@ -4,7 +4,7 @@ using System.Text;
 using Core.Entities;
 using Core.RequestModels;
 using FluentValidation;
-using Infrastructure.DTOs;
+using Core.DTOs;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;

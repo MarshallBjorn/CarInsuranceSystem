@@ -104,13 +104,19 @@
                                 <ColumnDefinition Width="3*" />
                                 <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" Text="VIN" FontWeight="Bold" HorizontalAlignment="Center" />
-                            <TextBlock Grid.Column="1" Text="Mark" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="Make" FontWeight="Bold" HorizontalAlignment="Center" />
                             <TextBlock Grid.Column="2" Text="Model" FontWeight="Bold" HorizontalAlignment="Center" />
-                            <TextBlock Grid.Column="3" Text="" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="Year of Production" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="4" Text="Is insurance active" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="5" Text="Days left" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="6" Text="" FontWeight="Bold" HorizontalAlignment="Center" />
                         </Grid>
                     
                         <!-- BODY -->
@@ -136,14 +142,39 @@
                                                     <ColumnDefinition Width="3*" />
                                                     <ColumnDefinition Width="2*" />
                                                     <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="2*" />
                                                     <ColumnDefinition Width="1*" />
                                                 </Grid.ColumnDefinitions>
                 
-                                                <TextBlock Grid.Column="0" Text="{Binding Car.VIN}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding Car.Mark}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                                <TextBlock Grid.Column="2" Text="{Binding Car.Model}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="0" 
+                                                           Text="{Binding Car.VIN}"
+                                                           TextTrimming="CharacterEllipsis" 
+                                                           VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" 
+                                                           Text="{Binding Car.Mark}" 
+                                                           VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="2" 
+                                                           Text="{Binding Car.Model}" 
+                                                           VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="3" 
+                                                           Text="{Binding Car.ProductionYear}" 
+                                                           VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="4" 
+                                                           Text="{Binding HasActiveInsuranceText}" 
+                                                           VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Center" />
+                                                <TextBlock Grid.Column="5" 
+                                                           Text="{Binding DaysUntilNearestInsuranceExpiresText}" 
+                                                           VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Center" />
                                                 <Button Content="EDIT"
-                                                        Grid.Column="3"
+                                                        Grid.Column="6"
                                                         Command="{Binding ShowEditCommand}"
                                                         VerticalAlignment="Center"/>
                                             </Grid>
@@ -154,14 +185,15 @@
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Center"
                                         Margin="10"
-                                        IsVisible="{Binding IsList}">
+                                        IsVisible="{Binding IsList}"
+                                        DockPanel.Dock="Bottom">
                                 <Button Content="Previous"
                                         Command="{Binding PreviousPageCommand}"
                                         IsEnabled="{Binding HasPreviousPage}" />
 
-                                <TextBlock Text="{Binding CurrentPage}" Margin="10,0"/>
+                                <TextBlock Text="{Binding CurrentPage}" Margin="5,7,0,0"/>
                                 <TextBlock Text=" / " VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding TotalPages}" Margin="10,0"/>
+                                <TextBlock Text="{Binding TotalPages}" Margin="0,7,5,0"/>
 
                                 <Button Content="Next"
                                         Command="{Binding NextPageCommand}"
@@ -205,7 +237,7 @@
                           SelectedItem="{Binding SelectedInsurance}"
                           Width="200">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:InsuranceViewModel">
+                        <DataTemplate x:DataType="vm:CarPageViewModels.InsuranceViewModel">
                             <TextBlock Text="{Binding DisplayName}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>

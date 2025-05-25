@@ -1,6 +1,6 @@
 using AutoMapper;
-using Infrastructure.DTOs;
 using Core.Entities;
+using Core.DTOs;
 
 namespace Infrastructure.Mapper;
 
@@ -12,5 +12,7 @@ public class MappingProfile : Profile
         CreateMap<Car, CarDto>();
         CreateMap<UserCar, UserCarDto>();
         CreateMap<Firm, FirmDto>();
+        CreateMap<CarInsurance, CarInsuranceDto>();
+        CreateMap<InsuranceType, InsuranceTypeDto>();
     }
 }

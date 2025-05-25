@@ -109,6 +109,8 @@ public class CarRepository : ICarRepository
         var cars = await _context.UserCars
             .Where(uc => uc.UserId == user.Id)
             .Include(uc => uc.Car)
+                .ThenInclude(c => c.CarInsurances)
+                    .ThenInclude(ci => ci.InsuranceType)
             .Select(uc => uc.Car!)
             .ToListAsync();
 

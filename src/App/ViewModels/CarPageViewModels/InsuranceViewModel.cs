@@ -6,14 +6,14 @@ namespace App.ViewModels.CarPageViewModels;
 
 public partial class InsuranceViewModel : ViewModelBase
 {
-    public Insurance ThisInsurance { get; }
+    public InsuranceType ThisInsurance { get; }
 
     [ObservableProperty]
     public string? _displayName;
 
-    public InsuranceViewModel(Insurance insurance)
+    public InsuranceViewModel(InsuranceType insuranceType)
     {
-        ThisInsurance = insurance;
+        ThisInsurance = insuranceType;
         DisplayNameCreator();
     }
 
@@ -21,6 +21,6 @@ public partial class InsuranceViewModel : ViewModelBase
     {
         var firm = ThisInsurance.Firm ?? throw new Exception("No firm asigned");
 
-        DisplayName = $"{firm.Name} {ThisInsurance.Type}";
+        DisplayName = $"{firm.Name} {ThisInsurance.Firm}";
     }
 }

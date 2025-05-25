@@ -207,6 +207,17 @@ public partial class CarPageViewModel : ViewModelBase
                 return;
             }
 
+            var carInsurance = new CarInsurance
+            {
+                Id = Guid.NewGuid(),
+                CarVIN = Vin,                  // the VIN of the car you're creating
+                InsuranceTypeId = SelectedInsurance.ThisInsurance.Id,
+                InsuranceType = SelectedInsurance.ThisInsurance,
+                ValidFrom = DateTime.Now,      // set as appropriate
+                ValidTo = DateTime.Now.AddYears(1),  // example: valid for 1 year
+                IsActive = true
+            };
+
             var newCar = new Car
             {
                 VIN = Vin,
@@ -214,7 +225,7 @@ public partial class CarPageViewModel : ViewModelBase
                 Model = Model,
                 ProductionYear = productionYear,
                 EngineType = EngineType,
-                InsuranceId = SelectedInsurance?.ThisInsurance.Id
+                CarInsurances = new List<CarInsurance> { carInsurance }
             };
 
             var validator = new CarValidator();
@@ -347,42 +358,42 @@ public partial class CarPageViewModel : ViewModelBase
         }
     }
 
-    private async Task LoadInsurancesAsync()
-    {
-        try
-        {
-            Debug.WriteLine("LoadInsurancesAsync started");
-            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
-            Debug.WriteLine("LoadInsurancesAsync: Fetching api/Insurance");
-            var insurances = await client.GetFromJsonAsync<Insurance[]>("api/Insurance");
-            if (insurances == null)
-            {
-                ErrorText = "Failed to load insurances from API.";
-                Debug.WriteLine("LoadInsurancesAsync: Insurances array is null");
-                return;
-            }
+    // private async Task LoadInsurancesAsync()
+    // {
+    //     try
+    //     {
+    //         Debug.WriteLine("LoadInsurancesAsync started");
+    //         var client = HttpClientFactory.CreateClient("CarInsuranceApi");
+    //         Debug.WriteLine("LoadInsurancesAsync: Fetching api/Insurance");
+    //         var insurances = await client.GetFromJsonAsync<Insurance[]>("api/Insurance");
+    //         if (insurances == null)
+    //         {
+    //             ErrorText = "Failed to load insurances from API.";
+    //             Debug.WriteLine("LoadInsurancesAsync: Insurances array is null");
+    //             return;
+    //         }
 
-            Insurances = new ObservableCollection<InsuranceViewModel>(
-                insurances.Select(ins => new InsuranceViewModel(ins))
-            );
-            Debug.WriteLine($"LoadInsurancesAsync: Loaded {insurances.Length} insurances");
-        }
-        catch (HttpRequestException ex)
-        {
-            ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
-            Debug.WriteLine($"LoadInsurancesAsync: HttpRequestException: {ex}");
-        }
-        catch (InvalidOperationException ex)
-        {
-            ErrorText = $"Service error: {ex.Message}";
-            Debug.WriteLine($"LoadInsurancesAsync: InvalidOperationException: {ex}");
-        }
-        catch (Exception ex)
-        {
-            ErrorText = $"Failed to load insurances: {ex.Message}";
-            Debug.WriteLine($"LoadInsurancesAsync: Exception: {ex}");
-        }
-    }
+    //         Insurances = new ObservableCollection<InsuranceViewModel>(
+    //             insurances.Select(ins => new InsuranceViewModel(ins))
+    //         );
+    //         Debug.WriteLine($"LoadInsurancesAsync: Loaded {insurances.Length} insurances");
+    //     }
+    //     catch (HttpRequestException ex)
+    //     {
+    //         ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
+    //         Debug.WriteLine($"LoadInsurancesAsync: HttpRequestException: {ex}");
+    //     }
+    //     catch (InvalidOperationException ex)
+    //     {
+    //         ErrorText = $"Service error: {ex.Message}";
+    //         Debug.WriteLine($"LoadInsurancesAsync: InvalidOperationException: {ex}");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         ErrorText = $"Failed to load insurances: {ex.Message}";
+    //         Debug.WriteLine($"LoadInsurancesAsync: Exception: {ex}");
+    //     }
+    // }
 
     private void ResetDefaultCar()
     {

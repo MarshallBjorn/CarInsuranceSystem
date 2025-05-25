@@ -1,7 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using AutoMapper;
+using Core.DTOs;
 using Core.Entities;
 using FluentValidation;
+using Infrastructure.Mapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +20,13 @@ public class CarController : ControllerBase
 {
     private readonly CarService _carService;
     private readonly UserService _userService;
+    private readonly IMapper _mapper;
 
-    public CarController(CarService carService, UserService userService)
+    public CarController(CarService carService, UserService userService, IMapper mapper)
     {
         _carService = carService;
         _userService = userService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -73,11 +78,11 @@ public class CarController : ControllerBase
 
     [Authorize]
     [HttpGet("user")]
-    public async Task<ActionResult<IEnumerable<Car>>> GetCarsByUser()
+    public async Task<ActionResult<IEnumerable<CarDto>>> GetCarsByUser()
     {
         try
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) 
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)
                           ?? User.FindFirst(JwtRegisteredClaimNames.Sub);
 
             if (userIdClaim == null)
@@ -89,7 +94,8 @@ public class CarController : ControllerBase
 
             var user = await _userService.GetByIdAsync(userId);
             var cars = await _carService.GetCarsUserAsync(user);
-            return Ok(cars);
+            var carsDto = _mapper.Map<List<CarDto>>(cars);
+            return Ok(carsDto);
         }
         catch (KeyNotFoundException ex)
         {

@@ -25,7 +25,7 @@ public partial class CarPageViewModel : ViewModelBase
     private ObservableCollection<CarViewModel> _filteredCars = new();
 
     [ObservableProperty]
-    private ObservableCollection<InsuranceViewModel>? _insurances;
+    public ObservableCollection<InsuranceViewModel>? _insurances;
 
     [ObservableProperty]
     private string _filterText = "";
@@ -166,7 +166,7 @@ public partial class CarPageViewModel : ViewModelBase
     partial void OnCarEditIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
 
     [ObservableProperty]
-    private CarViewModel _selectedCar;
+    private CarViewModel _selectedCar = null!;
 
     public CarPageViewModel()
     {

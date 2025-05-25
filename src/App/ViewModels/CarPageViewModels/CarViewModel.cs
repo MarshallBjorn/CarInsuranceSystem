@@ -3,6 +3,8 @@ namespace App.ViewModels.CarPageViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,11 +18,13 @@ public partial class CarViewModel : ViewModelBase
     [ObservableProperty] private string _productionYear = "";
     [ObservableProperty] private string _engineType = "";
 
+    [ObservableProperty] private string _errorText = "";
+
     [ObservableProperty] private bool _hasActiveInsurance;
     [ObservableProperty] private int? _daysUntilExpiration;
 
-    [ObservableProperty] private ObservableCollection<InsuranceType> _availableInsuranceTypes = new();
-    [ObservableProperty] private InsuranceType? _selectedInsuranceType;
+    [ObservableProperty] private ObservableCollection<InsuranceViewModel> _availableInsuranceTypes = new();
+    [ObservableProperty] private InsuranceViewModel? _selectedInsuranceType;
 
     public Car Car { get; private set; }
 
@@ -35,9 +39,28 @@ public partial class CarViewModel : ViewModelBase
         EngineType = car.EngineType;
 
         var activeInsurance = car.CarInsurances?.FirstOrDefault(i => i.IsActive);
+
+        if (activeInsurance?.InsuranceType != null)
+        {
+            // Patch missing firm from preloaded insurance list
+            var fullInsurance = _availableInsuranceTypes.FirstOrDefault(vm =>
+                vm.ThisInsurance.Id == activeInsurance.InsuranceType.Id);
+
+            if (fullInsurance != null)
+            {
+                SelectedInsuranceType = fullInsurance;
+            }
+            else
+            {
+                // fallback with possibly incomplete insurance
+                SelectedInsuranceType = new InsuranceViewModel(activeInsurance.InsuranceType);
+            }
+        }
+
         HasActiveInsurance = activeInsurance != null;
-        DaysUntilExpiration = activeInsurance != null ? (activeInsurance.ValidTo - DateTime.Now).Days : null;
-        SelectedInsuranceType = activeInsurance?.InsuranceType;
+        DaysUntilExpiration = activeInsurance != null
+            ? (activeInsurance.ValidTo - DateTime.Now).Days
+            : null;
     }
 
     [RelayCommand]
@@ -59,7 +82,7 @@ public partial class CarViewModel : ViewModelBase
             var existing = Car.CarInsurances.FirstOrDefault(i => i.IsActive);
             if (existing != null)
             {
-                existing.InsuranceTypeId = SelectedInsuranceType.Id;
+                existing.InsuranceTypeId = SelectedInsuranceType.ThisInsurance.Id;
                 existing.ValidTo = DateTime.Now.AddYears(1);
             }
             else
@@ -67,7 +90,7 @@ public partial class CarViewModel : ViewModelBase
                 Car.CarInsurances.Add(new CarInsurance
                 {
                     CarVIN = Vin,
-                    InsuranceTypeId = SelectedInsuranceType.Id,
+                    InsuranceTypeId = SelectedInsuranceType.ThisInsurance.Id,
                     ValidFrom = DateTime.Now,
                     ValidTo = DateTime.Now.AddYears(1),
                     IsActive = true
@@ -81,6 +104,7 @@ public partial class CarViewModel : ViewModelBase
     public CarViewModel(Car car, CarPageViewModel carPageViewModel)
     {
         Car = car;
+        _ = LoadInsurancesAsync();
         _carPageViewModel = carPageViewModel;
     }
 
@@ -109,4 +133,35 @@ public partial class CarViewModel : ViewModelBase
         Car.CarInsurances?.Any(ci => ci.IsActive && ci.ValidTo > DateTime.Now) == true
             ? "Yes"
             : "n/a";
+
+    private async Task LoadInsurancesAsync()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
+
+            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceType");
+            if (insurances == null)
+            {
+                ErrorText = "Failed to load insurances from API.";
+                return;
+            }
+
+            AvailableInsuranceTypes = new ObservableCollection<InsuranceViewModel>(
+                insurances.Select(ins => new InsuranceViewModel(ins))
+            );
+        }
+        catch (HttpRequestException ex)
+        {
+            ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
+        }
+        catch (InvalidOperationException ex)
+        {
+            ErrorText = $"Service error: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            ErrorText = $"Failed to load insurances: {ex.Message}";
+        }
+    }
 }

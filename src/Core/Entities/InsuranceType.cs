@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Core.DTOs;
 using Core.Entities;
@@ -14,6 +15,7 @@ public class InsuranceType
 
     public ICollection<CarInsurance> CarInsurances { get; set; } = new List<CarInsurance>();
 
+    [NotMapped]
     [JsonPropertyName("firmDto")]
     public FirmDto FirmDto { get; set; } = null!;
 }

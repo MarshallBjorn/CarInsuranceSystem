@@ -58,7 +58,7 @@ public class CarController : ControllerBase
             var user = await _userService.GetByIdAsync(userId);
             var result = await _carService.AddCarAsync(car, user);
 
-            return result 
+            return result
                 ? CreatedAtAction(nameof(GetCarByVIN), new { vin = car.VIN }, car)
                 : BadRequest("Failed to add car.");
         }
@@ -101,5 +101,18 @@ public class CarController : ControllerBase
         {
             return NotFound(ex.Message);
         }
+    }
+    
+    [HttpPut("{vin}")]
+    public async Task<IActionResult> UpdateCar(string vin, [FromBody] Car updatedCar)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var success = await _carService.UpdateCarDataAsync(vin, updatedCar);
+        if (!success)
+            return NotFound($"Car with VIN '{vin}' not found.");
+
+        return NoContent(); // Or Ok(), depending on your frontend needs
     }
 }

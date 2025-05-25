@@ -26,6 +26,8 @@ public partial class CarViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<InsuranceViewModel> _availableInsuranceTypes = new();
     [ObservableProperty] private InsuranceViewModel? _selectedInsuranceType;
 
+    public bool IsInsuranceRenewable => DaysUntilExpiration.HasValue && DaysUntilExpiration.Value <= 364;
+
     public Car Car { get; private set; }
 
     public void LoadFromCar(Car car)
@@ -97,6 +99,7 @@ public partial class CarViewModel : ViewModelBase
                 });
             }
         }
+        _carPageViewModel.CarEditOpen(this);
     }
 
     private readonly CarPageViewModel _carPageViewModel;
@@ -163,5 +166,23 @@ public partial class CarViewModel : ViewModelBase
         {
             ErrorText = $"Failed to load insurances: {ex.Message}";
         }
+    }
+
+    [RelayCommand]
+    private void RenewInsurance()
+    {
+        foreach (var i in Car.CarInsurances)
+            i.IsActive = false;
+
+        Car.CarInsurances.Add(new CarInsurance
+        {
+            CarVIN = Car.VIN,
+            InsuranceTypeId = SelectedInsuranceType?.ThisInsurance.Id ?? Guid.Empty,
+            ValidFrom = DateTime.Now,
+            ValidTo = DateTime.Now.AddYears(1),
+            IsActive = true
+        });
+
+        LoadFromCar(Car);
     }
 }

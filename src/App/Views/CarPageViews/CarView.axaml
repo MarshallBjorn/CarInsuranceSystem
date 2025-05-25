@@ -23,13 +23,18 @@
         <TextBox Text="{Binding EngineType}" Watermark="Engine Type" />
 
         <ComboBox ItemsSource="{Binding AvailableInsuranceTypes}"
-                  SelectedItem="{Binding SelectedInsuranceType}">
+                  SelectedItem="{Binding SelectedInsuranceType}"
+                  IsEnabled="{Binding IsInsuranceRenewable}">
             <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:InsuranceViewModel">
                     <TextBlock Text="{Binding DisplayName}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+
+        <Button Content="Renew / Pay"
+                    Command="{Binding RenewInsuranceCommand}"
+                    IsVisible="{Binding IsInsuranceRenewable, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}" />
 
         <TextBlock>
             <Run Text="Has Active Insurance: " />

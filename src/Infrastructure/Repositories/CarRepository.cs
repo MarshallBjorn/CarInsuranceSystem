@@ -32,6 +32,7 @@ public class CarRepository : ICarRepository
     {
         if (string.IsNullOrWhiteSpace(vin))
             throw new ArgumentException("VIN cannot be null or empty.", nameof(vin));
+
         if (updatedCar == null)
             throw new ArgumentNullException(nameof(updatedCar));
 
@@ -39,11 +40,11 @@ public class CarRepository : ICarRepository
         if (existingCar == null)
             return false;
 
-        // Update only allowed fields
-        existingCar.Mark = updatedCar.Model;
+        // Update only mutable fields (VIN stays as primary key)
+        existingCar.Mark = updatedCar.Mark;
         existingCar.Model = updatedCar.Model;
         existingCar.ProductionYear = updatedCar.ProductionYear;
-        // Add other fields as needed, but avoid updating VIN
+        existingCar.EngineType = updatedCar.EngineType;
 
         try
         {
@@ -52,7 +53,7 @@ public class CarRepository : ICarRepository
         }
         catch (DbUpdateException ex)
         {
-            // Log ex (e.g., using Serilog)
+            // Optionally log exception
             throw new InvalidOperationException("Failed to update car data.", ex);
         }
     }

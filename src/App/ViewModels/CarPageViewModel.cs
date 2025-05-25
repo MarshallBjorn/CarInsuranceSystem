@@ -166,20 +166,17 @@ public partial class CarPageViewModel : ViewModelBase
     partial void OnCarEditIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
 
     [ObservableProperty]
-    private Car? _selectedCar;
+    private CarViewModel _selectedCar;
 
     public CarPageViewModel()
     {
         try
         {
-            Debug.WriteLine("CarPageViewModel constructor started");
             _ = InitializeAsync();
-            Debug.WriteLine("CarPageViewModel constructor completed");
         }
         catch (Exception ex)
         {
             ErrorText = $"Constructor error: {ex.Message}";
-            Debug.WriteLine($"Constructor error: {ex}");
         }
     }
 
@@ -191,19 +188,16 @@ public partial class CarPageViewModel : ViewModelBase
     {
         try
         {
-            Debug.WriteLine("CarAddSave started");
             var user = AppState.LoggedInUser;
             if (user == null)
             {
                 ErrorText = "No logged-in user.";
-                Debug.WriteLine("CarAddSave: No logged-in user");
                 return;
             }
 
             if (!int.TryParse(ProductionYear, out var productionYear))
             {
                 ErrorText = "Production year must be a valid number.";
-                Debug.WriteLine("CarAddSave: Invalid production year");
                 return;
             }
 
@@ -241,43 +235,39 @@ public partial class CarPageViewModel : ViewModelBase
                 ErrorText = "";
                 MessageText = "Car added successfully.";
                 ResetDefaultCar();
-                Debug.WriteLine("CarAddSave: Car added successfully");
             }
             else
             {
                 ErrorText = string.Join("\n", result.Errors.Select(e => $"- {e.ErrorMessage}"));
-                Debug.WriteLine($"CarAddSave: Validation failed: {ErrorText}");
             }
         }
         catch (HttpRequestException ex)
         {
             ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
-            Debug.WriteLine($"CarAddSave: HttpRequestException: {ex}");
         }
         catch (InvalidOperationException ex)
         {
             ErrorText = $"Service error: {ex.Message}";
-            Debug.WriteLine($"CarAddSave: InvalidOperationException: {ex}");
         }
         catch (Exception ex)
         {
             ErrorText = $"Failed to add car: {ex.Message}";
-            Debug.WriteLine($"CarAddSave: Exception: {ex}");
         }
     }
 
-    public void CarEditOpen(Car car)
+    public void CarEditOpen(CarViewModel carViewModel)
     {
         try
         {
-            Debug.WriteLine($"CarEditOpen: VIN={car?.VIN}");
+            var car = carViewModel.Car;
+            carViewModel.LoadFromCar(car);
+
             CarEditIsOpen ^= true;
-            SelectedCar = car;
+            SelectedCar = carViewModel;
         }
         catch (Exception ex)
         {
             ErrorText = $"Failed to open edit: {ex.Message}";
-            Debug.WriteLine($"CarEditOpen: Exception: {ex}");
         }
     }
 
@@ -285,8 +275,6 @@ public partial class CarPageViewModel : ViewModelBase
     {
         try
         {
-            Debug.WriteLine("LoadCarsAsync started");
-
             var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
             var token = TokenStorage.Token;
@@ -294,7 +282,6 @@ public partial class CarPageViewModel : ViewModelBase
             {
                 ListText = "User is not logged in.";
                 MessageText = "User is not logged in.";
-                Debug.WriteLine("LoadCarsAsync: Missing auth token.");
                 return;
             }
 
@@ -302,11 +289,9 @@ public partial class CarPageViewModel : ViewModelBase
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            Debug.WriteLine("LoadCarsAsync: Fetching api/Car/user/cars");
             var response = await client.GetAsync("api/Car/user");
 
             var json = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine($"LoadCarsAsync: Response JSON={json}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -336,64 +321,54 @@ public partial class CarPageViewModel : ViewModelBase
             );
             ApplyFilter();
             MessageText = cars.Any() ? $"{cars.Length} cars loaded." : "No cars found.";
-            Debug.WriteLine($"LoadCarsAsync: Loaded {cars.Length} cars");
         }
         catch (HttpRequestException ex)
         {
             ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
             MessageText = "Failed to load cars.";
-            Debug.WriteLine($"LoadCarsAsync: HttpRequestException: {ex}");
         }
         catch (InvalidOperationException ex)
         {
             ErrorText = $"Service error: {ex.Message}";
             MessageText = "Failed to load cars.";
-            Debug.WriteLine($"LoadCarsAsync: InvalidOperationException: {ex}");
         }
         catch (Exception ex)
         {
             ErrorText = $"Failed to load cars: {ex.Message}";
             MessageText = "Failed to load cars.";
-            Debug.WriteLine($"LoadCarsAsync: Exception: {ex}");
         }
     }
 
-    // private async Task LoadInsurancesAsync()
-    // {
-    //     try
-    //     {
-    //         Debug.WriteLine("LoadInsurancesAsync started");
-    //         var client = HttpClientFactory.CreateClient("CarInsuranceApi");
-    //         Debug.WriteLine("LoadInsurancesAsync: Fetching api/Insurance");
-    //         var insurances = await client.GetFromJsonAsync<Insurance[]>("api/Insurance");
-    //         if (insurances == null)
-    //         {
-    //             ErrorText = "Failed to load insurances from API.";
-    //             Debug.WriteLine("LoadInsurancesAsync: Insurances array is null");
-    //             return;
-    //         }
+    private async Task LoadInsurancesAsync()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
-    //         Insurances = new ObservableCollection<InsuranceViewModel>(
-    //             insurances.Select(ins => new InsuranceViewModel(ins))
-    //         );
-    //         Debug.WriteLine($"LoadInsurancesAsync: Loaded {insurances.Length} insurances");
-    //     }
-    //     catch (HttpRequestException ex)
-    //     {
-    //         ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
-    //         Debug.WriteLine($"LoadInsurancesAsync: HttpRequestException: {ex}");
-    //     }
-    //     catch (InvalidOperationException ex)
-    //     {
-    //         ErrorText = $"Service error: {ex.Message}";
-    //         Debug.WriteLine($"LoadInsurancesAsync: InvalidOperationException: {ex}");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         ErrorText = $"Failed to load insurances: {ex.Message}";
-    //         Debug.WriteLine($"LoadInsurancesAsync: Exception: {ex}");
-    //     }
-    // }
+            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceType");
+            if (insurances == null)
+            {
+                ErrorText = "Failed to load insurances from API.";
+                return;
+            }
+
+            Insurances = new ObservableCollection<InsuranceViewModel>(
+                insurances.Select(ins => new InsuranceViewModel(ins))
+            );
+        }
+        catch (HttpRequestException ex)
+        {
+            ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
+        }
+        catch (InvalidOperationException ex)
+        {
+            ErrorText = $"Service error: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            ErrorText = $"Failed to load insurances: {ex.Message}";
+        }
+    }
 
     private void ResetDefaultCar()
     {
@@ -419,11 +394,9 @@ public partial class CarPageViewModel : ViewModelBase
         try
         {
             Debug.WriteLine("InitializeAsync started");
-            // await TestGetAllCarsAsync(); // Test API call
             AppState.OnLogin += async () => await LoadCarsAsync();
             await LoadCarsAsync();
-
-            // MessageText = "TestGetAllCarsAsync completed.";
+            await LoadInsurancesAsync();
         }
         catch (Exception ex)
         {

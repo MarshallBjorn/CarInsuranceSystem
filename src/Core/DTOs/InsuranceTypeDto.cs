@@ -7,4 +7,5 @@ public class InsuranceTypeDto
     public string PolicyDescription { get; set; } = string.Empty;
     public string PolicyNumber { get; set; } = string.Empty;
     public Guid FirmId { get; set; }
+    public FirmDto firmDto { get; set; } = null!; 
 }

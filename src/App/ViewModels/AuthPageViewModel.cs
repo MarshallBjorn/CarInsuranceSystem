@@ -5,7 +5,6 @@ using App.Factories;
 using App.Support;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Core.Entities;
 using Core.RequestModels;
 
 namespace App.ViewModels;

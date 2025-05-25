@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using Core.DTOs;
 using Core.Entities;
 
 public class InsuranceType
@@ -11,4 +13,7 @@ public class InsuranceType
     public Firm? Firm { get; set; }
 
     public ICollection<CarInsurance> CarInsurances { get; set; } = new List<CarInsurance>();
+
+    [JsonPropertyName("firmDto")]
+    public FirmDto FirmDto { get; set; } = null!;
 }

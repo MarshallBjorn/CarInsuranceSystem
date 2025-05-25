@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:App.ViewModels.CarPageViewModels"
+             xmlns:converters="clr-namespace:App.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="App.Views.CarPageViews.CarView"
+             x:DataType="vm:CarViewModel">
+    <UserControl.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
+    </UserControl.Resources>
+        
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock Text="Edit Car" FontSize="24" FontWeight="Bold" />
+
+        <TextBox Text="{Binding Vin}" Watermark="VIN" />
+        <TextBox Text="{Binding Mark}" Watermark="Mark" />
+        <TextBox Text="{Binding Model}" Watermark="Model" />
+        <TextBox Text="{Binding ProductionYear}" Watermark="Production Year" />
+        <TextBox Text="{Binding EngineType}" Watermark="Engine Type" />
+
+        <ComboBox ItemsSource="{Binding AvailableInsuranceTypes}"
+                  SelectedItem="{Binding SelectedInsuranceType}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock>
+            <Run Text="Has Active Insurance: " />
+            <Run Text="{Binding HasActiveInsurance}" />
+        </TextBlock>
+
+        <TextBlock>
+            <Run Text="Days Until Expiration: " />
+            <Run Text="{Binding DaysUntilExpiration}" />
+        </TextBlock>
+
+        <Button Content="Save Changes" Command="{Binding SaveChangesCommand}" />
+    </StackPanel>
+</UserControl>

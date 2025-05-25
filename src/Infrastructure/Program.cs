@@ -4,8 +4,6 @@ using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Core.Validators;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using Infrastructure.Mapper;
@@ -31,10 +29,12 @@ builder.Services.AddScoped<IDbContextFactory<AppDbContext>, AppDbContextFactory>
 // Register repositories
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IInsuranceTypeRepository, InsuranceTypeRepository>();
 
 // Register services
 builder.Services.AddScoped<CarService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<InsuranceTypeService>();
 
 // Register validators
 builder.Services.AddValidatorsFromAssemblyContaining<CarValidator>();

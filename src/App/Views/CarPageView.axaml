@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:App.ViewModels"
+             xmlns:conv="clr-namespace:App.Converters"
              xmlns:model="using:Core.Entities"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -10,6 +11,12 @@
              x:Class="App.Views.CarPageView"
              x:DataType="vm:CarPageViewModel"
              x:Name="RootControl">
+
+    <UserControl.Resources>
+        <conv:GreaterThanOneConverter x:Key="GreaterThanOneConverter"/>
+        <conv:LessThanTotalPagesConverter x:Key="LessThanTotalPagesConverter"/>
+    </UserControl.Resources>
+
 
     <UserControl.Styles>
         <Style Selector="Border#AddCarPopup">
@@ -78,7 +85,7 @@
                     <Button Name="AddCarButton" 
                             HorizontalAlignment="Right"
                             Command="{Binding CarAddOpenCommand}"
-                            IsVisible="{Binding IsList}">Add Car</Button>
+                            IsVisible="{Binding ButtonIsVisible}">Add Car</Button>
                 </Grid>
 
                 <!-- Main content area -->
@@ -114,7 +121,7 @@
                                        FontWeight="Bold"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center" />
-                            <ItemsControl ItemsSource="{Binding FilteredCars}" IsVisible="{Binding IsList}">
+                            <ItemsControl ItemsSource="{Binding PagedCars}" IsVisible="{Binding IsList}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel />
@@ -144,6 +151,22 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="10"
+                                        IsVisible="{Binding IsList}">
+                                <Button Content="Previous"
+                                        Command="{Binding PreviousPageCommand}"
+                                        IsEnabled="{Binding HasPreviousPage}" />
+
+                                <TextBlock Text="{Binding CurrentPage}" Margin="10,0"/>
+                                <TextBlock Text=" / " VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding TotalPages}" Margin="10,0"/>
+
+                                <Button Content="Next"
+                                        Command="{Binding NextPageCommand}"
+                                        IsEnabled="{Binding HasNextPage}" /> 
+                            </StackPanel>
                         </StackPanel>
                     </DockPanel>
                 </Border>

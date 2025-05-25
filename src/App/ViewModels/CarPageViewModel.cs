@@ -12,6 +12,7 @@ using Core.Entities;
 using Core.Validators;
 using FluentValidation;
 using App.ViewModels.CarPageViewModels;
+using System.Collections.Generic;
 
 namespace App.ViewModels;
 
@@ -34,24 +35,33 @@ public partial class CarPageViewModel : ViewModelBase
         ApplyFilter();
     }
 
-    private void ApplyFilter()
+    private void ApplyFilter(bool resetPage = true)
     {
         try
         {
             Debug.WriteLine("ApplyFilter called");
+
+            if (resetPage)
+                CurrentPage = 1;
+
+            IEnumerable<CarViewModel> result;
             if (string.IsNullOrWhiteSpace(FilterText))
             {
-                FilteredCars = new ObservableCollection<CarViewModel>(Cars);
-                return;
+                result = Cars;
+            }
+            else
+            {
+                var lower = FilterText.ToLowerInvariant();
+                result = Cars.Where(car =>
+                    (car.Car.Model?.ToLower().Contains(lower) ?? false) ||
+                    (car.Car.Mark?.ToLower().Contains(lower) ?? false) ||
+                    (car.Car.VIN?.ToLower().Contains(lower) ?? false)
+                );
             }
 
-            var lower = FilterText.ToLowerInvariant();
-            var result = Cars.Where(car =>
-                (car.Car.Model?.ToLower().Contains(lower) ?? false) ||
-                (car.Car.Mark?.ToLower().Contains(lower) ?? false) ||
-                (car.Car.VIN?.ToLower().Contains(lower) ?? false)
-            );
             FilteredCars = new ObservableCollection<CarViewModel>(result);
+
+            UpdatePagedCars();
         }
         catch (Exception ex)
         {
@@ -60,12 +70,67 @@ public partial class CarPageViewModel : ViewModelBase
         }
     }
 
+    private void UpdatePagedCars()
+    {
+        try
+        {
+            if (FilteredCars == null || FilteredCars.Count == 0)
+            {
+                PagedCars = new ObservableCollection<CarViewModel>();
+                TotalPages = 1;
+                return;
+            }
+
+            TotalPages = (int)Math.Ceiling((double)FilteredCars.Count / ItemsPerPage);
+
+            // Clamp current page within valid range
+            if (CurrentPage > TotalPages)
+                CurrentPage = TotalPages;
+
+            var items = FilteredCars
+                .Skip((CurrentPage - 1) * ItemsPerPage)
+                .Take(ItemsPerPage);
+
+            PagedCars = new ObservableCollection<CarViewModel>(items);
+        }
+        catch (Exception ex)
+        {
+            ErrorText = $"Pagination error: {ex.Message}";
+            Debug.WriteLine($"UpdatePagedCars: Exception: {ex}");
+        }
+    }
+
+    public bool HasNextPage => CurrentPage < TotalPages;
+    public bool HasPreviousPage => CurrentPage > 1;
+
+    [RelayCommand]
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+            CurrentPage++;
+    }
+
+    [RelayCommand]
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+            CurrentPage--;
+    }
+
+    partial void OnCurrentPageChanged(int value)
+    {
+        UpdatePagedCars();
+        OnPropertyChanged(nameof(HasNextPage));
+        OnPropertyChanged(nameof(HasPreviousPage));
+    }
+
     [ObservableProperty] private bool _carAddIsOpen = false;
 
     [ObservableProperty] private bool _carEditIsOpen = false;
 
     [ObservableProperty] private bool _isList = false;
     [ObservableProperty] private bool _isEmpty = true;
+    [ObservableProperty] private bool _buttonIsVisible = false;
 
     [ObservableProperty]
     private string _errorText = "";
@@ -84,6 +149,18 @@ public partial class CarPageViewModel : ViewModelBase
     [ObservableProperty] private string _productionYear = "";
     [ObservableProperty] private string _engineType = "";
     [ObservableProperty] private InsuranceViewModel? _selectedInsurance;
+
+    [ObservableProperty]
+    private int _currentPage = 1;
+
+    [ObservableProperty]
+    private int _itemsPerPage = 10;
+
+    [ObservableProperty]
+    private int _totalPages;
+
+    [ObservableProperty]
+    private ObservableCollection<CarViewModel> _pagedCars = new();
 
     partial void OnCarAddIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
     partial void OnCarEditIsOpenChanged(bool value) => OnPropertyChanged(nameof(IsAnyPopupOpen));
@@ -210,6 +287,7 @@ public partial class CarPageViewModel : ViewModelBase
                 return;
             }
 
+            ButtonIsVisible = true;
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 

@@ -10,5 +10,6 @@ public class ViewModelBase : ObservableObject
     protected IHttpClientFactory HttpClientFactory => AppState.ServiceProvider?.GetRequiredService<IHttpClientFactory>()
         ?? throw new InvalidOperationException("ServiceProvider not initialized.");
 
-    protected AppState AppState => AppState.ServiceProvider?.GetRequiredService<AppState>();
+    protected AppState AppState => AppState.ServiceProvider?.GetRequiredService<AppState>()
+    ?? throw new InvalidOperationException("ServiceProvider not initialized.");
 }

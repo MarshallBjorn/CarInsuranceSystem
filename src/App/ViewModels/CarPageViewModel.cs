@@ -255,7 +255,7 @@ public partial class CarPageViewModel : ViewModelBase
         }
     }
 
-    public void CarEditOpen(CarViewModel carViewModel)
+    public void CarEditOpen(CarViewModel carViewModel, bool IsSuccess=false)
     {
         try
         {
@@ -264,6 +264,8 @@ public partial class CarPageViewModel : ViewModelBase
 
             CarEditIsOpen ^= true;
             SelectedCar = carViewModel;
+            if (IsSuccess)
+                _ = LoadCarsAsync();
         }
         catch (Exception ex)
         {

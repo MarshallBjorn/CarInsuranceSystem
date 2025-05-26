@@ -103,6 +103,7 @@ public class CarController : ControllerBase
         }
     }
     
+    [Authorize]
     [HttpPut("{vin}")]
     public async Task<IActionResult> UpdateCar(string vin, [FromBody] Car updatedCar)
     {

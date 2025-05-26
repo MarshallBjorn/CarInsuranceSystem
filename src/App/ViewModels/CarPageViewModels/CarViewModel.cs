@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -44,7 +45,6 @@ public partial class CarViewModel : ViewModelBase
 
         if (activeInsurance?.InsuranceType != null)
         {
-            // Patch missing firm from preloaded insurance list
             var fullInsurance = _availableInsuranceTypes.FirstOrDefault(vm =>
                 vm.ThisInsurance.Id == activeInsurance.InsuranceType.Id);
 
@@ -99,7 +99,36 @@ public partial class CarViewModel : ViewModelBase
                 });
             }
         }
-        _carPageViewModel.CarEditOpen(this);
+
+        foreach (var ci in Car.CarInsurances)
+        {
+            ci.Car = null;
+            ci.InsuranceType = null;
+        }
+
+        try
+        {
+            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
+
+            var response = await client.PutAsJsonAsync($"api/Car/{Vin}", Car);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                ErrorText = $"Failed to save car changes. Status: {response.StatusCode}\n{content}";
+                return;
+            }
+
+            _carPageViewModel.CarEditOpen(this, true);
+        }
+        catch (HttpRequestException ex)
+        {
+            ErrorText = $"Connection error: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            ErrorText = $"Unexpected error: {ex.Message}";
+        }
     }
 
     private readonly CarPageViewModel _carPageViewModel;

@@ -16,7 +16,7 @@
 
         <TextBlock Text="{Binding ErrorText}" />
 
-        <TextBox Text="{Binding Vin}" Watermark="VIN" />
+        <TextBox Text="{Binding Vin}" Watermark="VIN" IsEnabled="False"/>
         <TextBox Text="{Binding Mark}" Watermark="Mark" />
         <TextBox Text="{Binding Model}" Watermark="Model" />
         <TextBox Text="{Binding ProductionYear}" Watermark="Production Year" />

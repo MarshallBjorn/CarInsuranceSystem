@@ -58,9 +58,33 @@ public class CarController : ControllerBase
             var user = await _userService.GetByIdAsync(userId);
             var result = await _carService.AddCarAsync(car, user);
 
-            return result
-                ? CreatedAtAction(nameof(GetCarByVIN), new { vin = car.VIN }, car)
-                : BadRequest("Failed to add car.");
+            if (result)
+            {
+                // Map the Car entity to a CarDto
+                var carDto = new CreateCarDto
+                {
+                    VIN = car.VIN,
+                    Mark = car.Mark,
+                    Model = car.Model,
+                    ProductionYear = car.ProductionYear,
+                    EngineType = car.EngineType,
+                    CarInsurances = car.CarInsurances.Select(ci => new CarInsuranceCreateDto
+                    {
+                        Id = ci.Id,
+                        CarVIN = ci.CarVIN,
+                        InsuranceTypeId = ci.InsuranceTypeId,
+                        ValidFrom = ci.ValidFrom,
+                        ValidTo = ci.ValidTo,
+                        IsActive = ci.IsActive,
+                    }).ToList()
+                };
+
+                return CreatedAtAction(nameof(GetCarByVIN), new { vin = car.VIN }, carDto);
+            }
+            else
+            {
+                return BadRequest("Failed to add car.");
+            }
         }
         catch (ValidationException ex)
         {
@@ -73,6 +97,14 @@ public class CarController : ControllerBase
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(500, ex.Message); // Or a more specific status code
+        }
+        catch (Exception ex) // Catch any other unexpected errors
+        {
+            return StatusCode(500, "An unexpected error occurred: " + ex.Message);
         }
     }
 

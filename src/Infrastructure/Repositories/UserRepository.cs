@@ -58,8 +58,20 @@ public class UserRepository : IUserRepository
     public async Task<bool> UpdateUserAsync(User updatedUser)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        context.Users.Update(updatedUser);
-        var result = await context.SaveChangesAsync();
-        return result > 0;
+
+        var existingUser = await context.Users.FindAsync(updatedUser.Id);
+        if (existingUser == null)
+        {
+            return false; // User doesn't exist
+        }
+
+        // Update fields manually
+        existingUser.FirstName = updatedUser.FirstName;
+        existingUser.LastName = updatedUser.LastName;
+        existingUser.Email = updatedUser.Email;
+        existingUser.BirthDate = updatedUser.BirthDate;
+
+        await context.SaveChangesAsync();
+        return true;
     }
 }

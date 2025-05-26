@@ -25,7 +25,7 @@
     </Style>
   </UserControl.Styles>
 
-  <Grid Margin="40" RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*">
+  <Grid Margin="20" RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*">
     <!-- Header -->
     <StackPanel Grid.Row="0" HorizontalAlignment="Center" Spacing="8">
       <TextBlock Text="{Binding WelcomeMessage}" FontSize="26" FontWeight="Bold" />

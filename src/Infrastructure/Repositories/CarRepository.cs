@@ -66,6 +66,9 @@ public class CarRepository : ICarRepository
             throw new ArgumentNullException(nameof(user));
 
         var existingCar = await _context.Cars
+            .Include(c => c.CarInsurances)
+                .ThenInclude(ci => ci.InsuranceType)
+                    .ThenInclude(it => it.Firm) // optional: if you want the whole chain
             .FirstOrDefaultAsync(c => c.VIN == car.VIN);
 
         if (existingCar != null)

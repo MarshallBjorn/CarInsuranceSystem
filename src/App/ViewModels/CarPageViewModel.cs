@@ -181,7 +181,10 @@ public partial class CarPageViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void CarAddOpen() => CarAddIsOpen ^= true;
+    private void CarAddOpen() {
+        ErrorText = "";
+        CarAddIsOpen ^= true;
+    } 
 
     [RelayCommand]
     private async Task CarAddSave()
@@ -206,9 +209,9 @@ public partial class CarPageViewModel : ViewModelBase
                 Id = Guid.NewGuid(),
                 CarVIN = Vin,                  // the VIN of the car you're creating
                 InsuranceTypeId = SelectedInsurance.ThisInsurance.Id,
-                InsuranceType = SelectedInsurance.ThisInsurance,
-                ValidFrom = DateTime.Now,      // set as appropriate
-                ValidTo = DateTime.Now.AddYears(1),  // example: valid for 1 year
+                // InsuranceType = SelectedInsurance.ThisInsurance,
+                ValidFrom = DateTime.UtcNow,      // set as appropriate
+                ValidTo = DateTime.UtcNow.AddYears(1),  // example: valid for 1 year
                 IsActive = true
             };
 
@@ -229,7 +232,13 @@ public partial class CarPageViewModel : ViewModelBase
                 var client = HttpClientFactory.CreateClient("CarInsuranceApi");
                 Debug.WriteLine($"CarAddSave: Sending POST to api/Car?userId={user.Id}");
                 var response = await client.PostAsJsonAsync($"api/Car?userId={user.Id}", newCar);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    ErrorText = $"{response.StatusCode}";
+                    Vin = $"{json}";
+                    return;
+                }
                 await LoadCarsAsync();
                 CarAddIsOpen = false;
                 ErrorText = "";
@@ -283,7 +292,6 @@ public partial class CarPageViewModel : ViewModelBase
             if (string.IsNullOrWhiteSpace(token))
             {
                 ListText = "User is not logged in.";
-                MessageText = "User is not logged in.";
                 return;
             }
 
@@ -322,7 +330,6 @@ public partial class CarPageViewModel : ViewModelBase
                 cars.Select(car => new CarViewModel(car, this))
             );
             ApplyFilter();
-            MessageText = cars.Any() ? $"{cars.Length} cars loaded." : "No cars found.";
         }
         catch (HttpRequestException ex)
         {

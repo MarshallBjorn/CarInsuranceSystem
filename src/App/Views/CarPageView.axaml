@@ -81,7 +81,6 @@
                         Your car list!
                     </TextBlock>
                     <TextBlock VerticalAlignment="Top" Text="{Binding MessageText}" />
-                    <TextBlock VerticalAlignment="Bottom" Text="{Binding ErrorText}" />
                     <Button Name="AddCarButton" 
                             HorizontalAlignment="Right"
                             Command="{Binding CarAddOpenCommand}"

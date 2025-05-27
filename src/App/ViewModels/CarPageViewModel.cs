@@ -410,7 +410,6 @@ public partial class CarPageViewModel : ViewModelBase
         catch (Exception ex)
         {
             ErrorText = $"Initialization failed: {ex.Message}";
-            Debug.WriteLine($"InitializeAsync: Exception: {ex}");
         }
     }
 }

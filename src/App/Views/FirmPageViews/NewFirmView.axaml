@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:App.ViewModels.FirmPageViewModels"
+             xmlns:converters="clr-namespace:App.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="App.Views.FirmPageViews.NewFirmView"
+             x:DataType="vm:NewFirmViewModel">
+
+    <StackPanel Margin="30" Spacing="10">
+    <TextBlock Text="Add a New Firm" FontSize="22" FontWeight="Bold" Margin="0 0 0 20" />
+
+    <!-- Name Field -->
+    <TextBlock Text="Firm Name" />
+    <TextBox Text="{Binding Name, Mode=TwoWay}" Width="300" />
+    <TextBlock Text="{Binding NameErrors}" Foreground="Red" FontSize="12" />
+
+    <!-- Country Code Field -->
+    <TextBlock Text="Country Code" />
+    <TextBox Text="{Binding CountryCode, Mode=TwoWay}" Width="300" />
+    <TextBlock Text="{Binding CountryCodeErrors}" Foreground="Red" FontSize="12" />
+
+    <!-- Submit Button -->
+    <Button Command="{Binding CreateFirmCommand}" Content="Add Firm" Width="120" Margin="0 10 0 0" />
+
+    <!-- Message Feedback -->
+    <TextBlock Text="{Binding MessageText}" Foreground="Orange" FontWeight="Bold" Margin="0 10 0 0"/>
+  </StackPanel>
+</UserControl>

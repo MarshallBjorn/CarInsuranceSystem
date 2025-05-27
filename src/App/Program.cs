@@ -2,6 +2,7 @@
 using App.Support;
 using App.ViewModels;
 using App.ViewModels.AuthPageViewModels;
+using App.ViewModels.FirmPageViewModels;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -34,6 +35,7 @@ class Program
             });
 
             services.AddSingleton<IAuthViewModelFactory, AuthModelFactory>();
+            services.AddSingleton<IFirmViewModelFactory, FirmViewModelFactory>();
 
             services.AddSingleton<AppState>();
             services.AddSingleton<HomePageViewModel>();
@@ -44,6 +46,8 @@ class Program
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();
             services.AddTransient<UserPageViewModel>();
+            services.AddTransient<FirmViewModel>();
+            services.AddTransient<NewFirmViewModel>();
             Debug.WriteLine("DI services registered");
 
             var serviceProvider = services.BuildServiceProvider();

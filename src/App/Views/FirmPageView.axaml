@@ -2,8 +2,48 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="App.Views.FirmPageView">
+             xmlns:vm="clr-namespace:App.ViewModels"
+             xmlns:conv="clr-namespace:App.Converters"
+             xmlns:model="using:Core.Entities"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="App.Views.FirmPageView"
+             x:DataType="vm:FirmPageViewModel"
+             x:Name="RootControl">
+  <UserControl.Styles>
+    <Style Selector="Border#OverlayPanel">
+      <Setter Property="Opacity" Value="0"/>
+      <Setter Property="Transitions">
+          <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+          </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="Border#OverlayPanel.open">
+      <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+
+    <Style Selector="Border#Popup">
+      <Setter Property="Width" Value="0"/>
+      <Setter Property="Height" Value="0"/>
+      <Setter Property="Opacity" Value="0"/>
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Width" Duration="0:0:0.3" Easing="QuadraticEaseInOut"/>
+          <DoubleTransition Property="Height" Duration="0:0:0.3" Easing="QuadraticEaseInOut"/>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="QuadraticEaseInOut"/>
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="Border#Popup.open">
+      <Setter Property="Width" Value="800"/>
+      <Setter Property="Height" Value="600"/>
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+  </UserControl.Styles>
   
   <Grid>
     <ScrollViewer>
@@ -12,13 +52,116 @@
             Margin="20">
         <Grid Grid.Row="0">
           <TextBlock Grid.Row="0"
-                   Text="Welcome to Auth Page"
-                   FontSize="24"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0 10" />
+                     Text="Welcome to Firm Page"
+                     FontSize="24"
+                     FontWeight="Bold"
+                     HorizontalAlignment="Center"
+                     Margin="0 10" />
+
+          <TextBlock VerticalAlignment="Top" Text="{Binding MessageText}" />
+          <Button Command="{Binding FirmAddOpenCommand}"
+                  HorizontalAlignment="Right">Add Firm</Button>
         </Grid>
+
+        <Border Grid.Row="1" Background="#2d323c" CornerRadius="10">
+          <DockPanel Margin="10">
+            <TextBox DockPanel.Dock="Top"
+                    Text="{CompiledBinding FilterText}" 
+                    Watermark="Search..."
+                    IsVisible="{Binding IsList}"
+                    HorizontalAlignment="Center"
+                    Margin="0 0 0 10"
+                    Width="500"/>
+
+            <Grid DockPanel.Dock="Top" Background="#1e1e1e" IsVisible="{Binding IsList}">
+              <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="3*" />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="1*" />
+                  <ColumnDefinition Width="1*" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock Grid.Column="0" Text="Name" FontWeight="Bold" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Country" FontWeight="Bold" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="2" Text="Added at" FontWeight="Bold" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="3" Text="Number of types" FontWeight="Bold" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="4" Text="" FontWeight="Bold" HorizontalAlignment="Center" />
+            </Grid>
+
+            <StackPanel>
+              <TextBlock Text="{Binding ListText}" 
+                        IsVisible="{Binding IsEmpty}"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+              <ItemsControl ItemsSource="{Binding Firms}" IsVisible="{Binding IsList}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                      <StackPanel />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:FirmPageViewModels.FirmViewModel">
+                    <Border Margin="0,0,0,5" Padding="8" Background="#2D2D2D" CornerRadius="4">
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="3*" />
+                          <ColumnDefinition Width="2*" />
+                          <ColumnDefinition Width="2*" />
+                          <ColumnDefinition Width="1*" />
+                          <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" 
+                                    Text="{Binding Firm.Name}"
+                                    TextTrimming="CharacterEllipsis" 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" 
+                                    Text="{Binding Firm.CountryCode}"
+                                    TextTrimming="CharacterEllipsis" 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" 
+                                    Text="placeholder"
+                                    TextTrimming="CharacterEllipsis" 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="3" 
+                                    Text="placeholder"
+                                    TextTrimming="CharacterEllipsis" 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center"/>
+                        <Button Content="EDIT"
+                                Grid.Column="4"
+                                VerticalAlignment="Center"/>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </DockPanel>
+        </Border>
       </Grid>
     </ScrollViewer>
+
+    <Border Name="OverlayPanel"
+            Background="#000000"
+            Classes.open="{Binding IsAnyPopupOpen}"
+            IsHitTestVisible="{Binding IsAnyPopupOpen}"
+            PointerPressed="InputElement_OnPointerPressed"
+            ZIndex="1"/>
+    <Border Name="Popup"
+            Classes.open="{Binding IsAnyPopupOpen}"
+            Background="#1e1e1e"
+            CornerRadius="5"
+            ZIndex="2">
+            
+      <ContentControl Content="{Binding CurrentPopup}" />
+    </Border>
   </Grid>
 </UserControl>

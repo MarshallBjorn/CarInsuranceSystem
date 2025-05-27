@@ -136,6 +136,7 @@
                                     VerticalAlignment="Center" 
                                     HorizontalAlignment="Center"/>
                         <Button Content="EDIT"
+                                Command="{Binding ShowEditCommand}"
                                 Grid.Column="4"
                                 VerticalAlignment="Center"/>
                       </Grid>

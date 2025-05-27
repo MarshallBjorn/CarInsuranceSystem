@@ -67,7 +67,7 @@ public partial class FirmPageViewModel : ViewModelBase
             }
 
             Firms = new ObservableCollection<FirmViewModel>(
-                firms.Select(firm => new FirmViewModel(firm))
+                firms.Select(firm => _factory.CreateEdit(firm))
             );
         }
         catch (Exception ex)
@@ -83,6 +83,21 @@ public partial class FirmPageViewModel : ViewModelBase
         firmAddVm.OnFirmAdded = ClosePopup;
         CurrentPopup = firmAddVm;
         IsAnyPopupOpen ^= true;
+    }
+
+    public void FirmEditOpen(FirmViewModel firmViewModel)
+    {
+        try
+        {
+            var firmEditVm = firmViewModel;
+            firmEditVm.OnFirmEdited = ClosePopup;
+            CurrentPopup = firmViewModel;
+            IsAnyPopupOpen ^= true;
+        }
+        catch (Exception ex)
+        {
+            MessageText = $"Failed to open edit: {ex.Message}";
+        }
     }
 
     private void ClosePopup()

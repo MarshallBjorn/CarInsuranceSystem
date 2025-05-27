@@ -1,4 +1,6 @@
 using System;
+using System.Net.Http;
+using App.ViewModels;
 using App.ViewModels.FirmPageViewModels;
 using Core.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +17,11 @@ public class FirmViewModelFactory : IFirmViewModelFactory
 
     public FirmViewModel CreateEdit(Firm firm)
     {
-        var vm = new FirmViewModel(firm);
-        return vm;
+        var firmPageVm = AppState.ServiceProvider?.GetRequiredService<FirmPageViewModel>()
+            ?? throw new ArgumentNullException(nameof(FirmPageViewModel));
+        var clientFactory = AppState.ServiceProvider?.GetRequiredService<IHttpClientFactory>()
+            ?? throw new ArgumentNullException(nameof(IHttpClientFactory));
+
+        return new FirmViewModel(firm, firmPageVm, clientFactory);
     }
 }

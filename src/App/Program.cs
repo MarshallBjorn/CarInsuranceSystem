@@ -39,7 +39,7 @@ class Program
             services.AddSingleton<HomePageViewModel>();
             services.AddSingleton<CarPageViewModel>();
             services.AddSingleton<AuthPageViewModel>();
-            services.AddSingleton<AboutPageViewModel>();
+            services.AddSingleton<FirmPageViewModel>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<RegisterViewModel>();

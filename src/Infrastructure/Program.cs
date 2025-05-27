@@ -29,11 +29,13 @@ builder.Services.AddScoped<IDbContextFactory<AppDbContext>, AppDbContextFactory>
 // Register repositories
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFirmRepository, FirmRepository>();
 builder.Services.AddScoped<IInsuranceTypeRepository, InsuranceTypeRepository>();
 
 // Register services
 builder.Services.AddScoped<CarService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IFirmService, FirmService>();
 builder.Services.AddScoped<InsuranceTypeService>();
 
 // Register validators

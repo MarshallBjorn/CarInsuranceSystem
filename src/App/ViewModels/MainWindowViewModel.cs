@@ -35,7 +35,7 @@ public partial class MainWindowViewModel : ViewModelBase
         new ListItemTemplate(typeof(HomePageViewModel), "HomeRegular"),
         new ListItemTemplate(typeof(CarPageViewModel), "Vehicle"),
         new ListItemTemplate(typeof(AuthPageViewModel), "PersonAccount"),
-        new ListItemTemplate(typeof(AboutPageViewModel), "Info")
+        new ListItemTemplate(typeof(FirmPageViewModel), "Firmc")
     };
 
     [RelayCommand]

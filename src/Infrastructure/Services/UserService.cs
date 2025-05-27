@@ -81,8 +81,12 @@ public class UserService
         if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
             throw new ArgumentException("Current password is incorrect.");
 
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-        await _repository.UpdateUserAsync(user);
+        var newHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        var success = await _repository.UpdatePasswordAsync(email, newHash);
+
+        if (!success)
+            throw new InvalidOperationException("Failed to update password.");
+
         return true;
     }
 }

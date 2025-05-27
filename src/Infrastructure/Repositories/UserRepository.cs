@@ -62,7 +62,7 @@ public class UserRepository : IUserRepository
         var existingUser = await context.Users.FindAsync(updatedUser.Id);
         if (existingUser == null)
         {
-            return false; // User doesn't exist
+            return false;
         }
 
         // Update fields manually
@@ -71,6 +71,23 @@ public class UserRepository : IUserRepository
         existingUser.Email = updatedUser.Email;
         existingUser.BirthDate = updatedUser.BirthDate;
 
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UpdatePasswordAsync(string email, string newPasswordHash)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null)
+        {
+            return false;
+        }
+
+        user.PasswordHash = newPasswordHash;
+
+        context.Users.Update(user);
         await context.SaveChangesAsync();
         return true;
     }

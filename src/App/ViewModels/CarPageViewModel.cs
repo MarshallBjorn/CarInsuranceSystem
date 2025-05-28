@@ -25,7 +25,7 @@ public partial class CarPageViewModel : ViewModelBase
     private ObservableCollection<CarViewModel> _filteredCars = new();
 
     [ObservableProperty]
-    public ObservableCollection<InsuranceViewModel>? _insurances;
+    private ObservableCollection<InsuranceViewModel>? _insurances;
 
     [ObservableProperty]
     private string _filterText = "";
@@ -354,28 +354,34 @@ public partial class CarPageViewModel : ViewModelBase
         {
             var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
-            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceType");
+            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceTypes");
             if (insurances == null)
             {
-                ErrorText = "Failed to load insurances from API.";
+                MessageText = "Failed to load insurances from API.";
                 return;
             }
 
             Insurances = new ObservableCollection<InsuranceViewModel>(
                 insurances.Select(ins => new InsuranceViewModel(ins))
             );
+
+            if (!Insurances.Any())
+            {
+                MessageText = "Nuh uh";
+                return;
+            }
         }
         catch (HttpRequestException ex)
         {
-            ErrorText = $"API error: {ex.StatusCode} - {ex.Message}";
+            MessageText = $"API error: {ex.StatusCode} - {ex.Message}";
         }
         catch (InvalidOperationException ex)
         {
-            ErrorText = $"Service error: {ex.Message}";
+            MessageText = $"Service error: {ex.Message}";
         }
         catch (Exception ex)
         {
-            ErrorText = $"Failed to load insurances: {ex.Message}";
+            MessageText = $"Failed to load insurances: {ex.Message}";
         }
     }
 

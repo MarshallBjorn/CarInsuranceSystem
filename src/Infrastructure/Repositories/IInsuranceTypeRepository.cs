@@ -2,5 +2,9 @@ namespace Infrastructure.Repositories;
 
 public interface IInsuranceTypeRepository
 {
-    Task<IEnumerable<InsuranceType>> GetAllAsync();
+    Task<List<InsuranceType>> GetAllWithFirmAsync();
+    Task<InsuranceType?> GetByIdAsync(Guid id);
+    Task<InsuranceType> AddAsync(InsuranceType entity);
+    Task UpdateAsync(InsuranceType entity);
+    Task DeleteAsync(Guid id);
 }

@@ -36,7 +36,7 @@ builder.Services.AddScoped<IInsuranceTypeRepository, InsuranceTypeRepository>();
 builder.Services.AddScoped<CarService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IFirmService, FirmService>();
-builder.Services.AddScoped<InsuranceTypeService>();
+builder.Services.AddScoped<IInsuranceTypeService, InsuranceTypeService>();
 
 // Register validators
 builder.Services.AddValidatorsFromAssemblyContaining<CarValidator>();

@@ -18,4 +18,8 @@ public class InsuranceType
     [NotMapped]
     [JsonPropertyName("firmDto")]
     public FirmDto FirmDto { get; set; } = null!;
+
+    [NotMapped]
+    [JsonPropertyName("firmInsuranceDto")]
+    public FirmInsuranceDto FirmInsuranceDto { get; set; } = null!;
 }

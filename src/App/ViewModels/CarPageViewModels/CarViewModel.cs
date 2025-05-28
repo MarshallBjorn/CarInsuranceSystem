@@ -172,7 +172,7 @@ public partial class CarViewModel : ViewModelBase
         {
             var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
-            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceType");
+            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceTypes");
             if (insurances == null)
             {
                 ErrorText = "Failed to load insurances from API.";

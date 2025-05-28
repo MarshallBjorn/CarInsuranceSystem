@@ -5,30 +5,46 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-public class InsuranceTypeController : ControllerBase
+public class InsuranceTypesController : ControllerBase
 {
-    private readonly InsuranceTypeService _service;
-    private readonly IMapper _mapper;
+    private readonly IInsuranceTypeService _service;
 
-    public InsuranceTypeController(InsuranceTypeService service, IMapper mapper)
+    public InsuranceTypesController(IInsuranceTypeService service)
     {
         _service = service;
-        _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<InsuranceType>>> GetAll()
+    public async Task<ActionResult<List<InsuranceTypeDto>>> Get()
     {
-        try
-        {
-            var types = await _service.GetAllInsuranceTypesAsync();
+        return Ok(await _service.GetAllAsync());
+    }
 
-            var typesDto = _mapper.Map<List<InsuranceTypeDto>>(types);
-            return Ok(typesDto);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+    [HttpGet("{id}")]
+    public async Task<ActionResult<InsuranceTypeDto>> Get(Guid id)
+    {
+        var result = await _service.GetByIdAsync(id);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<InsuranceTypeDto>> Post(CreateUpdateInsuranceTypeDto dto)
+    {
+        var created = await _service.CreateAsync(dto);
+        return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(Guid id, CreateUpdateInsuranceTypeDto dto)
+    {
+        await _service.UpdateAsync(id, dto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        await _service.DeleteAsync(id);
+        return NoContent();
     }
 }

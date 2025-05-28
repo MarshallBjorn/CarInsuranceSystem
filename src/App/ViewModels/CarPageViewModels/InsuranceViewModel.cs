@@ -18,7 +18,7 @@ public partial class InsuranceViewModel : ViewModelBase
 
     public void DisplayNameCreator()
     {
-        var firm = ThisInsurance.FirmDto ?? throw new Exception("No firm asigned");
+        var firm = ThisInsurance.FirmInsuranceDto ?? throw new Exception("No firm asigned");
 
         DisplayName = $"{firm.Name} {ThisInsurance.Firm}";
     }

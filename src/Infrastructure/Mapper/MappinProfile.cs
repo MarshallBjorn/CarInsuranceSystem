@@ -12,8 +12,10 @@ public class MappingProfile : Profile
         CreateMap<Car, CarDto>();
         CreateMap<UserCar, UserCarDto>();
         CreateMap<CarInsurance, CarInsuranceDto>();
+        CreateMap<Firm, FirmInsuranceDto>();
         CreateMap<InsuranceType, InsuranceTypeDto>()
-            .ForMember(dest => dest.firmDto, opt => opt.MapFrom(src => src.Firm));
+            .ForMember(dest => dest.FirmInsuranceDto, opt => opt.MapFrom(src => src.Firm));
+        CreateMap<CreateUpdateInsuranceTypeDto, InsuranceType>();
         CreateMap<Firm, FirmDto>();
     }
 }

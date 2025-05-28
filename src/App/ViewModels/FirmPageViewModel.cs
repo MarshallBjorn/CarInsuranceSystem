@@ -100,6 +100,22 @@ public partial class FirmPageViewModel : ViewModelBase
         }
     }
 
+    public void InsuranceEditOpen(InsuranceTypeViewModel insuranceTypeViewModel)
+    {
+        try
+        {
+            var insuranceEditVm = insuranceTypeViewModel;
+            insuranceEditVm.OnInsuranceEdited = ClosePopup;
+            CurrentPopup = insuranceEditVm;
+            IsAnyPopupOpen ^= true;
+        }
+        catch (Exception ex)
+        {
+            MessageText = $"Failed to open edit: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
     private void ClosePopup()
     {
         _ = LoadFirmsAsync();

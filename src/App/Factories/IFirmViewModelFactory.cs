@@ -7,4 +7,5 @@ public interface IFirmViewModelFactory
 {
     NewFirmViewModel CreateAdd();
     FirmViewModel CreateEdit(Firm firm);
+    InsuranceTypeViewModel CreateInsuranceEdit(InsuranceType insuranceType, FirmViewModel firm);
 }

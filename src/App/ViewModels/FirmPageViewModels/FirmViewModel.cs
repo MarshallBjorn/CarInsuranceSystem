@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using App.Factories;
 using App.Validators;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace App.ViewModels.FirmPageViewModels;
 
@@ -14,11 +18,15 @@ public partial class FirmViewModel : ViewModelBase
 {
     private readonly FirmPageViewModel _firmPageViewModel;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IFirmViewModelFactory _factory;
+
     public Action? OnFirmEdited { get; set; }
 
     [ObservableProperty] private string _name;
     [ObservableProperty] private string _countryCode;
     [ObservableProperty] private string _messageText = string.Empty;
+
+    [ObservableProperty] private ObservableCollection<InsuranceTypeViewModel> _insurances;
 
     private readonly List<string> _nameErrors = new();
     private readonly List<string> _countryCodeErrors = new();
@@ -33,8 +41,14 @@ public partial class FirmViewModel : ViewModelBase
         Firm = firm;
         _firmPageViewModel = firmPageViewModel;
         _httpClientFactory = httpClientFactory;
+        _factory = AppState.ServiceProvider?.GetRequiredService<IFirmViewModelFactory>()
+            ?? throw new ArgumentNullException(nameof(IFirmViewModelFactory));
         _name = Firm.Name;
         _countryCode = Firm.CountryCode;
+
+        Insurances = new ObservableCollection<InsuranceTypeViewModel>(
+            Firm.InsuranceTypes.Select(insurance => _factory.CreateInsuranceEdit(insurance, this))
+        );
     }
 
     [RelayCommand]

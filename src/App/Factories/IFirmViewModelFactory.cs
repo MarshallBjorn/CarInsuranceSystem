@@ -1,3 +1,4 @@
+using System;
 using App.ViewModels.FirmPageViewModels;
 using Core.Entities;
 
@@ -7,5 +8,6 @@ public interface IFirmViewModelFactory
 {
     NewFirmViewModel CreateAdd();
     FirmViewModel CreateEdit(Firm firm);
+    NewInsuranceTypeViewModel CreateInsuranceAdd();
     InsuranceTypeViewModel CreateInsuranceEdit(InsuranceType insuranceType, FirmViewModel firm);
 }

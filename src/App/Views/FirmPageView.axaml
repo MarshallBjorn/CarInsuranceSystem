@@ -59,8 +59,14 @@
                      Margin="0 10" />
 
           <TextBlock VerticalAlignment="Top" Text="{Binding MessageText}" />
-          <Button Command="{Binding FirmAddOpenCommand}"
-                  HorizontalAlignment="Right">Add Firm</Button>
+          <StackPanel>
+            
+            <Button Command="{Binding InsuranceAddOpenCommand}"
+                    HorizontalAlignment="Left">Add Insurance</Button>
+            
+            <Button Command="{Binding FirmAddOpenCommand}"
+                    HorizontalAlignment="Right">Add Firm</Button>
+          </StackPanel>
         </Grid>
 
         <Border Grid.Row="1" Background="#2d323c" CornerRadius="10">

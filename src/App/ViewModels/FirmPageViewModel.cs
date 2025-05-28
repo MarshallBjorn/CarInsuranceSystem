@@ -100,6 +100,15 @@ public partial class FirmPageViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
+    public void InsuranceAddOpen()
+    {
+        var insuranceAddVm = _factory.CreateInsuranceAdd();
+        insuranceAddVm.OnNewInsuranceAdd = ClosePopup;
+        CurrentPopup = insuranceAddVm;
+        IsAnyPopupOpen ^= true;
+    }
+
     public void InsuranceEditOpen(InsuranceTypeViewModel insuranceTypeViewModel)
     {
         try

@@ -48,6 +48,7 @@ class Program
             services.AddTransient<UserPageViewModel>();
             services.AddTransient<FirmViewModel>();
             services.AddTransient<NewFirmViewModel>();
+            services.AddTransient<NewInsuranceTypeViewModel>();
             Debug.WriteLine("DI services registered");
 
             var serviceProvider = services.BuildServiceProvider();

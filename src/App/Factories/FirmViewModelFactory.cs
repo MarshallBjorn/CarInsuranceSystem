@@ -26,11 +26,17 @@ public class FirmViewModelFactory : IFirmViewModelFactory
         return new FirmViewModel(firm, firmPageVm, clientFactory);
     }
 
+    public NewInsuranceTypeViewModel CreateInsuranceAdd()
+    {
+        var vm = AppState.ServiceProvider?.GetRequiredService<NewInsuranceTypeViewModel>() ?? throw new ArgumentNullException();
+        return vm;
+    }
+
     public InsuranceTypeViewModel CreateInsuranceEdit(InsuranceType insuranceType, FirmViewModel firm)
     {
         var firmPageVm = AppState.ServiceProvider?.GetRequiredService<FirmPageViewModel>()
             ?? throw new ArgumentNullException(nameof(FirmPageViewModel));
-       
+
         var clientFactory = AppState.ServiceProvider?.GetRequiredService<IHttpClientFactory>()
             ?? throw new ArgumentNullException(nameof(IHttpClientFactory));
 

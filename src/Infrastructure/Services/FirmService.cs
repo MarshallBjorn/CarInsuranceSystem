@@ -38,6 +38,7 @@ public class FirmService : IFirmService
         var firm = new Firm
         {
             Name = dto.Name,
+            UserId = dto.UserId,
             CountryCode = dto.CountryCode
         };
 
@@ -53,5 +54,26 @@ public class FirmService : IFirmService
         firm.CountryCode = dto.CountryCode;
 
         await _repository.UpdateAsync(firm);
+    }
+
+    public async Task<List<FirmDto>> GetAllByUserAsync(Guid userId)
+    {
+        var firms = await _repository.GetAllByUserIdAsync(userId);
+
+        return firms.Select(f => new FirmDto
+        {
+            Id = f.Id,
+            Name = f.Name,
+            CountryCode = f.CountryCode,
+            CreatedAt = f.CreatedAt,
+            UserId = f.UserId,
+            InsuranceTypes = f.InsuranceTypes.Select(it => new InsuranceTypeDto
+            {
+                Id = it.Id,
+                Name = it.Name,
+                PolicyDescription = it.PolicyDescription,
+                PolicyNumber = it.PolicyNumber
+            }).ToList()
+        }).ToList();
     }
 }

@@ -39,4 +39,13 @@ public class FirmRepository : IFirmRepository
         context.Firms.Update(firm);
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<Firm>> GetAllByUserIdAsync(Guid userId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Firms
+            .Where(f => f.UserId == userId)
+            .Include(f => f.InsuranceTypes)
+            .ToListAsync();
+    }
 }

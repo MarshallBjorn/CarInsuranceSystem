@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using App.Views;
 using Avalonia;
 using Avalonia.Controls;
@@ -22,6 +23,14 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private ListItemTemplate? _selectedListItem;
 
+    [ObservableProperty]
+    private string _credentials = string.Empty;
+
+    public MainWindowViewModel()
+    {
+        AppState.OnLogin += () => LoadCredentials();
+    }
+
     partial void OnSelectedListItemChanged(ListItemTemplate? value)
     {
         if (value is null) return;
@@ -42,6 +51,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private void TriggerPane()
     {
         IsPaneOpen = !IsPaneOpen;
+    }
+
+    private void LoadCredentials()
+    {
+        var user = AppState.LoggedInUser ?? throw new ArgumentNullException(nameof(LoadCredentials));
+        Credentials = $"{user.FirstName}\n{user.LastName}";
     }
 }
 

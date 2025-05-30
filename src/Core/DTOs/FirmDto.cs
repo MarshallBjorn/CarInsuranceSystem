@@ -6,6 +6,7 @@ public class FirmDto
     public string Name { get; set; } = null!;
     public string CountryCode { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
+    public Guid UserId { get; set; }
 
     public List<InsuranceTypeDto>? InsuranceTypes { get; set; }
 }

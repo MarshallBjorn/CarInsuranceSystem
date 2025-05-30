@@ -43,11 +43,14 @@
                         <DataTemplate DataType="{x:Type vm:ListItemTemplate}">
                             <StackPanel Spacing="17" Orientation="Horizontal">
                                 <PathIcon Width="14" Data="{Binding ListItemIcon}" />
-                                <TextBlock Text="{Binding Label}" />
+                                <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <TextBlock VerticalAlignment="Bottom"
+                           HorizontalAlignment="Left"
+                           Text="{Binding Credentials}" />
             </StackPanel>
         </SplitView.Pane>
         <SplitView.Content>

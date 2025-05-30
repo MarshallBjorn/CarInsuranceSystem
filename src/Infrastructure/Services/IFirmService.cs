@@ -7,4 +7,5 @@ public interface IFirmService
     Task<List<FirmDto>> GetAllAsync();
     Task CreateAsync(CreateFirmDto dto);
     Task UpdateAsync(UpdateFirmDto dto);
+    Task<List<FirmDto>> GetAllByUserAsync(Guid userId);
 }

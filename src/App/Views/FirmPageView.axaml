@@ -39,7 +39,7 @@
     </Style>
 
     <Style Selector="Border#Popup.open">
-      <Setter Property="Width" Value="800"/>
+      <Setter Property="Width" Value="400"/>
       <Setter Property="Height" Value="600"/>
       <Setter Property="Opacity" Value="1"/>
     </Style>
@@ -59,8 +59,10 @@
                      Margin="0 10" />
 
           <TextBlock VerticalAlignment="Top" Text="{Binding MessageText}" />
-          <StackPanel>
-            
+          <StackPanel VerticalAlignment="Center"
+                      HorizontalAlignment="Right"
+                      Orientation="Horizontal"
+                      Margin="0 10">
             <Button Command="{Binding InsuranceAddOpenCommand}"
                     HorizontalAlignment="Left">Add Insurance</Button>
             
@@ -81,18 +83,18 @@
 
             <Grid DockPanel.Dock="Top" Background="#1e1e1e" IsVisible="{Binding IsList}">
               <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="3*" />
+                  <ColumnDefinition Width="2*" />
                   <ColumnDefinition Width="2*" />
                   <ColumnDefinition Width="2*" />
                   <ColumnDefinition Width="1*" />
                   <ColumnDefinition Width="1*" />
               </Grid.ColumnDefinitions>
 
-              <TextBlock Grid.Column="0" Text="Name" FontWeight="Bold" HorizontalAlignment="Center" />
-              <TextBlock Grid.Column="1" Text="Country" FontWeight="Bold" HorizontalAlignment="Center" />
-              <TextBlock Grid.Column="2" Text="Added at" FontWeight="Bold" HorizontalAlignment="Center" />
-              <TextBlock Grid.Column="3" Text="Number of types" FontWeight="Bold" HorizontalAlignment="Center" />
-              <TextBlock Grid.Column="4" Text="" FontWeight="Bold" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="0" Text="Name" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Country" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="2" Text="Added at" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="3" Text="Number of types" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="4" Text="" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
             </Grid>
 
             <StackPanel>
@@ -103,23 +105,25 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center" />
               <ItemsControl ItemsSource="{Binding Firms}" IsVisible="{Binding IsList}">
-    <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-            <StackPanel />
-        </ItemsPanelTemplate>
-    </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
     <ItemsControl.ItemTemplate>
         <DataTemplate x:DataType="vm:FirmPageViewModels.FirmViewModel">
-            <StackPanel Margin="0,0,0,20" Spacing="8">
+            <StackPanel>
                 <!-- Firm Card -->
                 <Border Padding="12" Background="#2D2D2D" CornerRadius="6" BorderBrush="#444" BorderThickness="1">
-                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="3*,2*,2*,1*,Auto">
+                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="2*,2*,2*,1*,Auto">
                         <!-- Firm Info -->
                         <TextBlock Grid.Column="0" Text="{Binding Firm.Name}" 
-                                   FontWeight="Bold" FontSize="16" Foreground="White"/>
+                                   FontWeight="Bold" FontSize="16" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="{Binding Firm.CountryCode}" 
-                                   VerticalAlignment="Center" Foreground="LightGray"/>
+                                   VerticalAlignment="Center" Foreground="LightGray"
+                                   HorizontalAlignment="Center"/>
                         <Button Grid.Column="4" Content="EDIT" 
                                 Command="{Binding ShowEditCommand}" 
                                 HorizontalAlignment="Right" VerticalAlignment="Center" />

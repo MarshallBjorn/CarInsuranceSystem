@@ -7,21 +7,57 @@ public static class DatabaseSeeder
 {
     public static void Seed(AppDbContext context)
     {
+        if (!context.Users.Any())
+        {
+            var users = new List<User>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Email = "oleksij.nawrockij@gmail.com",
+                    FirstName = "Oleksij",
+                    LastName = "Nawrockij",
+                    BirthDate = DateTime.SpecifyKind(new DateTime(2004, 12, 8), DateTimeKind.Utc),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"),
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Email = "tomasz.nowak@gmail.com",
+                    FirstName = "Tomasz",
+                    LastName = "Nowak",
+                    BirthDate = DateTime.SpecifyKind(new DateTime(2003, 11, 2), DateTimeKind.Utc),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("321"),
+                }
+            };
+
+            context.Users.AddRange(users);
+            context.SaveChanges();
+        }
+
+        // Retrieve the users after ensuring they are saved
+        var oleksij = context.Users.First(u => u.FirstName == "Oleksij");
+        var tomasz = context.Users.First(u => u.FirstName == "Tomasz");
+
         if (!context.Firms.Any())
         {
             var firms = new List<Firm>
             {
-                new() {
+                new()
+                {
                     Id = Guid.NewGuid(),
                     Name = "Black FOX",
                     CountryCode = "UA",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    UserId = oleksij.Id // 👈 Assign Oleksij as owner
                 },
-                new() {
+                new()
+                {
                     Id = Guid.NewGuid(),
                     Name = "Tegoniemasz Industries",
                     CountryCode = "PL",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    UserId = tomasz.Id // 👈 Assign Tomasz as owner
                 }
             };
 
@@ -116,40 +152,10 @@ public static class DatabaseSeeder
             context.SaveChanges();
         }
 
-        if (!context.Users.Any())
-        {
-            var users = new List<User>
-            {
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    Email = "oleksij.nawrockij@gmail.com",
-                    FirstName = "Oleksij",
-                    LastName = "Nawrockij",
-                    BirthDate = DateTime.SpecifyKind(new DateTime(2004, 12, 8), DateTimeKind.Utc),
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"),
-                },
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    Email = "tomasz.nowak@gmail.com",
-                    FirstName = "Tomasz",
-                    LastName = "Nowak",
-                    BirthDate = DateTime.SpecifyKind(new DateTime(2003, 11, 2), DateTimeKind.Utc),
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("321"),
-                }
-            };
-
-            context.Users.AddRange(users);
-            context.SaveChanges();
-        }
-
         if (!context.UserCars.Any())
         {
             var mazda = context.Cars.First(c => c.Mark == "Mazda");
             var seat = context.Cars.First(c => c.Mark == "Seat");
-            var oleksij = context.Users.First(u => u.FirstName == "Oleksij");
-            var tomasz = context.Users.First(u => u.FirstName == "Tomasz");
 
             var userCars = new List<UserCar>
             {

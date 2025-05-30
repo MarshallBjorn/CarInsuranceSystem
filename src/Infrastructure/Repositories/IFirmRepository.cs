@@ -7,4 +7,5 @@ public interface IFirmRepository
     Task<Firm?> GetByIdAsync(Guid id);
     Task CreateAsync(Firm firm);
     Task UpdateAsync(Firm firm);
+    Task<List<Firm>> GetAllByUserIdAsync(Guid userId);
 }

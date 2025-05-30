@@ -62,6 +62,10 @@ public class AppDbContext : DbContext
             modelBuilder.Entity<Car>()
                 .HasKey(c => c.VIN);
 
+            modelBuilder.Entity<Firm>()
+                .Property(f => f.UserId)
+                .IsRequired();
+
             modelBuilder.Entity<Car>()
                 .HasMany(c => c.CarInsurances)
                 .WithOne(ci => ci.Car)

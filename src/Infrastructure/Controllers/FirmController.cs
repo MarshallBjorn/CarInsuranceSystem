@@ -1,5 +1,6 @@
 using Core.DTOs;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Infrastructure.Controllers;
@@ -41,5 +42,13 @@ public class FirmController : ControllerBase
         {
             return NotFound(ex.Message);
         }
+    }
+
+    [Authorize]
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetByUser(Guid userId)
+    {
+        var firms = await _firmService.GetAllByUserAsync(userId);
+        return Ok(firms);
     }
 }

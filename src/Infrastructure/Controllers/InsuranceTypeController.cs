@@ -47,4 +47,11 @@ public class InsuranceTypesController : ControllerBase
         await _service.DeleteAsync(id);
         return NoContent();
     }
+
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<List<InsuranceTypeDto>>> GetByUserId(Guid userId)
+    {
+        var result = await _service.GetByUserIdAsync(userId);
+        return Ok(result);
+    }
 }

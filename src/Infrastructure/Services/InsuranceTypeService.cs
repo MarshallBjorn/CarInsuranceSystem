@@ -47,4 +47,10 @@ public class InsuranceTypeService : IInsuranceTypeService
     {
         await _repository.DeleteAsync(id);
     }
+
+    public async Task<List<InsuranceTypeDto>> GetByUserIdAsync(Guid userId)
+    {
+        var entities = await _repository.GetByUserIdAsync(userId);
+        return entities.Select(e => _mapper.Map<InsuranceTypeDto>(e)).ToList();
+    }
 }

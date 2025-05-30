@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using App.Factories;
+using App.Support;
 using App.ViewModels.FirmPageViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -42,38 +43,50 @@ public partial class FirmPageViewModel : ViewModelBase
     private async Task InitializeAsync()
     {
         await LoadFirmsAsync();
+        AppState.OnLogin += async () => await LoadFirmsAsync();
     }
 
     private async Task LoadFirmsAsync()
     {
+        var user = AppState.LoggedInUser;
+        var token = TokenStorage.Token;
+
+        if (user is null || string.IsNullOrWhiteSpace(token))
+        {
+            MessageText = "You have to loggin first";
+            return;
+        }
+
         try
-        {
-            var response = await _client.GetAsync("api/Firm");
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
             {
-                MessageText = $"{response.StatusCode}: {response.Content}";
-                return;
+                _client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var response = await _client.GetAsync($"api/Firm/user/{user.Id}");
+
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageText = $"{response.StatusCode}: {response.Content}";
+                    return;
+                }
+
+                var firms = await response.Content.ReadFromJsonAsync<Firm[]>();
+
+                if (firms == null)
+                {
+                    MessageText = "Failed to load firms";
+                    return;
+                }
+
+                Firms = new ObservableCollection<FirmViewModel>(
+                    firms.Select(firm => _factory.CreateEdit(firm))
+                );
             }
-
-            var firms = await response.Content.ReadFromJsonAsync<Firm[]>();
-
-            if (firms == null)
+            catch (Exception ex)
             {
-                MessageText = "Failed to load firms";
-                return;
+                MessageText = $"Failed to load cars. {ex.Message}";
             }
-
-            Firms = new ObservableCollection<FirmViewModel>(
-                firms.Select(firm => _factory.CreateEdit(firm))
-            );
-        }
-        catch (Exception ex)
-        {
-            MessageText = $"Failed to load cars. {ex.Message}";
-        }
     }
 
     [RelayCommand]

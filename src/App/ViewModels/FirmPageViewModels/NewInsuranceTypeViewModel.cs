@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using App.Factories;
+using App.Support;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
@@ -39,9 +40,18 @@ public partial class NewInsuranceTypeViewModel : ViewModelBase
 
     private async Task LoadFirmsAsync()
     {
+        var user = AppState.LoggedInUser;
+        var token = TokenStorage.Token;
+
+        if (user is null || string.IsNullOrWhiteSpace(token))
+        {
+            MessageText = "You have to loggin first";
+            return;
+        }
+
         try
         {
-            var response = await _client.GetAsync("api/Firm");
+            var response = await _client.GetAsync($"api/Firm/user/{user.Id}");
 
             var json = await response.Content.ReadAsStringAsync();
 
@@ -97,6 +107,7 @@ public partial class NewInsuranceTypeViewModel : ViewModelBase
 
             MessageText = "Insurance type added successfully.";
             OnNewInsuranceAdd?.Invoke();
+            AppState.RaiseInsurance();
         }
         catch (Exception ex)
         {

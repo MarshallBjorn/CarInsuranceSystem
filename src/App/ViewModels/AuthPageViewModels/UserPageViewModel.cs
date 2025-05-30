@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using App.Support;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
@@ -118,6 +119,8 @@ namespace App.ViewModels.AuthPageViewModels
         [RelayCommand]
         public void Logout()
         {
+            AppState.LoggedInUser = null;
+            TokenStorage.Token = string.Empty;
             OnLogoutClick?.Invoke();
         }
     }

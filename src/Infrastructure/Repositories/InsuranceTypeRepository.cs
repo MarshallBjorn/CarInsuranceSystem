@@ -43,4 +43,12 @@ public class InsuranceTypeRepository : IInsuranceTypeRepository
             await _context.SaveChangesAsync();
         }
     }
+
+    public async Task<List<InsuranceType>> GetByUserIdAsync(Guid userId)
+    {
+        return await _context.InsuranceTypes
+            .Include(i => i.Firm)
+            .Where(i => i.Firm.UserId == userId)
+            .ToListAsync();
+    }
 }

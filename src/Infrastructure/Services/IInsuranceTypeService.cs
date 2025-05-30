@@ -9,5 +9,6 @@ public interface IInsuranceTypeService
     Task<InsuranceTypeDto> CreateAsync(CreateUpdateInsuranceTypeDto dto);
     Task UpdateAsync(Guid id, CreateUpdateInsuranceTypeDto dto);
     Task DeleteAsync(Guid id);
+    Task<List<InsuranceTypeDto>> GetByUserIdAsync(Guid userId);
 }
 

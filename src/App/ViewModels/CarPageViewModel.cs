@@ -410,6 +410,17 @@ public partial class CarPageViewModel : ViewModelBase
         {
             Debug.WriteLine("InitializeAsync started");
             AppState.OnLogin += async () => await LoadCarsAsync();
+            AppState.OnLogOut += () =>
+            {
+                Cars.Clear();
+                FilteredCars.Clear();
+                PagedCars.Clear();
+                IsList = false;
+                IsEmpty = true;
+                ButtonIsVisible = false;
+                ListText = "You have been logged out.";
+            };
+            AppState.OnInsuranceChange += async () => await LoadInsurancesAsync();
             await LoadCarsAsync();
             await LoadInsurancesAsync();
         }

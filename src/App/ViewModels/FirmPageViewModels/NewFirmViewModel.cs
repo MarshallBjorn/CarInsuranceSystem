@@ -38,6 +38,14 @@ public partial class NewFirmViewModel : ViewModelBase
 
     private async Task AddFirmAsync()
     {
+        var user = AppState.LoggedInUser;
+
+        if (user is null)
+        {
+            MessageText = "You have to be logged in";
+            return;
+        }
+
         MessageText = string.Empty;
         _nameErrors.Clear();
         _countryCodeErrors.Clear();
@@ -47,6 +55,7 @@ public partial class NewFirmViewModel : ViewModelBase
         var firm = new Firm
         {
             Name = Name,
+            UserId = user.Id,
             CountryCode = CountryCode
         };
 

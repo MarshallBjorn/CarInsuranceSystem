@@ -7,4 +7,5 @@ public interface IInsuranceTypeRepository
     Task<InsuranceType> AddAsync(InsuranceType entity);
     Task UpdateAsync(InsuranceType entity);
     Task DeleteAsync(Guid id);
+    Task<List<InsuranceType>> GetByUserIdAsync(Guid userId);
 }

@@ -10,6 +10,8 @@ public class AppState
     public static IServiceProvider? ServiceProvider { get; set; }
 
     public event Action? OnLogin;
+    public event Action? OnLogOut;
+    public event Action? OnInsuranceChange;
 
     public void RaiseLogin()
     {
@@ -18,6 +20,8 @@ public class AppState
 
     public void RaiseLogout()
     {
-        OnLogin?.Invoke();
+        OnLogOut?.Invoke();
     }
+
+    public void RaiseInsurance() => OnInsuranceChange?.Invoke();
 }

@@ -49,7 +49,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <TextBlock VerticalAlignment="Bottom"
-                           HorizontalAlignment="Left"
+                           HorizontalAlignment="Center"
                            Text="{Binding Credentials}" />
             </StackPanel>
         </SplitView.Pane>

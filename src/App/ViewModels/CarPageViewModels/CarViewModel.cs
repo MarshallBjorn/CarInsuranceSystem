@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
+using global::App.Support;
 
 public partial class CarViewModel : ViewModelBase
 {
@@ -39,13 +40,13 @@ public partial class CarViewModel : ViewModelBase
         Mark = car.Mark;
         Model = car.Model;
         ProductionYear = car.ProductionYear.ToString();
-        EngineType = car.EngineType;
+        EngineType = car.EngineType ?? string.Empty;
 
         var activeInsurance = car.CarInsurances?.FirstOrDefault(i => i.IsActive);
 
         if (activeInsurance?.InsuranceType != null)
         {
-            var fullInsurance = _availableInsuranceTypes.FirstOrDefault(vm =>
+            var fullInsurance = AvailableInsuranceTypes.FirstOrDefault(vm =>
                 vm.ThisInsurance.Id == activeInsurance.InsuranceType.Id);
 
             if (fullInsurance != null)
@@ -168,11 +169,20 @@ public partial class CarViewModel : ViewModelBase
 
     private async Task LoadInsurancesAsync()
     {
+        var user = AppState.LoggedInUser;
+        var token = TokenStorage.Token;
+
+        if (user is null || string.IsNullOrEmpty(token))
+        {
+            ErrorText = "You should be logged in.";
+            return;
+        }
+        
         try
         {
             var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
-            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceTypes");
+            var insurances = await client.GetFromJsonAsync<InsuranceType[]>($"api/InsuranceTypes/user/{user.Id}");
             if (insurances == null)
             {
                 ErrorText = "Failed to load insurances from API.";

@@ -350,11 +350,20 @@ public partial class CarPageViewModel : ViewModelBase
 
     private async Task LoadInsurancesAsync()
     {
+        var user = AppState.LoggedInUser;
+        var token = TokenStorage.Token;
+
+        if (user is null || string.IsNullOrWhiteSpace(token))
+        {
+            MessageText = "You have to loggin first";
+            return;
+        }
+
         try
         {
             var client = HttpClientFactory.CreateClient("CarInsuranceApi");
 
-            var insurances = await client.GetFromJsonAsync<InsuranceType[]>("api/InsuranceTypes");
+            var insurances = await client.GetFromJsonAsync<InsuranceType[]>($"api/InsuranceTypes/user/{user.Id}");
             if (insurances == null)
             {
                 MessageText = "Failed to load insurances from API.";
@@ -409,7 +418,12 @@ public partial class CarPageViewModel : ViewModelBase
         try
         {
             Debug.WriteLine("InitializeAsync started");
-            AppState.OnLogin += async () => await LoadCarsAsync();
+            AppState.OnLogin += async () =>
+            {
+                await LoadCarsAsync();
+                await LoadInsurancesAsync();
+            };
+
             AppState.OnLogOut += () =>
             {
                 Cars.Clear();

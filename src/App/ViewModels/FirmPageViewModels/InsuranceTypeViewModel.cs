@@ -119,6 +119,7 @@ public partial class InsuranceTypeViewModel : ViewModelBase
 
             MessageText = "Insurance updated successfully.";
             OnInsuranceEdited?.Invoke();
+            AppState.RaiseInsurance();
         }
         catch (Exception ex)
         {

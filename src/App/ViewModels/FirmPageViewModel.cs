@@ -26,7 +26,7 @@ public partial class FirmPageViewModel : ViewModelBase
     [ObservableProperty] private string _messageText = "";
     [ObservableProperty] private string _listText = "";
 
-    [ObservableProperty] private bool _isList = true;
+    [ObservableProperty] private bool _isList = false;
     [ObservableProperty] private bool _isEmpty = true;
     [ObservableProperty] private bool _buttonIsVisible = false;
     [ObservableProperty] public bool _isAnyPopupOpen = false;
@@ -45,6 +45,16 @@ public partial class FirmPageViewModel : ViewModelBase
     {
         await LoadFirmsAsync();
         AppState.OnLogin += async () => await LoadFirmsAsync();
+
+        AppState.OnLogOut += () =>
+        {
+            Firms.Clear();
+            FilteredFirms.Clear();
+            IsList = false;
+            IsEmpty = true;
+            ButtonIsVisible = false;
+            ListText = "You have been logged out.";
+        };
     }
 
     private async Task LoadFirmsAsync()
@@ -58,36 +68,44 @@ public partial class FirmPageViewModel : ViewModelBase
             return;
         }
 
+        ButtonIsVisible = true;
+
         try
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await _client.GetAsync($"api/Firm/user/{user.Id}");
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
             {
-                _client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                var response = await _client.GetAsync($"api/Firm/user/{user.Id}");
-
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    MessageText = $"{response.StatusCode}: {response.Content}";
-                    return;
-                }
-
-                var firms = await response.Content.ReadFromJsonAsync<Firm[]>();
-
-                if (firms == null)
-                {
-                    MessageText = "Failed to load firms";
-                    return;
-                }
-
-                Firms = new ObservableCollection<FirmViewModel>(
-                    firms.Select(firm => _factory.CreateEdit(firm))
-                );
+                MessageText = $"{response.StatusCode}: {response.Content}";
+                return;
             }
-            catch (Exception ex)
+
+            var firms = await response.Content.ReadFromJsonAsync<Firm[]>();
+
+            if (!IsList)
             {
-                MessageText = $"Failed to load cars. {ex.Message}";
+                IsList ^= true;
+                IsEmpty ^= true;
             }
+
+            if (firms == null)
+            {
+                MessageText = "Failed to load firms";
+                return;
+            }
+
+            Firms = new ObservableCollection<FirmViewModel>(
+                firms.Select(firm => _factory.CreateEdit(firm))
+            );
+        }
+        catch (Exception ex)
+        {
+            MessageText = $"Failed to load cars. {ex.Message}";
+        }
     }
 
     [RelayCommand]

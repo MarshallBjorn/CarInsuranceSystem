@@ -138,6 +138,7 @@ public partial class CarViewModel : ViewModelBase
     {
         Car = car;
         _ = LoadInsurancesAsync();
+        AppState.OnInsuranceChange += async () => await LoadInsurancesAsync();
         _carPageViewModel = carPageViewModel;
     }
 

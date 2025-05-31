@@ -204,6 +204,12 @@ public partial class CarPageViewModel : ViewModelBase
                 return;
             }
 
+            if (SelectedInsurance == null)
+            {
+                ErrorText = "Please select an insurance.";
+                return;
+            }
+
             var carInsurance = new CarInsurance
             {
                 Id = Guid.NewGuid(),

@@ -13,19 +13,21 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
 
-        <TextBlock Text="Add Firm"
+        <TextBlock Text="Edit Firm"
                 FontSize="24"
                 HorizontalAlignment="Center"/>
             
             <StackPanel>
                 <TextBlock Text="Name" />
-                <TextBox Text="{Binding Name}" />
+                <TextBox Text="{Binding Name}"
+                         Width="300" />
                 <TextBlock Text="{Binding NameErrors}" Foreground="Red"/>
             </StackPanel>
 
             <StackPanel>
                 <TextBlock Text="Country Code" />
-                <TextBox Text="{Binding CountryCode}" />
+                <TextBox Text="{Binding CountryCode}"
+                         Width="300" />
                 <TextBlock Text="{Binding CountryCodeErrors}" Foreground="Red"/>
             </StackPanel>
 

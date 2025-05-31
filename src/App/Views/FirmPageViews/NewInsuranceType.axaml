@@ -27,8 +27,10 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <TextBlock Text="Name" />
-        <TextBox Text="{Binding Name}" Width="300" />
+        <StackPanel>
+            <TextBlock Text="Name" />
+            <TextBox Text="{Binding Name}" Width="300" />
+        </StackPanel>
 
         <TextBlock Text="Policy Number" />
         <TextBox Text="{Binding PolicyNumber}" Width="300" />

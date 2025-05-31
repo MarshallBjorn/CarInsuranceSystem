@@ -23,12 +23,17 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private ListItemTemplate? _selectedListItem;
 
-    [ObservableProperty]
-    private string _credentials = string.Empty;
+    [ObservableProperty] private string _credentialFirstName = string.Empty;
+    [ObservableProperty] private string _credentialLastName = string.Empty;
 
     public MainWindowViewModel()
     {
         AppState.OnLogin += () => LoadCredentials();
+        AppState.OnLogOut += () =>
+        {
+            CredentialFirstName = "";
+            CredentialLastName = "";
+        };
     }
 
     partial void OnSelectedListItemChanged(ListItemTemplate? value)
@@ -44,7 +49,7 @@ public partial class MainWindowViewModel : ViewModelBase
         new ListItemTemplate(typeof(HomePageViewModel), "HomeRegular"),
         new ListItemTemplate(typeof(CarPageViewModel), "Vehicle"),
         new ListItemTemplate(typeof(AuthPageViewModel), "PersonAccount"),
-        new ListItemTemplate(typeof(FirmPageViewModel), "Firmc")
+        new ListItemTemplate(typeof(FirmPageViewModel), "Globe")
     };
 
     [RelayCommand]
@@ -56,7 +61,8 @@ public partial class MainWindowViewModel : ViewModelBase
     private void LoadCredentials()
     {
         var user = AppState.LoggedInUser ?? throw new ArgumentNullException(nameof(LoadCredentials));
-        Credentials = $"{user.FirstName}\n{user.LastName}";
+        CredentialFirstName = $"{user.FirstName}";
+        CredentialLastName = $"{user.LastName}";
     }
 }
 

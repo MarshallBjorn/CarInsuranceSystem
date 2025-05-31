@@ -48,9 +48,14 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock VerticalAlignment="Bottom"
-                           HorizontalAlignment="Center"
-                           Text="{Binding Credentials}" />
+                <StackPanel>
+                    <TextBlock VerticalAlignment="Bottom"
+                               HorizontalAlignment="Center"
+                               Text="{Binding CredentialFirstName}" />
+                    <TextBlock VerticalAlignment="Bottom"
+                               HorizontalAlignment="Center"
+                               Text="{Binding CredentialLastName}" />
+                </StackPanel>
             </StackPanel>
         </SplitView.Pane>
         <SplitView.Content>

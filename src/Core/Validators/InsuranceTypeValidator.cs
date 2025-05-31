@@ -14,6 +14,9 @@ public class InsuranceTypeValidator : AbstractValidator<InsuranceType>
             .NotEmpty().WithMessage("Policy description is required.")
             .Length(5, 500).WithMessage("Description must be between 5 and 500 characters.");
 
+        RuleFor(x => x.Price)
+            .NotEmpty().WithMessage("Price should not be empty.");
+
         RuleFor(x => x.PolicyNumber)
             .NotEmpty().WithMessage("Policy number is required.")
             .Matches(@"^POL-[A-Z]{2,5}-\d{3,10}$")

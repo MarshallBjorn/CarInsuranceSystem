@@ -30,10 +30,12 @@ public partial class InsuranceTypeViewModel : ViewModelBase
     private readonly List<string> _nameErrors = new();
     private readonly List<string> _policyNumberErrors = new();
     private readonly List<string> _policyDescriptionErrors = new();
+    private readonly List<string> _priceErrors = new();
 
     public string NameErrors => _nameErrors.Count > 0 ? string.Join("\n", _nameErrors) : string.Empty;
     public string PolicyNumberErrors => _policyNumberErrors.Count > 0 ? string.Join("\n", _policyNumberErrors) : string.Empty;
     public string PolicyDescriptionErrors => _policyDescriptionErrors.Count > 0 ? string.Join("\n", _policyDescriptionErrors) : string.Empty;
+    public string PriceErrors => _priceErrors.Count > 0 ? string.Join("\n", _priceErrors) : string.Empty;
 
     public InsuranceType InsuranceType { get; }
 
@@ -68,6 +70,13 @@ public partial class InsuranceTypeViewModel : ViewModelBase
         OnPropertyChanged(nameof(PolicyNumberErrors));
         OnPropertyChanged(nameof(PolicyDescriptionErrors));
 
+        if (!decimal.TryParse(InputPrice, out var parsedPrice))
+        {
+            _priceErrors.Add("Price must be a valid number.");
+            OnPropertyChanged(nameof(PriceErrors));
+            return;
+        }
+
         var validator = new InsuranceTypeValidator();
         var insuranceToValidate = new InsuranceType
         {
@@ -93,6 +102,9 @@ public partial class InsuranceTypeViewModel : ViewModelBase
                     case "PolicyDescription":
                         _policyDescriptionErrors.Add(error.ErrorMessage);
                         break;
+                    case "Price":
+                        _priceErrors.Add(error.ErrorMessage);
+                        return;
                 }
             }
 
@@ -100,6 +112,7 @@ public partial class InsuranceTypeViewModel : ViewModelBase
             OnPropertyChanged(nameof(NameErrors));
             OnPropertyChanged(nameof(PolicyNumberErrors));
             OnPropertyChanged(nameof(PolicyDescriptionErrors));
+            OnPropertyChanged(nameof(PriceErrors));
             return;
         }
 

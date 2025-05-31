@@ -30,21 +30,25 @@
         <StackPanel>
             <TextBlock Text="Name" />
             <TextBox Text="{Binding Name}" Width="300" />
+            <TextBlock Text="{Binding NameErrors}" Foreground="Red" FontSize="12"/>
         </StackPanel>
 
         <StackPanel>
             <TextBlock Text="Policy Number" />
             <TextBox Text="{Binding PolicyNumber}" Width="300" />
+            <TextBlock Text="{Binding PolicyNumberErrors}" Foreground="Red" FontSize="12"/>
         </StackPanel>
 
         <StackPanel>
             <TextBlock Text="Price" />
             <TextBox Text="{Binding Price}" Width="300" />
+            <TextBlock Text="{Binding PriceErrors}" Foreground="Red" FontSize="12"/>
         </StackPanel>
 
         <StackPanel>
             <TextBlock Text="Policy Description" />
             <TextBox Text="{Binding PolicyDescription}" Width="300" AcceptsReturn="True" Height="100"/>
+            <TextBlock Text="{Binding PolicyDescriptionErrors}" Foreground="Red" FontSize="12"/>
         </StackPanel>
 
         <TextBlock Foreground="Red" Text="{Binding MessageText}" TextWrapping="Wrap" />

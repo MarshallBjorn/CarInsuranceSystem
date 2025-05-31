@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
@@ -9,6 +10,7 @@ using App.Support;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
+using Core.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace App.ViewModels.FirmPageViewModels;
@@ -29,6 +31,16 @@ public partial class NewInsuranceTypeViewModel : ViewModelBase
     [ObservableProperty] private string _price = string.Empty;
 
     [ObservableProperty] private string _messageText = string.Empty;
+
+    private readonly List<string> _nameErrors = new();
+    private readonly List<string> _policyNumberErrors = new();
+    private readonly List<string> _policyDescriptionErrors = new();
+    private readonly List<string> _priceErrors = new();
+
+    public string NameErrors => _nameErrors.Count > 0 ? string.Join("\n", _nameErrors) : string.Empty;
+    public string PolicyNumberErrors => _policyNumberErrors.Count > 0 ? string.Join("\n", _policyNumberErrors) : string.Empty;
+    public string PolicyDescriptionErrors => _policyDescriptionErrors.Count > 0 ? string.Join("\n", _policyDescriptionErrors) : string.Empty;
+    public string PriceErrors => _priceErrors.Count > 0 ? string.Join("\n", _priceErrors) : string.Empty;
 
     public NewInsuranceTypeViewModel(IHttpClientFactory httpClientFactory, IFirmViewModelFactory factory)
     {
@@ -83,12 +95,30 @@ public partial class NewInsuranceTypeViewModel : ViewModelBase
     [RelayCommand]
     private async Task SaveAsync()
     {
+        _nameErrors.Clear();
+        _policyNumberErrors.Clear();
+        _policyDescriptionErrors.Clear();
+        _priceErrors.Clear();
+        OnPropertyChanged(nameof(NameErrors));
+        OnPropertyChanged(nameof(PolicyNumberErrors));
+        OnPropertyChanged(nameof(PolicyDescriptionErrors));
+        OnPropertyChanged(nameof(PriceErrors));
+
+
         if (SelectedFirm == null)
         {
             MessageText = "Please select a firm.";
             return;
         }
 
+        if (!decimal.TryParse(Price, out var parsedPrice))
+        {
+            _priceErrors.Add("Price must be a valid number.");
+            OnPropertyChanged(nameof(PriceErrors));
+            return;
+        }
+
+        var validator = new InsuranceTypeValidator();
         var newInsurance = new InsuranceType
         {
             Name = Name,
@@ -98,22 +128,52 @@ public partial class NewInsuranceTypeViewModel : ViewModelBase
             Price = decimal.Parse(Price)
         };
 
-        try
+        var result = validator.Validate(newInsurance);
+
+        if (!result.IsValid)
         {
-            var response = await _client.PostAsJsonAsync("api/InsuranceTypes", newInsurance);
-            if (!response.IsSuccessStatusCode)
+            foreach (var error in result.Errors)
             {
-                MessageText = $"Error: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}";
-                return;
+                switch (error.PropertyName)
+                {
+                    case "Name":
+                        _nameErrors.Add(error.ErrorMessage);
+                        break;
+                    case "PolicyNumber":
+                        _policyNumberErrors.Add(error.ErrorMessage);
+                        break;
+                    case "PolicyDescription":
+                        _policyDescriptionErrors.Add(error.ErrorMessage);
+                        break;
+                    case "Price":
+                        _priceErrors.Add(error.ErrorMessage);
+                        return;
+                }
             }
 
-            MessageText = "Insurance type added successfully.";
-            OnNewInsuranceAdd?.Invoke();
-            AppState.RaiseInsurance();
+            OnPropertyChanged(nameof(NameErrors));
+            OnPropertyChanged(nameof(PolicyNumberErrors));
+            OnPropertyChanged(nameof(PolicyDescriptionErrors));
+            OnPropertyChanged(nameof(PriceErrors));
+            return;
         }
-        catch (Exception ex)
-        {
-            MessageText = $"Unexpected error: {ex.Message}";
-        }
+
+        try
+            {
+                var response = await _client.PostAsJsonAsync("api/InsuranceTypes", newInsurance);
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageText = $"Error: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}";
+                    return;
+                }
+
+                MessageText = "Insurance type added successfully.";
+                OnNewInsuranceAdd?.Invoke();
+                AppState.RaiseInsurance();
+            }
+            catch (Exception ex)
+            {
+                MessageText = $"Unexpected error: {ex.Message}";
+            }
     }
 }

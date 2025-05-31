@@ -25,6 +25,7 @@ public partial class FirmViewModel : ViewModelBase
     [ObservableProperty] private string _name;
     [ObservableProperty] private string _countryCode;
     [ObservableProperty] private string _messageText = string.Empty;
+    [ObservableProperty] private string _policyCount = string.Empty;
 
     [ObservableProperty] private ObservableCollection<InsuranceTypeViewModel> _insurances;
 
@@ -49,6 +50,8 @@ public partial class FirmViewModel : ViewModelBase
         Insurances = new ObservableCollection<InsuranceTypeViewModel>(
             Firm.InsuranceTypes.Select(insurance => _factory.CreateInsuranceEdit(insurance, this))
         );
+
+        PolicyCount = Insurances.Count().ToString();
     }
 
     [RelayCommand]

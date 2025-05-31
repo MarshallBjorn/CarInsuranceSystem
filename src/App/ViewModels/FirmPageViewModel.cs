@@ -21,6 +21,7 @@ public partial class FirmPageViewModel : ViewModelBase
 
     [ObservableProperty] private ObservableCollection<FirmViewModel> _firms = new();
     [ObservableProperty] private ObservableCollection<FirmPageViewModel> _filteredFirms = new();
+    
     [ObservableProperty] private string _filterText = "";
     [ObservableProperty] private string _messageText = "";
     [ObservableProperty] private string _listText = "";

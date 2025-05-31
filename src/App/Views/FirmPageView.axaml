@@ -124,6 +124,13 @@
                         <TextBlock Grid.Column="1" Text="{Binding Firm.CountryCode}" 
                                    VerticalAlignment="Center" Foreground="LightGray"
                                    HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" 
+                                   Text="{Binding Firm.CreatedAt, StringFormat='dd.MM.yyyy'}" 
+                                   VerticalAlignment="Center" Foreground="LightGray"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="3" Text="{Binding PolicyCount}" 
+                                   VerticalAlignment="Center" Foreground="LightGray"
+                                   HorizontalAlignment="Center"/>
                         <Button Grid.Column="4" Content="EDIT" 
                                 Command="{Binding ShowEditCommand}" 
                                 HorizontalAlignment="Right" VerticalAlignment="Center" />

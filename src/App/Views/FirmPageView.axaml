@@ -40,7 +40,7 @@
 
     <Style Selector="Border#Popup.open">
       <Setter Property="Width" Value="400"/>
-      <Setter Property="Height" Value="500"/>
+      <Setter Property="Height" Value="550"/>
       <Setter Property="Opacity" Value="1"/>
     </Style>
   </UserControl.Styles>
@@ -158,6 +158,10 @@
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="2" Text="{Binding InsuranceType.PolicyDescription}" 
+                                               Foreground="LightGray" TextWrapping="Wrap"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Price}" 
                                                Foreground="LightGray" TextWrapping="Wrap"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>

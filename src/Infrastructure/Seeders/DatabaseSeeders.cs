@@ -76,6 +76,7 @@ public static class DatabaseSeeder
                     Id = Guid.NewGuid(),
                     Name = "Premium",
                     PolicyDescription = "Premium insurance policy",
+                    Price = 1200,
                     PolicyNumber = "POL-ALL-123",
                     FirmId = fox.Id
                 },
@@ -84,6 +85,7 @@ public static class DatabaseSeeder
                     Name = "Basic",
                     PolicyDescription = "Basic insurance policy",
                     PolicyNumber = "POL-SF-456",
+                    Price = 900,
                     FirmId = tegnie.Id
                 }
             };

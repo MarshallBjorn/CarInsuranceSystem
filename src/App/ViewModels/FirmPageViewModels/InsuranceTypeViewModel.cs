@@ -22,6 +22,9 @@ public partial class InsuranceTypeViewModel : ViewModelBase
     [ObservableProperty] private string _name;
     [ObservableProperty] private string _policyNumber;
     [ObservableProperty] private string _policyDescription;
+    [ObservableProperty] private decimal _price;
+    [ObservableProperty] private string _inputPrice;
+    [ObservableProperty] private string _displayPrice;
     [ObservableProperty] private string _messageText = string.Empty;
 
     private readonly List<string> _nameErrors = new();
@@ -44,6 +47,9 @@ public partial class InsuranceTypeViewModel : ViewModelBase
         Name = InsuranceType.Name;
         PolicyNumber = InsuranceType.PolicyNumber;
         PolicyDescription = InsuranceType.PolicyDescription;
+        Price = InsuranceType.Price;
+        InputPrice = $"{Price}";
+        DisplayPrice = $"{Price} PLN";
     }
 
     [RelayCommand]
@@ -68,6 +74,7 @@ public partial class InsuranceTypeViewModel : ViewModelBase
             Name = Name,
             PolicyNumber = PolicyNumber,
             PolicyDescription = PolicyDescription,
+            Price = decimal.Parse(InputPrice)
         };
         var result = validator.Validate(insuranceToValidate);
 
@@ -105,6 +112,7 @@ public partial class InsuranceTypeViewModel : ViewModelBase
                 PolicyNumber = PolicyNumber,
                 PolicyDescription = PolicyDescription,
                 FirmId = _firmViewModel.Firm.Id,
+                Price = decimal.Parse(InputPrice)
             };
 
             var response = await client.PutAsJsonAsync($"api/InsuranceTypes/{InsuranceType.Id}", updatedInsurance);

@@ -39,6 +39,12 @@
         <TextBlock Text="{Binding PolicyDescriptionErrors}" Foreground="Red" FontSize="12"/>
       </StackPanel>
 
+      <StackPanel>
+        <TextBlock Text="Price"/>
+        <TextBox Text="{Binding InputPrice}"
+                 Width="300" />
+      </StackPanel>
+
       <TextBlock Text="{Binding MessageText}" Foreground="Orange" FontSize="12"/>
 
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">

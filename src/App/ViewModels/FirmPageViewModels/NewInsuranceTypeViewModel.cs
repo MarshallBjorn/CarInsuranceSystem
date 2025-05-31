@@ -26,6 +26,7 @@ public partial class NewInsuranceTypeViewModel : ViewModelBase
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _policyNumber = string.Empty;
     [ObservableProperty] private string _policyDescription = string.Empty;
+    [ObservableProperty] private string _price = string.Empty;
 
     [ObservableProperty] private string _messageText = string.Empty;
 
@@ -93,7 +94,8 @@ public partial class NewInsuranceTypeViewModel : ViewModelBase
             Name = Name,
             PolicyNumber = PolicyNumber,
             PolicyDescription = PolicyDescription,
-            FirmId = SelectedFirm.Firm.Id
+            FirmId = SelectedFirm.Firm.Id,
+            Price = decimal.Parse(Price)
         };
 
         try

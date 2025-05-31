@@ -28,7 +28,8 @@ public class FirmService : IFirmService
                 Id = it.Id,
                 Name = it.Name,
                 PolicyDescription = it.PolicyDescription,
-                PolicyNumber = it.PolicyNumber
+                PolicyNumber = it.PolicyNumber,
+                Price = it.Price
             }).ToList()
         }).ToList();
     }
@@ -72,7 +73,8 @@ public class FirmService : IFirmService
                 Id = it.Id,
                 Name = it.Name,
                 PolicyDescription = it.PolicyDescription,
-                PolicyNumber = it.PolicyNumber
+                PolicyNumber = it.PolicyNumber,
+                Price = it.Price
             }).ToList()
         }).ToList();
     }

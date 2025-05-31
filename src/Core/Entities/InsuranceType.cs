@@ -9,6 +9,7 @@ public class InsuranceType
     public required string Name { get; set; } // "Basic", "Premium"
     public required string PolicyDescription { get; set; }
     public required string PolicyNumber { get; set; }
+    public decimal Price { get; set; }
 
     public Guid FirmId { get; set; }
     public Firm? Firm { get; set; }

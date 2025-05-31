@@ -51,4 +51,14 @@ public class FirmController : ControllerBase
         var firms = await _firmService.GetAllByUserAsync(userId);
         return Ok(firms);
     }
+
+    [HttpGet("count")]
+    public async Task<ActionResult<int>> GetCount()
+    {
+        var count = await _firmService.CountAsync();
+
+        if (count > 0) return Ok(count);
+
+        return NotFound("No firms registered.");
+    }
 }

@@ -250,6 +250,7 @@ public partial class CarPageViewModel : ViewModelBase
                 ErrorText = "";
                 MessageText = "Car added successfully.";
                 ResetDefaultCar();
+                AppState.RaiseCar();
             }
             else
             {

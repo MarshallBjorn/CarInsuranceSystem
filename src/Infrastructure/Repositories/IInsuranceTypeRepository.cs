@@ -8,4 +8,5 @@ public interface IInsuranceTypeRepository
     Task UpdateAsync(InsuranceType entity);
     Task DeleteAsync(Guid id);
     Task<List<InsuranceType>> GetByUserIdAsync(Guid userId);
+    Task<int> GetActiveCountAsync();
 }

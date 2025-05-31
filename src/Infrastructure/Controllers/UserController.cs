@@ -172,7 +172,7 @@ public class UserController : ControllerBase
         var success = await _userService.UpdateUserAsync(user);
         return success ? Ok("User updated successfully.") : NotFound("User not found.");
     }
-    
+
     [Authorize]
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
@@ -196,5 +196,14 @@ public class UserController : ControllerBase
         {
             return NotFound(ex.Message);
         }
+    }
+
+    [HttpGet("count")]
+    public async Task<ActionResult<int>> GetCount()
+    {
+        var count = await _userService.CountAsync();
+
+        if (count > 0) return Ok(count);
+        return NotFound("No users registered");
     }
 }

@@ -78,4 +78,9 @@ public class FirmService : IFirmService
             }).ToList()
         }).ToList();
     }
+
+    public async Task<int> CountAsync()
+    {
+        return await _repository.GetCountAsync();
+    }
 }

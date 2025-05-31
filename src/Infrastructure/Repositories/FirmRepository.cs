@@ -48,4 +48,10 @@ public class FirmRepository : IFirmRepository
             .Include(f => f.InsuranceTypes)
             .ToListAsync();
     }
+
+    public async Task<int> GetCountAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Firms.CountAsync();
+    }
 }

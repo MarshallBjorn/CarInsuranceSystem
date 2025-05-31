@@ -91,4 +91,10 @@ public class UserRepository : IUserRepository
         await context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<int> GetCountAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Users.CountAsync();
+    }
 }

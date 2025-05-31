@@ -10,5 +10,6 @@ public interface IInsuranceTypeService
     Task UpdateAsync(Guid id, CreateUpdateInsuranceTypeDto dto);
     Task DeleteAsync(Guid id);
     Task<List<InsuranceTypeDto>> GetByUserIdAsync(Guid userId);
+    Task<int> CountAsync();
 }
 

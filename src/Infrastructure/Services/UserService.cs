@@ -89,4 +89,9 @@ public class UserService
 
         return true;
     }
+
+    public async Task<int> CountAsync()
+    {
+        return await _repository.GetCountAsync();
+    }
 }

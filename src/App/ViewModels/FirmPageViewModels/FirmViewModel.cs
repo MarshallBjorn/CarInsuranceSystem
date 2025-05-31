@@ -107,6 +107,7 @@ public partial class FirmViewModel : ViewModelBase
 
             MessageText = "Firm updated successfully.";
             OnFirmEdited?.Invoke();
+            AppState.RaiseFirm();
         }
         catch (Exception ex)
         {

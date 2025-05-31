@@ -51,4 +51,11 @@ public class InsuranceTypeRepository : IInsuranceTypeRepository
             .Where(i => i.Firm.UserId == userId)
             .ToListAsync();
     }
+
+    public async Task<int> GetActiveCountAsync()
+    {
+        return await _context.CarInsurances
+            .Where(i => i.IsActive)
+            .CountAsync();
+    }
 }

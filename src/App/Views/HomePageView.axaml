@@ -2,17 +2,100 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:App.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="App.Views.HomePageView">
+             x:Class="App.Views.HomePageView"
+             x:DataType="vm:HomePageViewModel">
 
   <ScrollViewer>
-    <Grid RowDefinitions="Auto, *" Margin="20">
-      <TextBlock Grid.Row="0" Margin="0 20" FontSize="20" FontWeight="Bold">
+    <StackPanel Margin="20" Spacing="20">
+      <TextBlock Margin="0 20" FontSize="20" FontWeight="Bold">
         Homepage
       </TextBlock>
-      <Border Grid.Row="1" Background="#2d323c" CornerRadius="10">
-        <Image Source="/Assets/Images/homepageImage.jpg" Height="320" />
+
+      <TextBlock Text="Safety of your cars starts here."
+                  FontSize="18"
+                  FontStyle="Italic"
+                  FontWeight="Medium"
+                  HorizontalAlignment="Center"
+                  Margin="0,10"/>
+    
+      <Border Background="#2d323c" CornerRadius="10">
+        <Image Source="/Assets/Images/homepageImage.jpg" Height="250" Stretch="UniformToFill"/>
       </Border>
-    </Grid>
+
+      <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                Spacing="20">
+        <Border Background="#3b4252" CornerRadius="12" Padding="16" Width="160">
+          <StackPanel>
+            <TextBlock Text="Firms" FontWeight="Bold" FontSize="14" Foreground="White"/>
+            <TextBlock Text="{Binding Firms}" FontSize="32" FontWeight="Bold" Foreground="White"/>
+          </StackPanel>
+        </Border>
+        <Border Background="#3b4252" CornerRadius="12" Padding="16" Width="160">
+          <StackPanel>
+            <TextBlock Text="Insurances" FontWeight="Bold" FontSize="14" Foreground="White"/>
+            <TextBlock Text="{Binding Insurances}" FontSize="32" FontWeight="Bold" Foreground="White"/>
+          </StackPanel>
+        </Border>
+        <Border Background="#3b4252" CornerRadius="12" Padding="16" Width="160">
+          <StackPanel>
+            <TextBlock Text="Users" FontWeight="Bold" FontSize="14" Foreground="White"/>
+            <TextBlock Text="{Binding Users}" FontSize="32" FontWeight="Bold" Foreground="White"/>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+
+      <StackPanel>
+        <TextBlock Text="🔧 What can you do with this app?"
+                  FontSize="16"
+                  HorizontalAlignment="Center"
+                  FontWeight="Bold"
+                  Margin="0,20,0,10"/>
+
+        <UniformGrid Columns="2" Rows="2" HorizontalAlignment="Center" Margin="0,0,0,10">
+          <Border Background="#3b4252" CornerRadius="10" Padding="12" Margin="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Image Source="/Assets/Icons/building.png" Width="24" Height="24"/>
+              <TextBlock Text="Add and edit insurance firms"
+                        Foreground="White"
+                        FontSize="14"
+                        TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <Border Background="#3b4252" CornerRadius="10" Padding="12" Margin="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Image Source="/Assets/Icons/policy.png" Width="24" Height="24"/>
+              <TextBlock Text="Create and modify insurance policies"
+                        Foreground="White"
+                        FontSize="14"
+                        TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <Border Background="#3b4252" CornerRadius="10" Padding="12" Margin="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Image Source="/Assets/Icons/car.png" Width="24" Height="24"/>
+              <TextBlock Text="Assign policies to cars and check duration"
+                        Foreground="White"
+                        FontSize="14"
+                        TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <Border Background="#3b4252" CornerRadius="10" Padding="12" Margin="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Image Source="/Assets/Icons/edit-car.png" Width="24" Height="24"/>
+              <TextBlock Text="Add and edit your car data"
+                        Foreground="White"
+                        FontSize="14"
+                        TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+        </UniformGrid>
+      </StackPanel>
+    </StackPanel>
   </ScrollViewer>
 </UserControl>

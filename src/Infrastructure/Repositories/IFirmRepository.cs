@@ -8,4 +8,5 @@ public interface IFirmRepository
     Task CreateAsync(Firm firm);
     Task UpdateAsync(Firm firm);
     Task<List<Firm>> GetAllByUserIdAsync(Guid userId);
+    Task<int> GetCountAsync();
 }

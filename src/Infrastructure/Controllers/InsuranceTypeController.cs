@@ -54,4 +54,14 @@ public class InsuranceTypesController : ControllerBase
         var result = await _service.GetByUserIdAsync(userId);
         return Ok(result);
     }
+
+    [HttpGet("count")]
+    public async Task<ActionResult<int>> GetCount()
+    {
+        var count = await _service.CountAsync();
+
+        if (count > 0) return Ok(count);
+
+        return NotFound("No current active insurances");
+    }
 }

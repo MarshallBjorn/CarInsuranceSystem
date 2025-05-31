@@ -8,4 +8,5 @@ public interface IFirmService
     Task CreateAsync(CreateFirmDto dto);
     Task UpdateAsync(UpdateFirmDto dto);
     Task<List<FirmDto>> GetAllByUserAsync(Guid userId);
+    Task<int> CountAsync();
 }

@@ -12,6 +12,8 @@ public class AppState
     public event Action? OnLogin;
     public event Action? OnLogOut;
     public event Action? OnInsuranceChange;
+    public event Action? OnCarChange;
+    public event Action? OnFirmChange;
 
     public void RaiseLogin()
     {
@@ -24,4 +26,8 @@ public class AppState
     }
 
     public void RaiseInsurance() => OnInsuranceChange?.Invoke();
+
+    public void RaiseCar() => OnCarChange?.Invoke();
+
+    public void RaiseFirm() => OnFirmChange?.Invoke();
 }

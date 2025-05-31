@@ -53,4 +53,9 @@ public class InsuranceTypeService : IInsuranceTypeService
         var entities = await _repository.GetByUserIdAsync(userId);
         return entities.Select(e => _mapper.Map<InsuranceTypeDto>(e)).ToList();
     }
+
+    public async Task<int> CountAsync()
+    {
+        return await _repository.GetActiveCountAsync();
+    }
 }

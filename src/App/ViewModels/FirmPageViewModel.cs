@@ -20,7 +20,7 @@ public partial class FirmPageViewModel : ViewModelBase
     private readonly IFirmViewModelFactory _factory;
 
     [ObservableProperty] private ObservableCollection<FirmViewModel> _firms = new();
-    [ObservableProperty] private ObservableCollection<FirmPageViewModel> _filteredFirms = new();
+    [ObservableProperty] private ObservableCollection<FirmViewModel> _filteredFirms = new();
     
     [ObservableProperty] private string _filterText = "";
     [ObservableProperty] private string _messageText = "";
@@ -55,6 +55,11 @@ public partial class FirmPageViewModel : ViewModelBase
             ButtonIsVisible = false;
             ListText = "You have been logged out.";
         };
+    }
+
+    partial void OnFilterTextChanged(string value)
+    {
+        ApplyFirmFilter();
     }
 
     private async Task LoadFirmsAsync()
@@ -101,12 +106,39 @@ public partial class FirmPageViewModel : ViewModelBase
             Firms = new ObservableCollection<FirmViewModel>(
                 firms.Select(firm => _factory.CreateEdit(firm))
             );
+
+            ApplyFirmFilter();
         }
         catch (Exception ex)
         {
             MessageText = $"Failed to load cars. {ex.Message}";
         }
     }
+
+    private void ApplyFirmFilter()
+    {
+        if (string.IsNullOrWhiteSpace(FilterText))
+        {
+            FilteredFirms = new ObservableCollection<FirmViewModel>(Firms);
+            return;
+        }
+
+        var lower = FilterText.ToLowerInvariant();
+
+        var filtered = Firms.Where(firmVm =>
+            (firmVm.Firm.Name?.ToLower().Contains(lower) ?? false) ||
+            (firmVm.Firm.CountryCode?.ToLower().Contains(lower) ?? false) ||
+            (firmVm.Firm.CreatedAt.ToString("dd.MM.yyyy").ToLower().Contains(lower)) ||
+            firmVm.Insurances.Any(ins =>
+                (ins.InsuranceType.Name?.ToLower().Contains(lower) ?? false) ||
+                (ins.InsuranceType.PolicyNumber?.ToLower().Contains(lower) ?? false) ||
+                (ins.InsuranceType.PolicyDescription?.ToLower().Contains(lower) ?? false)
+            )
+        );
+
+        FilteredFirms = new ObservableCollection<FirmViewModel>(filtered);
+    }
+
 
     [RelayCommand]
     private void FirmAddOpen()

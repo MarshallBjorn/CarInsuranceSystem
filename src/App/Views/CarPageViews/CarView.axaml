@@ -11,41 +11,70 @@
         <converters:StringNullOrEmptyToBoolConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
     </UserControl.Resources>
         
-    <StackPanel Margin="20" Spacing="10">
-        <TextBlock Text="Edit Car" FontSize="24" FontWeight="Bold" />
+    <ScrollViewer>
+        <StackPanel Margin="20" 
+                    Spacing="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
 
-        <TextBlock Text="{Binding ErrorText}" />
+            <TextBlock Text="Edit Car" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
 
-        <TextBox Text="{Binding Vin}" Watermark="VIN" IsEnabled="False"/>
-        <TextBox Text="{Binding Mark}" Watermark="Mark" />
-        <TextBox Text="{Binding Model}" Watermark="Model" />
-        <TextBox Text="{Binding ProductionYear}" Watermark="Production Year" />
-        <TextBox Text="{Binding EngineType}" Watermark="Engine Type" />
+            <TextBlock Text="{Binding ErrorText}" />
 
-        <ComboBox ItemsSource="{Binding AvailableInsuranceTypes}"
-                  SelectedItem="{Binding SelectedInsuranceType}"
-                  IsEnabled="{Binding IsInsuranceRenewable}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:InsuranceViewModel">
-                    <TextBlock Text="{Binding DisplayName}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+            <StackPanel>
+                <TextBlock Text="VIN" />
+                <TextBox Text="{Binding Vin}" Watermark="VIN" Width="300" IsEnabled="False"/>
+                <TextBlock Text="{Binding VinErrors}" Foreground="Red" />
+            </StackPanel>
 
-        <Button Content="Renew / Pay"
-                    Command="{Binding RenewInsuranceCommand}"
-                    IsVisible="{Binding IsInsuranceRenewable, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}" />
+            <StackPanel>
+                <TextBlock Text="Mark" />
+                <TextBox Text="{Binding Mark}" Width="300" Watermark="Mark" />
+                <TextBlock Text="{Binding MarkErrors}" Foreground="Red" />
+            </StackPanel>
+            
+            <StackPanel>
+                <TextBlock Text="Model" />
+                <TextBox Text="{Binding Model}" Width="300" Watermark="Model" />
+                <TextBlock Text="{Binding ModelErrors}" Foreground="Red" />
+            </StackPanel>
+            
+            <StackPanel>
+                <TextBlock Text="Year of Production" />
+                <TextBox Text="{Binding ProductionYear}" Width="300" Watermark="Production Year" />
+                <TextBlock Text="{Binding ProductionYearErrors}" Foreground="Red" />
+            </StackPanel>
 
-        <TextBlock>
-            <Run Text="Has Active Insurance: " />
-            <Run Text="{Binding HasActiveInsurance}" />
-        </TextBlock>
+            <StackPanel>
+                <TextBlock Text="Type of Engine" />
+                <TextBox Text="{Binding EngineType}" Width="300" Watermark="Engine Type" />
+            </StackPanel>
 
-        <TextBlock>
-            <Run Text="Days Until Expiration: " />
-            <Run Text="{Binding DaysUntilExpiration}" />
-        </TextBlock>
+            <ComboBox ItemsSource="{Binding AvailableInsuranceTypes}"
+                    SelectedItem="{Binding SelectedInsuranceType}"
+                    IsEnabled="{Binding IsInsuranceRenewable}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:InsuranceViewModel">
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
-        <Button Content="Save Changes" Command="{Binding SaveChangesCommand}" />
-    </StackPanel>
+            <Button Content="Renew / Pay"
+                        Command="{Binding RenewInsuranceCommand}"
+                        IsVisible="{Binding IsInsuranceRenewable, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}" />
+
+            <TextBlock>
+                <Run Text="Has Active Insurance: " />
+                <Run Text="{Binding HasActiveInsurance}" />
+            </TextBlock>
+
+            <TextBlock>
+                <Run Text="Days Until Expiration: " />
+                <Run Text="{Binding DaysUntilExpiration}" />
+            </TextBlock>
+
+            <Button Content="Save Changes" Command="{Binding SaveChangesCommand}" />
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

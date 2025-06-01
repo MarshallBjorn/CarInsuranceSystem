@@ -28,12 +28,20 @@
   <Grid Margin="20" RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*">
     <!-- Header -->
     <StackPanel Grid.Row="0" HorizontalAlignment="Center" Spacing="8">
-      <TextBlock Text="{Binding WelcomeMessage}" FontSize="26" FontWeight="Bold" />
-      <TextBlock Text="{Binding MessageText}" FontSize="18" Foreground="Red" />
+      <TextBlock Text="{Binding WelcomeMessage}" FontSize="26" FontWeight="Bold" HorizontalAlignment="Center" />
+      <Border Height="30"> <!-- Reserve space -->
+        <TextBlock Text="{Binding MessageText}"
+                  FontSize="18"
+                  Foreground="Red"
+                  TextWrapping="Wrap"
+                  VerticalAlignment="Center"
+                  TextAlignment="Center" />
+      </Border>
     </StackPanel>
 
     <!-- Edit Button -->
-    <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="0 20 0 10">
+    <StackPanel Grid.Row="1" Margin="0 20 0 10"
+                HorizontalAlignment="Center">
       <Button Content="{Binding EditButtonText}"
               Command="{Binding ToggleEditCommand}"
               HorizontalContentAlignment="Center"

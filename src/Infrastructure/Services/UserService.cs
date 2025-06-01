@@ -4,6 +4,13 @@ using FluentValidation;
 
 namespace Infrastructure.Services;
 
+public class EmailExistsException : Exception
+{
+    public EmailExistsException() : base() { }
+    public EmailExistsException(string message) : base(message) { }
+    public string TriedEmail { get; set; }
+}
+
 public class UserService
 {
     private readonly IUserRepository _repository;
@@ -34,6 +41,8 @@ public class UserService
     {
         if (user == null)
             throw new ArgumentNullException(nameof(user));
+
+        if (await UserExistsAsync(user.Email)) throw new EmailExistsException("Email is already used by another user.") { TriedEmail = user.Email };
 
         var validationResult = await _userValidator.ValidateAsync(user);
         if (!validationResult.IsValid)
@@ -66,6 +75,8 @@ public class UserService
 
     public async Task<bool> UpdateUserAsync(User updatedUser)
     {
+        if (await UserExistsAsync(updatedUser.Email)) throw new EmailExistsException("Email is already used by another user.") { TriedEmail = updatedUser.Email };
+
         return await _repository.UpdateUserAsync(updatedUser);
     }
 

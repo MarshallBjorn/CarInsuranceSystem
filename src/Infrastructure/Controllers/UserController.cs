@@ -84,6 +84,10 @@ public class UserController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+        catch (EmailExistsException ex)
+        {
+            return BadRequest($"{ex.Message}. Tried email: {ex.TriedEmail}");
+        }
     }
 
     [Authorize]
@@ -151,26 +155,33 @@ public class UserController : ControllerBase
     [HttpPut("update")]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest dto)
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                        ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out Guid userId))
-            return Unauthorized("Invalid token");
-
-        if (dto.Id != userId)
-            return Forbid("You can only update your own profile.");
-
-        var user = new User
+        try
         {
-            Id = dto.Id,
-            Email = dto.Email,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            BirthDate = dto.BirthDate
-        };
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                            ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
-        var success = await _userService.UpdateUserAsync(user);
-        return success ? Ok("User updated successfully.") : NotFound("User not found.");
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim, out Guid userId))
+                return Unauthorized("Invalid token");
+
+            if (dto.Id != userId)
+                return Forbid("You can only update your own profile.");
+
+            var user = new User
+            {
+                Id = dto.Id,
+                Email = dto.Email,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                BirthDate = dto.BirthDate
+            };
+
+            var success = await _userService.UpdateUserAsync(user);
+            return success ? Ok("User updated successfully.") : NotFound("User not found.");
+        }
+        catch (EmailExistsException ex)
+        {
+            return BadRequest($"{ex.Message}. Tried email: {ex.TriedEmail}");
+        }
     }
 
     [Authorize]

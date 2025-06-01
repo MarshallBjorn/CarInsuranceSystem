@@ -27,7 +27,7 @@ public static class DatabaseSeeder
                     FirstName = "Oleksij",
                     LastName = "Nawrockij",
                     BirthDate = new DateTime(2004, 12, 8).ToUniversalTime(),
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("supperp@sswrd123"),
                     Role = "User"
                 },
                 new()

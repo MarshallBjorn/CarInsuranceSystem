@@ -1,6 +1,7 @@
 namespace App.ViewModels.CarPageViewModels;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Core.Entities;
+using Core.Validators;
 using global::App.Support;
 
 public partial class CarViewModel : ViewModelBase
@@ -27,6 +29,16 @@ public partial class CarViewModel : ViewModelBase
 
     [ObservableProperty] private ObservableCollection<InsuranceViewModel> _availableInsuranceTypes = new();
     [ObservableProperty] private InsuranceViewModel? _selectedInsuranceType;
+
+    private readonly List<string> _vinErrors = new();
+    private readonly List<string> _markErrors = new();
+    private readonly List<string> _modelErrors = new();
+    private readonly List<string> _productionYearErrors = new();
+
+    public string VinErrors => _vinErrors.Any() ? string.Join("\n", _vinErrors) : string.Empty;
+    public string MarkErrors => _markErrors.Any() ? string.Join("\n", _markErrors) : string.Empty;
+    public string ModelErrors => _modelErrors.Any() ? string.Join("\n", _modelErrors) : string.Empty;
+    public string ProductionYearErrors => _productionYearErrors.Any() ? string.Join("\n", _productionYearErrors) : string.Empty;
 
     public bool IsInsuranceRenewable => DaysUntilExpiration.HasValue && DaysUntilExpiration.Value <= 364;
 
@@ -71,8 +83,57 @@ public partial class CarViewModel : ViewModelBase
     {
         if (Car == null) return;
 
+        _vinErrors.Clear();
+        _markErrors.Clear();
+        _modelErrors.Clear();
+        _productionYearErrors.Clear();
+        OnPropertyChanged(nameof(VinErrors));
+        OnPropertyChanged(nameof(MarkErrors));
+        OnPropertyChanged(nameof(ModelErrors));
+        OnPropertyChanged(nameof(ProductionYearErrors));
+
         if (!int.TryParse(ProductionYear, out var parsedYear))
             return;
+
+        var carToValidate = new Car
+        {
+            VIN = Vin,
+            Mark = Mark,
+            Model = Model,
+            ProductionYear = parsedYear,
+            EngineType = EngineType
+        };
+
+        var validator = new CarValidator();
+        var result = validator.Validate(carToValidate);
+
+        if (!result.IsValid)
+        {
+            foreach (var error in result.Errors)
+            {
+                switch (error.PropertyName)
+                {
+                    case nameof(Car.VIN):
+                        _vinErrors.Add(error.ErrorMessage);
+                        break;
+                    case nameof(Car.Mark):
+                        _markErrors.Add(error.ErrorMessage);
+                        break;
+                    case nameof(Car.Model):
+                        _modelErrors.Add(error.ErrorMessage);
+                        break;
+                    case nameof(Car.ProductionYear):
+                        _productionYearErrors.Add(error.ErrorMessage);
+                        break;
+                }
+            }
+
+            OnPropertyChanged(nameof(VinErrors));
+            OnPropertyChanged(nameof(MarkErrors));
+            OnPropertyChanged(nameof(ModelErrors));
+            OnPropertyChanged(nameof(ProductionYearErrors));
+            return;
+        }
 
         Car.VIN = Vin;
         Car.Mark = Mark;

@@ -218,35 +218,38 @@
                 Background="#1e1e1e"
                 CornerRadius="5"
                 ZIndex="2">
-            <DockPanel Margin="20">
-                <TextBlock Text="{Binding ErrorText}"
-                           DockPanel.Dock="Top" />
-                <TextBox Watermark="VIN" Text="{Binding Vin}"
-                         DockPanel.Dock="Top" />
-                <TextBox Watermark="Mark" Text="{Binding Mark}" 
-                         DockPanel.Dock="Top"/>
-                <TextBox Watermark="Model" Text="{Binding Model}"
-                         DockPanel.Dock="Top" />
-                <TextBox Watermark="Production Year" Text="{Binding ProductionYear}"
-                         DockPanel.Dock="Top" />
-                <TextBox Watermark="Engine Type" Text="{Binding EngineType}"
-                         DockPanel.Dock="Top" />
+            <ScrollViewer>
+                <StackPanel Margin="20" 
+                            Spacing="10"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="Add Car"
+                            FontSize="24"
+                            HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding ErrorText}" />
 
-                <ComboBox ItemsSource="{Binding Insurances}"
-                          SelectedItem="{Binding SelectedInsurance}"
-                          Width="200">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:CarPageViewModels.InsuranceViewModel">
-                            <TextBlock Text="{Binding DisplayName}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Button Command="{Binding CarAddSaveCommand}"
-                        DockPanel.Dock="Bottom"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Left"
-                        Content="ADD CAR"/>
-            </DockPanel>
+                    <TextBox Watermark="VIN" Text="{Binding Vin}" />
+                    <TextBox Watermark="Mark" Text="{Binding Mark}" />
+                    <TextBox Watermark="Model" Text="{Binding Model}" />
+                    <TextBox Watermark="Production Year" Text="{Binding ProductionYear}" />
+                    <TextBox Watermark="Engine Type" Text="{Binding EngineType}" />
+
+                    <ComboBox ItemsSource="{Binding Insurances}"
+                            SelectedItem="{Binding SelectedInsurance}"
+                            Width="200">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:CarPageViewModels.InsuranceViewModel">
+                                <TextBlock Text="{Binding DisplayName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Command="{Binding CarAddSaveCommand}"
+                            DockPanel.Dock="Bottom"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Left"
+                            Content="ADD CAR"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <!-- Edit Car Popup -->

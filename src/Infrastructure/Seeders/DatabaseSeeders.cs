@@ -1,15 +1,24 @@
+using Bogus;
 using Core.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Seeders;
 
 public static class DatabaseSeeder
 {
-    public static void Seed(AppDbContext context)
+    public static async Task SeedAsync(AppDbContext context)
     {
-        if (!context.Users.Any())
+        // Ensure database exists
+        await context.Database.EnsureCreatedAsync();
+
+        var utcNow = DateTime.UtcNow;
+
+        // Seed Users
+        List<User> users;
+        if (!await context.Users.AnyAsync())
         {
-            var users = new List<User>
+            var seededUsers = new List<User>
             {
                 new()
                 {
@@ -17,8 +26,9 @@ public static class DatabaseSeeder
                     Email = "oleksij.nawrockij@gmail.com",
                     FirstName = "Oleksij",
                     LastName = "Nawrockij",
-                    BirthDate = DateTime.SpecifyKind(new DateTime(2004, 12, 8), DateTimeKind.Utc),
+                    BirthDate = new DateTime(2004, 12, 8).ToUniversalTime(),
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"),
+                    Role = "User"
                 },
                 new()
                 {
@@ -26,61 +36,101 @@ public static class DatabaseSeeder
                     Email = "tomasz.nowak@gmail.com",
                     FirstName = "Tomasz",
                     LastName = "Nowak",
-                    BirthDate = DateTime.SpecifyKind(new DateTime(2003, 11, 2), DateTimeKind.Utc),
+                    BirthDate = new DateTime(2003, 11, 2).ToUniversalTime(),
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("321"),
+                    Role = "User"
                 }
             };
 
-            context.Users.AddRange(users);
-            context.SaveChanges();
+            var userFaker = new Faker<User>()
+                .RuleFor(u => u.Id, _ => Guid.NewGuid())
+                .RuleFor(u => u.FirstName, f => f.Name.FirstName())
+                .RuleFor(u => u.LastName, f => f.Name.LastName())
+                .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
+                .RuleFor(u => u.BirthDate, f => f.Date.Past(30, utcNow.AddYears(-18)))
+                .RuleFor(u => u.PasswordHash, _ => BCrypt.Net.BCrypt.HashPassword("password"))
+                .RuleFor(u => u.Role, _ => "User");
+
+            users = seededUsers.Concat(userFaker.Generate(40)).ToList();
+
+            await context.Users.AddRangeAsync(users);
+            await context.SaveChangesAsync();
+        }
+        else
+        {
+            users = await context.Users.ToListAsync();
         }
 
-        // Retrieve the users after ensuring they are saved
-        var oleksij = context.Users.First(u => u.FirstName == "Oleksij");
-        var tomasz = context.Users.First(u => u.FirstName == "Tomasz");
+        var oleksij = users.FirstOrDefault(u => u.FirstName == "Oleksij");
+        var tomasz = users.FirstOrDefault(u => u.FirstName == "Tomasz");
 
-        if (!context.Firms.Any())
+        if (oleksij is null || tomasz is null)
+            throw new Exception("Seed users 'Oleksij' or 'Tomasz' not found.");
+
+        // Seed Firms
+        List<Firm> firms;
+        if (!await context.Firms.AnyAsync())
         {
-            var firms = new List<Firm>
+            var seededFirms = new List<Firm>
             {
                 new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Black FOX",
                     CountryCode = "UA",
-                    CreatedAt = DateTime.UtcNow,
-                    UserId = oleksij.Id // 👈 Assign Oleksij as owner
+                    CreatedAt = utcNow,
+                    UserId = oleksij.Id
                 },
                 new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Tegoniemasz Industries",
                     CountryCode = "PL",
-                    CreatedAt = DateTime.UtcNow,
-                    UserId = tomasz.Id // 👈 Assign Tomasz as owner
+                    CreatedAt = utcNow,
+                    UserId = tomasz.Id
                 }
             };
 
-            context.Firms.AddRange(firms);
-            context.SaveChanges();
+            var firmFaker = new Faker<Firm>()
+                .RuleFor(f => f.Id, _ => Guid.NewGuid())
+                .RuleFor(f => f.Name, f => f.Company.CompanyName())
+                .RuleFor(f => f.CountryCode, f => f.Address.CountryCode())
+                .RuleFor(f => f.CreatedAt, f => f.Date.Past(10, utcNow))
+                .RuleFor(f => f.UserId, f => f.PickRandom(users).Id);
+
+            firms = seededFirms.Concat(firmFaker.Generate(60)).ToList();
+
+            await context.Firms.AddRangeAsync(firms);
+            await context.SaveChangesAsync();
+        }
+        else
+        {
+            firms = await context.Firms.ToListAsync();
         }
 
-        if (!context.InsuranceTypes.Any())
-        {
-            var fox = context.Firms.First(f => f.Name == "Black FOX");
-            var tegnie = context.Firms.First(f => f.Name == "Tegoniemasz Industries");
+        var fox = firms.FirstOrDefault(f => f.Name == "Black FOX");
+        var tegnie = firms.FirstOrDefault(f => f.Name == "Tegoniemasz Industries");
 
-            var insuranceTypes = new List<InsuranceType>
+        if (fox is null || tegnie is null)
+            throw new Exception("Seed firms not found.");
+
+        // Seed InsuranceTypes
+        List<InsuranceType> insurances;
+        if (!await context.InsuranceTypes.AnyAsync())
+        {
+            var seededInsuranceTypes = new List<InsuranceType>
             {
-                new() {
+                new()
+                {
                     Id = Guid.NewGuid(),
                     Name = "Premium",
                     PolicyDescription = "Premium insurance policy",
-                    Price = 1200,
                     PolicyNumber = "POL-ALL-123",
+                    Price = 1200,
                     FirmId = fox.Id
                 },
-                new() {
+                new()
+                {
                     Id = Guid.NewGuid(),
                     Name = "Basic",
                     PolicyDescription = "Basic insurance policy",
@@ -90,13 +140,29 @@ public static class DatabaseSeeder
                 }
             };
 
-            context.InsuranceTypes.AddRange(insuranceTypes);
-            context.SaveChanges();
+            var insuranceFaker = new Faker<InsuranceType>()
+                .RuleFor(i => i.Id, _ => Guid.NewGuid())
+                .RuleFor(i => i.Name, f => f.PickRandom("Basic", "Premium", "Advanced"))
+                .RuleFor(i => i.PolicyDescription, f => f.Lorem.Sentence())
+                .RuleFor(i => i.PolicyNumber, f => $"POL-{f.Random.AlphaNumeric(7).ToUpper()}")
+                .RuleFor(i => i.Price, f => Math.Round(f.Random.Decimal(100, 1000), 2))
+                .RuleFor(i => i.FirmId, f => f.PickRandom(firms).Id);
+
+            insurances = seededInsuranceTypes.Concat(insuranceFaker.Generate(100)).ToList();
+
+            await context.InsuranceTypes.AddRangeAsync(insurances);
+            await context.SaveChangesAsync();
+        }
+        else
+        {
+            insurances = await context.InsuranceTypes.ToListAsync();
         }
 
-        if (!context.Cars.Any())
+        // Seed Cars
+        List<Car> cars;
+        if (!await context.Cars.AnyAsync())
         {
-            var cars = new List<Car>
+            var seededCars = new List<Car>
             {
                 new()
                 {
@@ -116,69 +182,125 @@ public static class DatabaseSeeder
                 }
             };
 
-            context.Cars.AddRange(cars);
-            context.SaveChanges();
+            var carFaker = new Faker<Car>()
+                .RuleFor(c => c.VIN, f => f.Random.Replace("??######????????"))
+                .RuleFor(c => c.Mark, f => f.Vehicle.Manufacturer())
+                .RuleFor(c => c.Model, f => f.Vehicle.Model())
+                .RuleFor(c => c.ProductionYear, f => f.Date.Past(20).Year)
+                .RuleFor(c => c.EngineType, f => f.PickRandom("Petrol", "Diesel", "Hybrid", "Electric"));
+
+            cars = seededCars.Concat(carFaker.Generate(500)).ToList();
+
+            await context.Cars.AddRangeAsync(cars);
+            await context.SaveChangesAsync();
+        }
+        else
+        {
+            cars = await context.Cars.ToListAsync();
         }
 
-        if (!context.CarInsurances.Any())
+        var mazda = cars.FirstOrDefault(c => c.VIN == "JM1TA221321173708");
+        var seat = cars.FirstOrDefault(c => c.VIN == "WMEEK8AA9BK479016");
+        var premium = insurances.FirstOrDefault(i => i.PolicyNumber == "POL-ALL-123");
+        var basic = insurances.FirstOrDefault(i => i.PolicyNumber == "POL-SF-456");
+
+        // Seed CarInsurances
+        if (!await context.CarInsurances.AnyAsync())
         {
-            var premiumInsuranceType = context.InsuranceTypes.First(i => i.PolicyNumber == "POL-ALL-123");
-            var basicInsuranceType = context.InsuranceTypes.First(i => i.PolicyNumber == "POL-SF-456");
+            if (mazda is null || seat is null || premium is null || basic is null)
+                throw new Exception("Required seeded data for car insurances not found.");
 
-            var mazda = context.Cars.First(c => c.VIN == "JM1TA221321173708");
-            var seat = context.Cars.First(c => c.VIN == "WMEEK8AA9BK479016");
-
-            var carInsurances = new List<CarInsurance>
+            var seededCarInsurances = new List<CarInsurance>
             {
                 new()
                 {
                     Id = Guid.NewGuid(),
                     CarVIN = mazda.VIN,
-                    InsuranceTypeId = premiumInsuranceType.Id,
-                    ValidFrom = DateTime.UtcNow.AddYears(-1),
-                    ValidTo = DateTime.UtcNow.AddYears(1),
+                    InsuranceTypeId = premium.Id,
+                    ValidFrom = utcNow.AddYears(-1),
+                    ValidTo = utcNow.AddYears(1),
                     IsActive = true
                 },
                 new()
                 {
                     Id = Guid.NewGuid(),
                     CarVIN = seat.VIN,
-                    InsuranceTypeId = basicInsuranceType.Id,
-                    ValidFrom = DateTime.UtcNow,
-                    ValidTo = DateTime.UtcNow.AddYears(2),
+                    InsuranceTypeId = basic.Id,
+                    ValidFrom = utcNow,
+                    ValidTo = utcNow.AddYears(2),
                     IsActive = true
                 }
             };
 
-            context.CarInsurances.AddRange(carInsurances);
-            context.SaveChanges();
+            var carInsuranceFaker = new Faker<CarInsurance>()
+                .RuleFor(ci => ci.Id, _ => Guid.NewGuid())
+                .RuleFor(ci => ci.CarVIN, f => f.PickRandom(cars).VIN)
+                .RuleFor(ci => ci.InsuranceTypeId, f => f.PickRandom(insurances).Id)
+                .RuleFor(ci => ci.ValidFrom, f => f.Date.Past(1, utcNow))
+                .RuleFor(ci => ci.ValidTo, (f, ci) => ci.ValidFrom.AddYears(1))
+                .RuleFor(ci => ci.IsActive, _ => true);
+
+            await context.CarInsurances.AddRangeAsync(seededCarInsurances);
+            await context.CarInsurances.AddRangeAsync(carInsuranceFaker.Generate(500));
+            await context.SaveChangesAsync();
         }
 
-        if (!context.UserCars.Any())
+        if (!await context.UserCars.AnyAsync())
         {
-            var mazda = context.Cars.First(c => c.Mark == "Mazda");
-            var seat = context.Cars.First(c => c.Mark == "Seat");
+            if (mazda is null || seat is null)
+                throw new Exception("Required seeded cars not found for UserCars.");
 
-            var userCars = new List<UserCar>
+            var seededUserCars = new List<UserCar>
             {
                 new()
                 {
                     UserId = oleksij.Id,
                     CarVIN = mazda.VIN,
-                    PurchaseDate = DateTime.UtcNow.AddMonths(-6),
+                    PurchaseDate = utcNow.AddMonths(-6),
                     IsCurrentOwner = true
                 },
                 new()
                 {
                     UserId = tomasz.Id,
                     CarVIN = seat.VIN,
-                    PurchaseDate = DateTime.UtcNow.AddMonths(-2),
+                    PurchaseDate = utcNow.AddMonths(-2),
                     IsCurrentOwner = true
                 }
             };
 
-            context.UserCars.AddRange(userCars);
-            context.SaveChanges();
+            var usedKeys = new HashSet<(Guid, string)>
+            {
+                (oleksij.Id, mazda.VIN),
+                (tomasz.Id, seat.VIN)
+            };
+
+            var userCarsToAdd = new List<UserCar>(seededUserCars);
+            var faker = new Faker();
+
+            int attempts = 0;
+            while (userCarsToAdd.Count < 12 && attempts < 100)
+            {
+                attempts++;
+
+                var userId = faker.PickRandom(users).Id;
+                var carVIN = faker.PickRandom(cars).VIN;
+
+                if (usedKeys.Contains((userId, carVIN)))
+                    continue;
+
+                usedKeys.Add((userId, carVIN));
+
+                userCarsToAdd.Add(new UserCar
+                {
+                    UserId = userId,
+                    CarVIN = carVIN,
+                    PurchaseDate = faker.Date.Past(3, utcNow),
+                    IsCurrentOwner = faker.Random.Bool()
+                });
+            }
+
+            await context.UserCars.AddRangeAsync(userCarsToAdd);
+            await context.SaveChangesAsync();
         }
     }
 }

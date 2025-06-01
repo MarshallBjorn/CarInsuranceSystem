@@ -60,37 +60,64 @@ project-root/
 ---
 ## 📋 Typowe zadania i użycie
 
-### Logowanie
+### 🔐 Logowanie
+1. Przejdź do zakładki "Auth".
+2. Wprowadź dane do logowania.
+3. Wciśnij przycisk "LOGIN".
+![зображення](https://github.com/user-attachments/assets/c69411f9-93bb-41e4-ab76-507ded56e98a)
 
-### Rejestracja
+### 🛠️ Rejestracja
+1. Przejdź do zakładki "Auth".
+2. Wciśnij tekst pod przyciskiem "LOGIN"
+3. Wprowadź dane do rejestracji.
+4. Wciśnij przycisk "REGISTER"
+![зображення](https://github.com/user-attachments/assets/852cb5b4-e680-44a4-bab6-a8bd52c41a2e)
 
-### Edycja danych
+### ✏️ Edycja danych użytkownika
+1. Zaloguj się do aplikacji.
+2. W zakładce "Auth" wciśnij przycisk "Edit".
+3. W polach z danymi zaktualizuj swoje danne.
+4. Wciśnij przycisk "Save"
+![зображення](https://github.com/user-attachments/assets/bf0525a1-a1f4-4d9a-9a29-de930d37bebc)
 
-### Edycja hasła
+### ✏️ Edycja hasła
+1. Zaloguj się do aplikacji.
+2. W zakładce "Auth" wciśnij przycisk "Change Password".
+3. Wpisz stare hasło, nowe oraz powtórz nowe.
+4. Wpiśnij przycisk "CONFIRM"
+![зображення](https://github.com/user-attachments/assets/f7c614de-5e78-4164-a5fa-3f428c3f0af3)
 
 ### 🛠️ Tworzenie firmy
 1. Zaloguj się do aplikacji.
-2. Przejdź do zakładki firmy.
+2. Przejdź do zakładki "Firm".
 3. Kliknij przycisk "Add Firm".
 4. Wprowadź dane i zapisz.
+![зображення](https://github.com/user-attachments/assets/5b52df13-f900-4f0a-9954-30c526419288)
 
 ### 🛠️ Tworzenie typu ubezpieczenia
 1. Zaloguj się do aplikacji.
 2. Przejdź do zakładki firmy.
 3. Kliknij przycisk "Add Insurance Type".
 4. Wprowadź dane i zapisz.
+![зображення](https://github.com/user-attachments/assets/7a1a576d-5231-4b72-80ec-0156467e1b0c)
 
 ### ✏️ Edycja typu ubezpieczenia
 1. Zaloguj się do aplikacji.
 2. Przejdź do zakładki firmy.
 3. Obok potrzebnego ubezpieczenia kliknij "EDIT".
 4. Wypełnij formularz i zapisz.
+![зображення](https://github.com/user-attachments/assets/ab495ec2-ad8e-4621-95a6-9065fd5d96b4)
 
 ### ✏️ Edycja firmy.
 1. Zaloguj się do aplikacji.
 2. Przejdź do zakładki firmy.
 3. Obok potrzebnej firmy kliknij "EDIT".
 4. Wypełnij formularz i zapisz.
+![зображення](https://github.com/user-attachments/assets/5efdb915-e004-40c1-a2bf-500cd3b8cd01)
+
+![зображення](https://github.com/user-attachments/assets/eee56fab-656e-46af-a530-7916871c6072)
+
+
 
 
 

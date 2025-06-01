@@ -55,7 +55,7 @@ dotnet run --project src/App
 ### 🔐 Dane do logowania
 ```bash
 login: oleksij.nawrockij@gmail.com
-haslo: 123
+haslo: supperp@sswrd123
 ```
 ---
 ## 🧱 Struktura projektu
@@ -144,7 +144,18 @@ project-root/
 ---
 ## Skrajne przypadki
 
+### Zakładki "Car" oraz "Firm" dla użytkownika niezalogowanego
+![зображення](https://github.com/user-attachments/assets/79b03dea-6efb-41b5-a72d-6264ff28fb7c)
+![зображення](https://github.com/user-attachments/assets/e677f3fe-fbca-4442-9e6b-5b71426fe57a)
 
+### Niepoprawne dane dla widoku rejestracji.
+![зображення](https://github.com/user-attachments/assets/18d82b1f-757f-4c2f-bb4f-72a716deea27)
+
+### Widoki dla niepoprawnie wprowadzoncych danych w zakładce "Firm"
+![зображення](https://github.com/user-attachments/assets/9d8069ec-e277-4bd8-acf4-5e6154a21ec9)
+![зображення](https://github.com/user-attachments/assets/254d9ffe-b281-413e-9b79-0847cefc585e)
+![зображення](https://github.com/user-attachments/assets/717feb27-46a4-4357-aeba-82edaf69fa71)
+![зображення](https://github.com/user-attachments/assets/5ff35e5e-ac1a-49a8-b0c1-d47d1ebce82c)
 
 
 

@@ -1,6 +1,6 @@
 # 🚗 SaveYourCar App
 
-## 📄 Przegłąd
+## 📄 Przegląd
 ### Krosplatfromowa aplikacja dla zarządzania ubezpieczeniem dla aut.
 ![зображення](https://github.com/user-attachments/assets/3e04bf60-237f-4bc6-9a90-5c23799681c7)
 - **Frontend**: Avalonia UI (.NET)

@@ -7,55 +7,58 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="App.Views.FirmPageViews.NewInsuranceTypeView"
              x:DataType="vm:NewInsuranceTypeViewModel">
-    <StackPanel Margin="20" 
-                Spacing="10"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-    
-        <TextBlock Text="Add Insurance Type"
-                FontSize="24"
-                HorizontalAlignment="Center"/>
+    <ScrollViewer>
+        <StackPanel Margin="20" 
+                    Spacing="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+        
+            <TextBlock Text="Add Insurance Type"
+                    FontSize="24"
+                    HorizontalAlignment="Center"/>
 
-        <TextBlock Text="Firm" />
-        <ComboBox ItemsSource="{Binding Firms}"
-                SelectedItem="{Binding SelectedFirm}"
-                Width="300">
-            <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:FirmViewModel">
-                    <TextBlock Text="{Binding Name}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+            <TextBlock Text="Firm" />
+            <ComboBox ItemsSource="{Binding Firms}"
+                    SelectedItem="{Binding SelectedFirm}"
+                    Width="300">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:FirmViewModel">
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
-        <StackPanel>
-            <TextBlock Text="Name" />
-            <TextBox Text="{Binding Name}" Width="300" />
-            <TextBlock Text="{Binding NameErrors}" Foreground="Red" FontSize="12"/>
+            <StackPanel>
+                <TextBlock Text="Name" />
+                <TextBox Text="{Binding Name}" Width="300" />
+                <TextBlock Text="{Binding NameErrors}" Foreground="Red" FontSize="12"/>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Policy Number" />
+                <TextBox Text="{Binding PolicyNumber}" Width="300" />
+                <TextBlock Text="{Binding PolicyNumberErrors}" Foreground="Red" FontSize="12"/>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Price" />
+                <TextBox Text="{Binding Price}" Width="300" />
+                <TextBlock Text="{Binding PriceErrors}" Foreground="Red" FontSize="12"/>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Policy Description" />
+                <TextBox Text="{Binding PolicyDescription}" Width="300" AcceptsReturn="True" Height="100"/>
+                <TextBlock Text="{Binding PolicyDescriptionErrors}" Foreground="Red" FontSize="12"/>
+            </StackPanel>
+
+            <StackPanel>
+                <Button Content="Save"
+                        Command="{Binding SaveCommand}"
+                        Width="100"
+                        HorizontalAlignment="Center" />
+                <TextBlock Foreground="Red" Text="{Binding MessageText}" TextWrapping="Wrap" />
+            </StackPanel>
         </StackPanel>
-
-        <StackPanel>
-            <TextBlock Text="Policy Number" />
-            <TextBox Text="{Binding PolicyNumber}" Width="300" />
-            <TextBlock Text="{Binding PolicyNumberErrors}" Foreground="Red" FontSize="12"/>
-        </StackPanel>
-
-        <StackPanel>
-            <TextBlock Text="Price" />
-            <TextBox Text="{Binding Price}" Width="300" />
-            <TextBlock Text="{Binding PriceErrors}" Foreground="Red" FontSize="12"/>
-        </StackPanel>
-
-        <StackPanel>
-            <TextBlock Text="Policy Description" />
-            <TextBox Text="{Binding PolicyDescription}" Width="300" AcceptsReturn="True" Height="100"/>
-            <TextBlock Text="{Binding PolicyDescriptionErrors}" Foreground="Red" FontSize="12"/>
-        </StackPanel>
-
-        <TextBlock Foreground="Red" Text="{Binding MessageText}" TextWrapping="Wrap" />
-
-        <Button Content="Save"
-                Command="{Binding SaveCommand}"
-                Width="100"
-                HorizontalAlignment="Left" />
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>

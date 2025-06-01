@@ -53,6 +53,10 @@ dotnet run --project src/App
 ```
 
 ### 🔐 Dane do logowania
+```bash
+login: oleksij.nawrockij@gmail.com
+haslo: 123
+```
 ---
 ## 🧱 Struktura projektu
 ```

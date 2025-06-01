@@ -140,7 +140,7 @@ project-root/
 2. Przejdź do zakładki "Car".
 3. Obok potrzebnego auta kliknij "EDIT".
 4. Wypełnij formularz i zapisz.
-![зображення](https://github.com/user-attachments/assets/eee56fab-656e-46af-a530-7916871c6072)
+![зображення](https://github.com/user-attachments/assets/95d8c814-b820-45ed-a575-bfd4222b8a35)
 ---
 ## Skrajne przypadki
 
@@ -156,6 +156,11 @@ project-root/
 ![зображення](https://github.com/user-attachments/assets/254d9ffe-b281-413e-9b79-0847cefc585e)
 ![зображення](https://github.com/user-attachments/assets/717feb27-46a4-4357-aeba-82edaf69fa71)
 ![зображення](https://github.com/user-attachments/assets/5ff35e5e-ac1a-49a8-b0c1-d47d1ebce82c)
+
+### Widoki dla nieporawnie wprowadzonych danych w zakładce "Car"
+![зображення](https://github.com/user-attachments/assets/41f3ddc3-07ea-45e6-815e-2743cf5fa724)
+![зображення](https://github.com/user-attachments/assets/fba4f6eb-d24f-41b3-89dc-5fe03359b0a1)
+
 
 
 

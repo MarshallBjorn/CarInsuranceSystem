@@ -8,6 +8,9 @@
 - **Database**: PostgreSQL
 - **Deployment**: Docker
 
+### ERD
+![зображення](https://github.com/user-attachments/assets/171458d3-1b55-4538-b1f0-0cf19dc6c89a)
+
 ---
 ## 🛠️ Uruchomienie
 
@@ -38,7 +41,13 @@ cd src/Infrastructure
 dotnet ef database update
 ```
 
-4. Uruchom aplikację
+4. Zrestartuj kontenery Docker
+```bash
+docker-compose down
+docker-compose up --build
+```
+
+5. Uruchom aplikację
 ```bash
 dotnet run --project src/App
 ```
@@ -103,19 +112,33 @@ project-root/
 
 ### ✏️ Edycja typu ubezpieczenia
 1. Zaloguj się do aplikacji.
-2. Przejdź do zakładki firmy.
+2. Przejdź do zakładki "Firm".
 3. Obok potrzebnego ubezpieczenia kliknij "EDIT".
 4. Wypełnij formularz i zapisz.
 ![зображення](https://github.com/user-attachments/assets/ab495ec2-ad8e-4621-95a6-9065fd5d96b4)
 
 ### ✏️ Edycja firmy.
 1. Zaloguj się do aplikacji.
-2. Przejdź do zakładki firmy.
+2. Przejdź do zakładki "Firm".
 3. Obok potrzebnej firmy kliknij "EDIT".
 4. Wypełnij formularz i zapisz.
 ![зображення](https://github.com/user-attachments/assets/5efdb915-e004-40c1-a2bf-500cd3b8cd01)
 
+### 🛠️ Tworzenie auta
+1. Zaloguj się do aplikacji.
+2. Przejdź do zakładki "Car".
+3. Kliknij przycisk "Add Car".
+4. Wprowadź dane i zapisz.
+![зображення](https://github.com/user-attachments/assets/8854d210-2ed0-493b-98a1-df63724865c7)
+
+### ✏️ Edycja auta
+1. Zaloguj się do aplikacji.
+2. Przejdź do zakładki "Car".
+3. Obok potrzebnego auta kliknij "EDIT".
+4. Wypełnij formularz i zapisz.
 ![зображення](https://github.com/user-attachments/assets/eee56fab-656e-46af-a530-7916871c6072)
+---
+## Skrajne przypadki
 
 
 

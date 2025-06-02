@@ -27,7 +27,8 @@ cd SaveYourCar
 
 2. Stwórz .env
 ```bash
-cp .env.example .env
+Na Unix-based: cp .env.example .env
+Na Windows: copy .env.example .env
 ```
 
 2. Uruchom API i bazę danych:

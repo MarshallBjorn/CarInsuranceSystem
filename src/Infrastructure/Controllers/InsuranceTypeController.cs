@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Core.DTOs;
 using Infrastructure.Services;
@@ -30,15 +31,29 @@ public class InsuranceTypesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<InsuranceTypeDto>> Post(CreateUpdateInsuranceTypeDto dto)
     {
-        var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+        try
+        {
+            var created = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(Guid id, CreateUpdateInsuranceTypeDto dto)
     {
-        await _service.UpdateAsync(id, dto);
-        return NoContent();
+        try
+        {
+            await _service.UpdateAsync(id, dto);
+            return NoContent();
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]

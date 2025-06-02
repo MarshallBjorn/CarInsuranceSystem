@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Core.DTOs;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,8 +27,15 @@ public class FirmController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateFirmDto dto)
     {
-        await _firmService.CreateAsync(dto);
-        return Ok("Firm created successfully.");
+        try
+        {
+            await _firmService.CreateAsync(dto);
+            return Ok("Firm created successfully.");
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut]
@@ -41,6 +49,10 @@ public class FirmController : ControllerBase
         catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 

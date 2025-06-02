@@ -1,5 +1,6 @@
 using AutoMapper;
 using Core.DTOs;
+using FluentValidation;
 using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;
@@ -8,11 +9,13 @@ public class InsuranceTypeService : IInsuranceTypeService
 {
     private readonly IInsuranceTypeRepository _repository;
     private readonly IMapper _mapper;
+    private readonly IValidator<InsuranceType> _validator;
 
-    public InsuranceTypeService(IInsuranceTypeRepository repository, IMapper mapper)
+    public InsuranceTypeService(IInsuranceTypeRepository repository, IMapper mapper, IValidator<InsuranceType> validator)
     {
         _repository = repository;
         _mapper = mapper;
+        _validator = validator;
     }
 
     public async Task<List<InsuranceTypeDto>> GetAllAsync()
@@ -30,6 +33,11 @@ public class InsuranceTypeService : IInsuranceTypeService
     public async Task<InsuranceTypeDto> CreateAsync(CreateUpdateInsuranceTypeDto dto)
     {
         var entity = _mapper.Map<InsuranceType>(dto);
+
+        var validationResult = await _validator.ValidateAsync(entity);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+
         var result = await _repository.AddAsync(entity);
         return _mapper.Map<InsuranceTypeDto>(result);
     }
@@ -40,6 +48,11 @@ public class InsuranceTypeService : IInsuranceTypeService
         if (entity is null) throw new KeyNotFoundException();
 
         _mapper.Map(dto, entity);
+
+        var validationResult = await _validator.ValidateAsync(entity);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+
         await _repository.UpdateAsync(entity);
     }
 

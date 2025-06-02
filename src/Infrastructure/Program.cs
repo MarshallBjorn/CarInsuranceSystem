@@ -10,6 +10,7 @@ using Infrastructure.Mapper;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Infrastructure.Validators;
+using App.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,8 @@ builder.Services.AddScoped<IInsuranceTypeService, InsuranceTypeService>();
 // Register validators
 builder.Services.AddValidatorsFromAssemblyContaining<CarValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<FirmValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<InsuranceType>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

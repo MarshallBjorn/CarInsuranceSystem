@@ -1,5 +1,6 @@
 using Core.DTOs;
 using Core.Entities;
+using FluentValidation;
 using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;
@@ -7,10 +8,12 @@ namespace Infrastructure.Services;
 public class FirmService : IFirmService
 {
     private readonly IFirmRepository _repository;
+    private readonly IValidator<Firm> _validator;
 
-    public FirmService(IFirmRepository repository)
+    public FirmService(IFirmRepository repository, IValidator<Firm> validator)
     {
         _repository = repository;
+        _validator = validator;
     }
 
     public async Task<List<FirmDto>> GetAllAsync()
@@ -43,6 +46,10 @@ public class FirmService : IFirmService
             CountryCode = dto.CountryCode
         };
 
+        var validationResult = await _validator.ValidateAsync(firm);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+
         await _repository.CreateAsync(firm);
     }
 
@@ -53,6 +60,10 @@ public class FirmService : IFirmService
 
         firm.Name = dto.Name;
         firm.CountryCode = dto.CountryCode;
+
+        var validationResult = await _validator.ValidateAsync(firm);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
 
         await _repository.UpdateAsync(firm);
     }

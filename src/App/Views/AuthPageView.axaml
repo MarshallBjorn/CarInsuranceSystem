@@ -83,39 +83,47 @@
             CornerRadius="5"
             ZIndex="2"
             Padding="20">
-      <StackPanel Width="300" Spacing="12">
-        <TextBlock Text="{Binding PopupText}" FontSize="18" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
+      <ScrollViewer>
+        <StackPanel Width="300" Spacing="12">
+          <TextBlock Text="{Binding PopupText}" FontSize="18" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
 
-        <StackPanel>
-          <TextBlock Text="Current password" FontSize="14" Margin="0 0 0 4" Foreground="White"/>
-          <TextBox Watermark="Enter current password"
-                   Text="{Binding CurrentPassword}"
-                   PasswordChar="•"
-                   FontSize="16"/>
+          <StackPanel>
+            <TextBlock Text="Current password" FontSize="14" Margin="0 0 0 4" Foreground="White"/>
+            <TextBox Watermark="Enter current password"
+                    Text="{Binding CurrentPassword}"
+                    PasswordChar="•"
+                    FontSize="16"/>
+            <TextBlock Text="{Binding CurrentPasswordErrors}" 
+                   Foreground="Red" FontSize="12"/>
+          </StackPanel>
+
+          <StackPanel>
+            <TextBlock Text="New password" FontSize="14" Margin="0 0 0 4" Foreground="White"/>
+            <TextBox Watermark="Enter new password"
+                    Text="{Binding NewPassword}"
+                    PasswordChar="•"
+                    FontSize="16"/>
+            <TextBlock Text="{Binding NewPasswordErrors}" 
+                   Foreground="Red" FontSize="12"/>
+          </StackPanel>
+
+          <StackPanel>
+            <TextBlock Text="Confirm new password" FontSize="14" Margin="0 0 0 4" Foreground="White"/>
+            <TextBox Watermark="Confirm new password"
+                    Text="{Binding ConfirmPassword}"
+                    PasswordChar="•"
+                    FontSize="16"/>
+            <TextBlock Text="{Binding ConfirmPasswordErrors}" 
+                   Foreground="Red" FontSize="12"/>
+          </StackPanel>
+
+          <Button Command="{Binding ConfirmChangeCommand}"
+                  Content="CONFIRM"
+                  HorizontalAlignment="Center"
+                  Width="120"
+                  Margin="10 15 0 0"/>
         </StackPanel>
-
-        <StackPanel>
-          <TextBlock Text="New password" FontSize="14" Margin="0 0 0 4" Foreground="White"/>
-          <TextBox Watermark="Enter new password"
-                   Text="{Binding NewPassword}"
-                   PasswordChar="•"
-                   FontSize="16"/>
-        </StackPanel>
-
-        <StackPanel>
-          <TextBlock Text="Confirm new password" FontSize="14" Margin="0 0 0 4" Foreground="White"/>
-          <TextBox Watermark="Confirm new password"
-                   Text="{Binding ConfirmPassword}"
-                   PasswordChar="•"
-                   FontSize="16"/>
-        </StackPanel>
-
-        <Button Command="{Binding ConfirmChangeCommand}"
-                Content="CONFIRM"
-                HorizontalAlignment="Center"
-                Width="120"
-                Margin="10 15 0 0"/>
-      </StackPanel>
+      </ScrollViewer>
     </Border>
   </Grid>
 </UserControl>

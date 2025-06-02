@@ -15,11 +15,13 @@ public class UserService
 {
     private readonly IUserRepository _repository;
     private readonly IValidator<User> _userValidator;
+    private readonly IValidator<string> _passwordValidator;
 
-    public UserService(IUserRepository repository, IValidator<User> userValidator)
+    public UserService(IUserRepository repository, IValidator<User> userValidator, IValidator<string> passwordValidator)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _userValidator = userValidator ?? throw new ArgumentNullException(nameof(userValidator));
+        _passwordValidator = passwordValidator;
     }
 
     public async Task<User> GetByIdAsync(Guid id)
@@ -42,17 +44,19 @@ public class UserService
         if (user == null)
             throw new ArgumentNullException(nameof(user));
 
-        if (await UserExistsAsync(user.Email)) throw new EmailExistsException("Email is already used by another user.") { TriedEmail = user.Email };
+        if (await UserExistsAsync(user.Email))
+            throw new EmailExistsException("Email is already used by another user.") { TriedEmail = user.Email };
 
-        var validationResult = await _userValidator.ValidateAsync(user);
-        if (!validationResult.IsValid)
-            throw new ValidationException(validationResult.Errors);
-
-        if (string.IsNullOrWhiteSpace(password1) || string.IsNullOrWhiteSpace(password2))
-            throw new ArgumentException("Passwords cannot be empty.");
+        var userValidationResult = await _userValidator.ValidateAsync(user);
+        if (!userValidationResult.IsValid)
+            throw new ValidationException(userValidationResult.Errors);
 
         if (password1 != password2)
             throw new ArgumentException("Passwords do not match.");
+
+        var passwordValidationResult = await _passwordValidator.ValidateAsync(password1);
+        if (!passwordValidationResult.IsValid)
+            throw new ValidationException(passwordValidationResult.Errors);
 
         return await _repository.RegisterAsync(user, password1, password2);
     }
@@ -75,7 +79,19 @@ public class UserService
 
     public async Task<bool> UpdateUserAsync(User updatedUser)
     {
-        if (await UserExistsAsync(updatedUser.Email)) throw new EmailExistsException("Email is already used by another user.") { TriedEmail = updatedUser.Email };
+        var existingUser = await _repository.GetByIdAsync(updatedUser.Id);
+        if (existingUser == null)
+            throw new KeyNotFoundException("User not found.");
+
+        // Check if email is being changed
+        var isChangingEmail = !string.Equals(existingUser.Email, updatedUser.Email, StringComparison.OrdinalIgnoreCase);
+
+        if (isChangingEmail)
+        {
+            var emailTaken = await _repository.UserExistsAsync(updatedUser.Email);
+            if (emailTaken)
+                throw new EmailExistsException("Email is already used by another user.") { TriedEmail = updatedUser.Email };
+        }
 
         return await _repository.UpdateUserAsync(updatedUser);
     }
@@ -84,6 +100,10 @@ public class UserService
     {
         if (newPassword != confirmNewPassword)
             throw new ArgumentException("New passwords do not match.");
+
+        var passwordValidationResult = await _passwordValidator.ValidateAsync(newPassword);
+        if (!passwordValidationResult.IsValid)
+            throw new ValidationException(passwordValidationResult.Errors);
 
         var user = await _repository.GetByEmailAsync(email);
         if (user == null)

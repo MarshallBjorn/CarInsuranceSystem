@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using App.Factories;
@@ -21,6 +22,15 @@ public partial class AuthPageViewModel : ViewModelBase
     [ObservableProperty] private string _currentPassword = "";
     [ObservableProperty] private string _newPassword = "";
     [ObservableProperty] private string _confirmPassword = "";
+
+    private readonly List<string> _currentPasswordErrors = new();
+    private readonly List<string> _newPasswordErrors = new();
+    private readonly List<string> _confirmPasswordErrors = new();
+
+    public string CurrentPasswordErrors => _currentPasswordErrors.Count > 0 ? string.Join("\n", _currentPasswordErrors) : string.Empty;
+    public string NewPasswordErrors => _newPasswordErrors.Count > 0 ? string.Join("\n", _newPasswordErrors) : string.Empty;
+    public string ConfirmPasswordErrors => _confirmPasswordErrors.Count > 0 ? string.Join("\n", _confirmPasswordErrors) : string.Empty;
+
 
     private string emailForPasswordChange = "";
 
@@ -65,18 +75,52 @@ public partial class AuthPageViewModel : ViewModelBase
     [RelayCommand]
     public async Task ConfirmChange()
     {
-        var client = HttpClientFactory.CreateClient("CarInsuranceApi");
-        PopupText = "";
+        _currentPasswordErrors.Clear();
+        _newPasswordErrors.Clear();
+        _confirmPasswordErrors.Clear();
+        OnPropertyChanged(nameof(CurrentPasswordErrors));
+        OnPropertyChanged(nameof(NewPasswordErrors));
+        OnPropertyChanged(nameof(ConfirmPasswordErrors));
+
+        var request = new ChangePasswordRequest
+        {
+            Email = emailForPasswordChange,
+            CurrentPassword = CurrentPassword,
+            NewPassword = NewPassword,
+            ConfirmNewPassword = ConfirmPassword
+        };
+
+        var validator = new ChangePasswordRequestValidator();
+        var result = validator.Validate(request);
+
+        if (!result.IsValid)
+        {
+            foreach (var error in result.Errors)
+            {
+                switch (error.PropertyName)
+                {
+                    case nameof(ChangePasswordRequest.CurrentPassword):
+                        _currentPasswordErrors.Add(error.ErrorMessage);
+                        break;
+                    case nameof(ChangePasswordRequest.NewPassword):
+                        _newPasswordErrors.Add(error.ErrorMessage);
+                        break;
+                    case nameof(ChangePasswordRequest.ConfirmNewPassword):
+                        _confirmPasswordErrors.Add(error.ErrorMessage);
+                        break;
+                }
+            }
+
+            OnPropertyChanged(nameof(CurrentPasswordErrors));
+            OnPropertyChanged(nameof(NewPasswordErrors));
+            OnPropertyChanged(nameof(ConfirmPasswordErrors));
+            return;
+        }
 
         try
         {
-            var request = new ChangePasswordRequest
-            {
-                Email = emailForPasswordChange,
-                CurrentPassword = CurrentPassword,
-                NewPassword = NewPassword,
-                ConfirmNewPassword = ConfirmPassword
-            };
+            var client = HttpClientFactory.CreateClient("CarInsuranceApi");
+            PopupText = "";
 
             var response = await client.PutAsJsonAsync("api/User/change-password", request);
             if (!response.IsSuccessStatusCode)
@@ -89,6 +133,10 @@ public partial class AuthPageViewModel : ViewModelBase
                 PopupText = "Password successfully changed";
                 await Task.Delay(2000);
                 PopupIsOpen = false;
+
+                CurrentPassword = string.Empty;
+                NewPassword = string.Empty;
+                ConfirmPassword = string.Empty;
             }
         }
         catch (Exception ex)

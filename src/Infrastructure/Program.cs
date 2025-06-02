@@ -44,6 +44,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<CarValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<FirmValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<InsuranceType>();
+builder.Services.AddValidatorsFromAssemblyContaining<string>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

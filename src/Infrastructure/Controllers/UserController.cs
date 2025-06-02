@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Infrastructure.Validators;
 
 namespace Infrastructure.Controllers;
 
@@ -122,12 +123,19 @@ public class UserController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] Core.RequestModels.LoginRequest request)
     {
-        var user = await _userService.LoginAsync(request.Email, request.Password);
-        if (user == null)
-            return Unauthorized("Invalid credentials");
+        try
+        {
+            var user = await _userService.LoginAsync(request.Email, request.Password);
+            if (user == null)
+                return Unauthorized("Invalid credentials");
 
-        var token = GenerateJwt(user);
-        return Ok(new AuthResponseDto { Token = token });
+            var token = GenerateJwt(user);
+            return Ok(new AuthResponseDto { Token = token });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     private string GenerateJwt(User user)
@@ -151,6 +159,7 @@ public class UserController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    
     [Authorize]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest dto)
@@ -166,6 +175,22 @@ public class UserController : ControllerBase
             if (dto.Id != userId)
                 return Forbid("You can only update your own profile.");
 
+            // Validate request DTO
+            var validator = new UpdateUserRequestValidator();
+            var validationResult = await validator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            // Get the current user to compare emails
+            var existingUser = await _userService.GetByIdAsync(userId);
+            if (existingUser == null)
+                return NotFound("User not found.");
+
+            var isEmailChanged = !string.Equals(existingUser.Email, dto.Email, StringComparison.OrdinalIgnoreCase);
+            if (isEmailChanged && await _userService.UserExistsAsync(dto.Email))
+                throw new EmailExistsException("Email is already used by another user.") { TriedEmail = dto.Email };
+
+            // Create updated user entity
             var user = new User
             {
                 Id = dto.Id,
@@ -177,6 +202,10 @@ public class UserController : ControllerBase
 
             var success = await _userService.UpdateUserAsync(user);
             return success ? Ok("User updated successfully.") : NotFound("User not found.");
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Errors);
         }
         catch (EmailExistsException ex)
         {
@@ -206,6 +235,10 @@ public class UserController : ControllerBase
         catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 
